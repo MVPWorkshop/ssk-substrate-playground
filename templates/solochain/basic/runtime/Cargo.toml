@@ -64,6 +64,9 @@ sp-genesis-builder = { default-features = false, git = "https://github.com/parit
 # RPC related
 frame-system-rpc-runtime-api = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 pallet-transaction-payment-rpc-runtime-api = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+pallet-utility = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+pallet-contracts = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+pallet-insecure-randomness-collective-flip = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
 # Used for runtime benchmarking
 frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false, optional = true }
@@ -96,6 +99,9 @@ std = [
 	"pallet-sudo/std",
 	"pallet-template/std",
 	"pallet-timestamp/std",
+	"pallet-utility/std",
+	"pallet-contracts/std",
+	"pallet-insecure-randomness-collective-flip/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
 
