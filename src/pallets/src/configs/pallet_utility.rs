@@ -1,0 +1,88 @@
+use super::super::types::*;
+use chrono::prelude::*;
+#[derive(Debug, Clone, Copy)]
+pub enum PalletUtilityTraits {
+    Event,
+    Call,
+    WeightInfo,
+}
+//
+// impl fmt::Display for PalletUtilityTraits {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         match self {
+//             PalletUtilityTraits::Event => write!(f, "Event"),
+//             PalletUtilityTraits::Call => write!(f, "Call"),
+//             PalletUtilityTraits::WeightInfo => write!(f, "WeightInfo"),
+//         }
+//     }
+// }
+pub struct PalletUtilityConfig {
+    name: ESupportedPallets,
+    metadata: PalletMetadata,
+    runtime: PalletRuntimeConfig,
+    dependencies: PalletDependencyConfig,
+}
+
+impl PalletUtilityConfig {
+    pub fn new() -> Self {
+        let pallet_description = [
+            "A stateless module with helpers for dispatch management which does no re-authentication.",
+            "This module contains two basic pieces of functionality:",
+            "- Batch dispatch: A stateless operation, allowing any origin to execute multiple calls in a single dispatch. This can be useful to amalgamate proposals, combining set_code with corresponding set_storages, for efficient multiple payouts with just a single signature verify, or in combination with one of the other two dispatch functionality.",
+            "- Pseudonymal dispatch: A stateless operation, allowing a signed origin to execute a call from an alternative signed origin. Each account has 2 * 2**16 possible \"pseudonyms\" (alternative account IDs) and these can be stacked. This can be useful as a key management tool, where you need multiple distinct accounts (e.g. as controllers for many staking accounts), but where it's perfectly fine to have each of them controlled by the same underlying keypair. Derivative accounts are, for the purposes of proxy filtering considered exactly the same as the origin and are thus hampered with the origin's filters.",
+            "Since proxy filters are respected in all dispatches of this module, it should never need to be filtered by any proxy."
+        ].join("\n");
+
+        let metadata = PalletMetadata {
+            description: pallet_description,
+            short_description: "FRAME utilities pallet".to_string(),
+            compatibility: SubstrateVersion::Two,
+            size: 10500,
+            updated: Utc.ymd(2020, 9, 22).and_hms(16, 32, 38),
+            license: Some("Apache-2.0".to_string()),
+            authors: vec![CommonAuthors::ParityTechnologies],
+            categories: Some(vec![PalletCategories::Runtime]),
+        };
+
+        let dependencies = PalletDependencyConfig {
+            pallet: CargoComplexDependency {
+                package: "pallet-utility".to_string(),
+                version: "2.0.0".to_string(),
+                alias: "utility".to_string(),
+                default_features: Some(vec![]),
+                git_repo: None,
+                tag: None,
+                branch: None,
+            },
+            additional_pallets: None,
+            additional_deps: None,
+        };
+
+        let runtime = PalletRuntimeConfig {
+            construct_runtime: PalletConstructRuntimeConfig {
+                modules: vec![
+                    PalletModuleParts::Module,
+                    PalletModuleParts::Call,
+                    PalletModuleParts::Event,
+                    PalletModuleParts::Storage,
+                ],
+                generic: None,
+            },
+            pallet_traits: vec![
+                ("Event".to_string() , "Event".to_string()),
+                ("Call".to_string() , "Call".to_string()),
+                ("WeightInfo".to_string() , "()".to_string()),
+            ].into_iter().collect(),
+            genesis_config: None,
+            additional_chain_spec_code: None,
+            additional_runtime_lib_code: None,
+        };
+
+        PalletUtilityConfig {
+            name: ESupportedPallets::PalletUtility,
+            metadata,
+            runtime,
+            dependencies,
+        }
+    }
+}
