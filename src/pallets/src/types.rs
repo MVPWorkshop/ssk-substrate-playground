@@ -1,7 +1,8 @@
+use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
+#[derive(Debug, Clone)]
 pub enum PalletModuleParts {
     Module,
     Call,
@@ -13,11 +14,13 @@ pub enum PalletModuleParts {
     ValidateUnsigned,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletConstructRuntimeConfig {
     pub modules: Vec<PalletModuleParts>,
     pub generic: Option<HashMap<PalletModuleParts, bool>>,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletTraitsConfig {
     custom_name: Option<String>,
     type_: String,
@@ -25,11 +28,13 @@ pub struct PalletTraitsConfig {
     is_not_const: Option<bool>,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletGenesisConfig {
     config_struct_name: String,
     struct_fields: HashMap<String, String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletRuntimeConfig {
     pub construct_runtime: PalletConstructRuntimeConfig,
     pub pallet_traits: HashMap<String, String>,
@@ -38,11 +43,13 @@ pub struct PalletRuntimeConfig {
     pub additional_runtime_lib_code: Option<Vec<String>>,
 }
 
+#[derive(Debug, Clone)]
 pub struct CargoSimpleDependency {
     package: String,
     version: String,
 }
 
+#[derive(Debug, Clone)]
 pub struct CargoComplexDependency {
     pub package: String,
     pub version: String,
@@ -53,17 +60,20 @@ pub struct CargoComplexDependency {
     pub branch: Option<String>,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
     pub additional_pallets: Option<Vec<HashMap<String, bool>>>,
     pub additional_deps: Option<Vec<CargoSimpleDependency>>,
 }
 
+#[derive(Debug, Clone)]
 pub enum SubstrateVersion {
     One,
     Two,
 }
 
+#[derive(Debug, Clone)]
 pub enum PalletCategories {
     Accounts,
     Assets,
@@ -75,12 +85,14 @@ pub enum PalletCategories {
     Other,
 }
 
+#[derive(Debug, Clone)]
 pub enum CommonAuthors {
     ParityTechnologies,
     IndividualDevelopers,
     SubstrateDevHub,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletMetadata {
     pub description: String,
     pub short_description: String,
@@ -92,14 +104,15 @@ pub struct PalletMetadata {
     pub updated: DateTime<Utc>,
 }
 
+#[derive(Debug, Clone)]
 pub struct PalletConfig {
-    pub name: ESupportedPallets,
+    pub name: String,
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ESupportedPallets {
     PalletContract,
     PalletBalance,

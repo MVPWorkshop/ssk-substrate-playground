@@ -67,11 +67,16 @@ impl PalletUtilityConfig {
                 generic: None,
             },
             pallet_traits: vec![
-                ("RuntimeEvent".to_string() , "RuntimeEvent".to_string()),
-                ("RuntimeCall".to_string() , "RuntimeCall".to_string()),
-                ("PalletsOrigin".to_string() , "OriginCaller".to_string()),
-                ("WeightInfo".to_string() , "pallet_utility::weights::SubstrateWeight<Runtime>".to_string()),
-            ].into_iter().collect(),
+                ("RuntimeEvent".to_string(), "RuntimeEvent".to_string()),
+                ("RuntimeCall".to_string(), "RuntimeCall".to_string()),
+                ("PalletsOrigin".to_string(), "OriginCaller".to_string()),
+                (
+                    "WeightInfo".to_string(),
+                    "pallet_utility::weights::SubstrateWeight<Runtime>".to_string(),
+                ),
+            ]
+            .into_iter()
+            .collect(),
             genesis_config: None,
             additional_chain_spec_code: None,
             additional_runtime_lib_code: None,
