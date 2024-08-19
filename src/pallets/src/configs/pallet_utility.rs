@@ -2,10 +2,12 @@ use super::super::types::*;
 use chrono::prelude::*;
 #[derive(Debug, Clone, Copy)]
 pub enum PalletUtilityTraits {
-    Event,
-    Call,
+    RuntimeEvent,
+    RuntimeCall,
+    PalletsOrigin,
     WeightInfo,
 }
+
 //
 // impl fmt::Display for PalletUtilityTraits {
 //     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -16,11 +18,12 @@ pub enum PalletUtilityTraits {
 //         }
 //     }
 // }
+#[derive(Debug, Clone)]
 pub struct PalletUtilityConfig {
-    name: ESupportedPallets,
-    metadata: PalletMetadata,
-    runtime: PalletRuntimeConfig,
-    dependencies: PalletDependencyConfig,
+    pub name: String,
+    pub metadata: PalletMetadata,
+    pub runtime: PalletRuntimeConfig,
+    pub dependencies: PalletDependencyConfig,
 }
 
 impl PalletUtilityConfig {
@@ -38,7 +41,7 @@ impl PalletUtilityConfig {
             short_description: "FRAME utilities pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            updated: Utc.ymd(2020, 9, 22).and_hms(16, 32, 38),
+            updated: Utc.ymd(2024, 8, 22).and_hms(16, 32, 38),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Runtime]),
@@ -47,7 +50,7 @@ impl PalletUtilityConfig {
         let dependencies = PalletDependencyConfig {
             pallet: CargoComplexDependency {
                 package: "pallet-utility".to_string(),
-                version: "2.0.0".to_string(),
+                version: "4.0.0".to_string(),
                 alias: "utility".to_string(),
                 default_features: Some(vec![]),
                 git_repo: None,
@@ -60,18 +63,14 @@ impl PalletUtilityConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                modules: vec![
-                    PalletModuleParts::Module,
-                    PalletModuleParts::Call,
-                    PalletModuleParts::Event,
-                    PalletModuleParts::Storage,
-                ],
+                modules: vec![],
                 generic: None,
             },
             pallet_traits: vec![
-                ("Event".to_string() , "Event".to_string()),
-                ("Call".to_string() , "Call".to_string()),
-                ("WeightInfo".to_string() , "()".to_string()),
+                ("RuntimeEvent".to_string() , "RuntimeEvent".to_string()),
+                ("RuntimeCall".to_string() , "RuntimeCall".to_string()),
+                ("PalletsOrigin".to_string() , "OriginCaller".to_string()),
+                ("WeightInfo".to_string() , "pallet_utility::weights::SubstrateWeight<Runtime>".to_string()),
             ].into_iter().collect(),
             genesis_config: None,
             additional_chain_spec_code: None,
@@ -79,7 +78,7 @@ impl PalletUtilityConfig {
         };
 
         PalletUtilityConfig {
-            name: ESupportedPallets::PalletUtility,
+            name: "Pallet utility".to_string(),
             metadata,
             runtime,
             dependencies,
