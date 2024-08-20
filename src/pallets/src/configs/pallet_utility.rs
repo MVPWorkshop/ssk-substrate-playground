@@ -63,7 +63,6 @@ impl PalletUtilityConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                modules: vec![],
                 generic: None,
             },
             pallet_traits: vec![

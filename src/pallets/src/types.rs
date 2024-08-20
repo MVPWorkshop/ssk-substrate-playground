@@ -16,7 +16,6 @@ pub enum PalletModuleParts {
 
 #[derive(Debug, Clone)]
 pub struct PalletConstructRuntimeConfig {
-    pub modules: Vec<PalletModuleParts>,
     pub generic: Option<HashMap<PalletModuleParts, bool>>,
 }
 
@@ -30,8 +29,8 @@ pub struct PalletTraitsConfig {
 
 #[derive(Debug, Clone)]
 pub struct PalletGenesisConfig {
-    config_struct_name: String,
-    struct_fields: HashMap<String, String>,
+    pub config_struct_name: String,
+    pub struct_fields: HashMap<String, String>,
 }
 
 #[derive(Debug, Clone)]
@@ -39,7 +38,7 @@ pub struct PalletRuntimeConfig {
     pub construct_runtime: PalletConstructRuntimeConfig,
     pub pallet_traits: HashMap<String, String>,
     pub genesis_config: Option<PalletGenesisConfig>,
-    pub additional_chain_spec_code: Option<HashMap<String, Vec<String>>>,
+    pub additional_chain_spec_code: Option<Vec<String>>,
     pub additional_runtime_lib_code: Option<Vec<String>>,
 }
 
