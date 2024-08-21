@@ -1,6 +1,5 @@
-
 use super::super::types::*;
-use chrono::prelude::*;
+use chrono::Local;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PalletUtilityTraits {
@@ -27,7 +26,7 @@ impl PalletAuraConfig {
             name: String::from("Pallet Aura"),
             metadata: PalletMetadata {
                 size: 5078,
-                updated: Utc.ymd(2024, 8, 22).and_hms(16, 32, 38),
+                updated: Local::now().to_string(),
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
@@ -38,7 +37,7 @@ impl PalletAuraConfig {
             runtime: PalletRuntimeConfig {
                 pallet_traits: vec![
                     (String::from("AuthorityId"), String::from("AuraId")),
-                    (String::from("DisabledValidators"), String::from("())")),
+                    (String::from("DisabledValidators"), String::from("()")),
                     (String::from("MaxAuthorities"), String::from("ConstU32<32>")),
                     (String::from("AllowMultipleBlocksPerSlot"), String::from("ConstBool<false>")),
                     (String::from("SlotDuration"), String::from("pallet_aura::MinimumPeriodTimesTwo<Runtime>")),
@@ -64,11 +63,11 @@ impl PalletAuraConfig {
             dependencies: PalletDependencyConfig {
                 pallet: CargoComplexDependency {
                     package: String::from("pallet-aura"),
-                    version: String::from("2.0.0"),
+                    version: None,
                     alias: String::from("pallet-aura"),
                     default_features: None,
-                    git_repo: None,
-                    tag: None,
+                    git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
+                    tag: Some("polkadot-v1.14.0".to_string()),
                     branch: None,
                 },
                 additional_pallets: None,

@@ -1,5 +1,4 @@
 use super::types::*;
-use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 use uuid::Uuid;
 
@@ -12,7 +11,6 @@ pub fn pallets_config_to_model(config: PalletConfig) -> HashMap<String, String> 
         "package_name".to_string(),
         config.dependencies.pallet.package,
     );
-    map.insert("version".to_string(), config.dependencies.pallet.version);
     map.insert(
         "license".to_string(),
         config.metadata.license.unwrap_or_default(),

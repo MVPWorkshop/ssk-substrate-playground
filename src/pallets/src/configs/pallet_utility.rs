@@ -1,5 +1,6 @@
 use super::super::types::*;
-use chrono::prelude::*;
+use chrono::Local;
+
 #[derive(Debug, Clone, Copy)]
 pub enum PalletUtilityTraits {
     RuntimeEvent,
@@ -41,7 +42,7 @@ impl PalletUtilityConfig {
             short_description: "FRAME utilities pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            updated: Utc.ymd(2024, 8, 22).and_hms(16, 32, 38),
+            updated: Local::now().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Runtime]),
@@ -50,11 +51,11 @@ impl PalletUtilityConfig {
         let dependencies = PalletDependencyConfig {
             pallet: CargoComplexDependency {
                 package: "pallet-utility".to_string(),
-                version: "4.0.0".to_string(),
-                alias: "utility".to_string(),
-                default_features: Some(vec![]),
-                git_repo: None,
-                tag: None,
+                version: None,
+                alias: "pallet-utility".to_string(),
+                default_features: None,
+                git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
+                tag: Some("polkadot-v1.14.0".to_string()),
                 branch: None,
             },
             additional_pallets: None,

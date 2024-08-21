@@ -1,6 +1,5 @@
 use chrono::{DateTime, Utc};
 use std::collections::HashMap;
-use uuid::Uuid;
 
 #[derive(Debug, Clone)]
 pub enum PalletModuleParts {
@@ -51,7 +50,7 @@ pub struct CargoSimpleDependency {
 #[derive(Debug, Clone)]
 pub struct CargoComplexDependency {
     pub package: String,
-    pub version: String,
+    pub version: Option<String>,
     pub alias: String,
     pub default_features: Option<Vec<String>>,
     pub git_repo: Option<String>,
@@ -100,7 +99,7 @@ pub struct PalletMetadata {
     pub authors: Vec<CommonAuthors>,
     pub categories: Option<Vec<PalletCategories>>,
     pub size: usize,
-    pub updated: DateTime<Utc>,
+    pub updated: String,
 }
 
 #[derive(Debug, Clone)]

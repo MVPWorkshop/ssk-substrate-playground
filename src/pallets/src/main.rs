@@ -37,4 +37,5 @@ fn main() {
     });
 
     println!("Pallet Utility Model: {:?}", utility_model);
+
 }
