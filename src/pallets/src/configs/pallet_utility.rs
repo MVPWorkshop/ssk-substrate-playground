@@ -1,5 +1,5 @@
 use super::super::types::*;
-use chrono::Local;
+use chrono::Utc;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PalletUtilityTraits {
@@ -42,7 +42,7 @@ impl PalletUtilityConfig {
             short_description: "FRAME utilities pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            updated: Local::now().to_string(),
+            updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Runtime]),

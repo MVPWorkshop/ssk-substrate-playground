@@ -4,4 +4,5 @@ pub mod configs {
     pub mod pallet_utility;
     pub mod pallet_aura;
     pub mod pallet_sudo;
+    pub mod pallet_timestamp;
 }
