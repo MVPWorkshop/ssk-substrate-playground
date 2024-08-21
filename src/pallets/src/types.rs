@@ -15,7 +15,8 @@ pub enum PalletModuleParts {
 
 #[derive(Debug, Clone)]
 pub struct PalletConstructRuntimeConfig {
-    pub generic: Option<HashMap<PalletModuleParts, bool>>,
+    pub index: Option<u32>,
+    pub runtime: (String, String),
 }
 
 #[derive(Debug, Clone)]

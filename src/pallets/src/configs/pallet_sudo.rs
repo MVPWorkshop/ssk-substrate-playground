@@ -42,7 +42,8 @@ impl PalletSudoConfig {
 
                 additional_runtime_lib_code: None,
                 construct_runtime: PalletConstructRuntimeConfig {
-                    generic: None,
+                    index: None,
+                    runtime: ("Sudo".to_string(), "pallet_sudo".to_string()),
                 },
                 genesis_config: Some(PalletGenesisConfig {
                     config_struct_name: String::from("sudo"),

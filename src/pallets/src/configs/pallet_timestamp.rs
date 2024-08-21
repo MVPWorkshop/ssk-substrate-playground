@@ -47,7 +47,8 @@ impl PalletTimestampConfig {
 
                 additional_runtime_lib_code: None,
                 construct_runtime: PalletConstructRuntimeConfig {
-                    generic: None,
+                    index: None,
+                    runtime: ("Timestamp".to_string(), "pallet_timestamp".to_string()),
                 },
                 genesis_config: None,
                 additional_chain_spec_code: None,

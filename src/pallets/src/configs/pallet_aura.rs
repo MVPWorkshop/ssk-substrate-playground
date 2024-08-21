@@ -48,7 +48,8 @@ impl PalletAuraConfig {
                     String::from("use sp_consensus_aura::sr25519::AuthorityId as AuraId;"),
                 ]),
                 construct_runtime: PalletConstructRuntimeConfig {
-                    generic: None,
+                    index: None,
+                    runtime: ("Aura".to_string(), "pallet_aura".to_string()),
                 },
                 genesis_config: Some(PalletGenesisConfig {
                     config_struct_name: String::from("aura"),
