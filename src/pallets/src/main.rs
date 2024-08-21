@@ -2,6 +2,7 @@ use actix_web::{web, App, HttpServer};
 use pallets_configs::configs::pallet_utility::PalletUtilityConfig;
 use pallets_configs::configs::pallet_aura::PalletAuraConfig;
 use pallets_configs::configs::pallet_timestamp::PalletTimestampConfig;
+use pallets_configs::configs::pallet_balances::PalletBalancesConfig;
 use pallets_configs::types::PalletConfig;
 use pallets_configs::utils::pallets_config_to_model;
 use std::process;
@@ -29,6 +30,9 @@ fn main() {
 
     let pallet_timestamp_config = PalletTimestampConfig::new();
     println!("Pallet Timestamp Config: {:?}", pallet_timestamp_config);
+
+    let pallet_balances_config = PalletBalancesConfig::new();
+    println!("Pallet Balances Config: {:?}", pallet_balances_config);
 
     let utility_model = pallets_config_to_model(PalletConfig {
         name: pallet_utility_config.name,
