@@ -7,7 +7,7 @@ pub enum PalletUtilityTraits {
     DisabledValidators,
     MaxAuthorities,
     AllowMultipleBlocksPerSlot,
-    SlotDuration
+    SlotDuration,
 }
 
 #[derive(Debug, Clone)]
@@ -20,7 +20,8 @@ pub struct PalletAuraConfig {
 
 impl PalletAuraConfig {
     pub fn new() -> Self {
-        let pallet_description = "The Aura module extends Aura consensus by managing offline reporting.";
+        let pallet_description =
+            "The Aura module extends Aura consensus by managing offline reporting.";
 
         PalletAuraConfig {
             name: String::from("Pallet Aura"),
@@ -39,27 +40,40 @@ impl PalletAuraConfig {
                     (String::from("AuthorityId"), String::from("AuraId")),
                     (String::from("DisabledValidators"), String::from("()")),
                     (String::from("MaxAuthorities"), String::from("ConstU32<32>")),
-                    (String::from("AllowMultipleBlocksPerSlot"), String::from("ConstBool<false>")),
-                    (String::from("SlotDuration"), String::from("pallet_aura::MinimumPeriodTimesTwo<Runtime>")),
-                ].into_iter().collect(),
+                    (
+                        String::from("AllowMultipleBlocksPerSlot"),
+                        String::from("ConstBool<false>"),
+                    ),
+                    (
+                        String::from("SlotDuration"),
+                        String::from("pallet_aura::MinimumPeriodTimesTwo<Runtime>"),
+                    ),
+                ]
+                .into_iter()
+                .collect(),
 
-
-                additional_runtime_lib_code: Some(vec![
-                    String::from("use sp_consensus_aura::sr25519::AuthorityId as AuraId;"),
-                ]),
+                additional_runtime_lib_code: Some(vec![String::from(
+                    "use sp_consensus_aura::sr25519::AuthorityId as AuraId;",
+                )]),
                 construct_runtime: PalletConstructRuntimeConfig {
                     index: None,
                     runtime: ("Aura".to_string(), "pallet_aura".to_string()),
                 },
                 genesis_config: Some(PalletGenesisConfig {
                     config_struct_name: String::from("aura"),
-                    struct_fields: vec![
-                        ("authorities".to_string(), "initial_authorities.iter().map(|x| (x.0.clone())).collect::<Vec<_>>(),".to_string()),
-                    ].into_iter().collect(),
+                    struct_fields: vec![(
+                        "authorities".to_string(),
+                        "initial_authorities.iter().map(|x| (x.0.clone())).collect::<Vec<_>>(),"
+                            .to_string(),
+                    )]
+                    .into_iter()
+                    .collect(),
                 }),
-                additional_chain_spec_code: Some(vec![
-                    "use node_template_runtime::AuraId;".to_string(),
-                ].into_iter().collect()),
+                additional_chain_spec_code: Some(
+                    vec!["use node_template_runtime::AuraId;".to_string()]
+                        .into_iter()
+                        .collect(),
+                ),
             },
             dependencies: PalletDependencyConfig {
                 pallet: CargoComplexDependency {

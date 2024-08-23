@@ -65,7 +65,10 @@ impl PalletUtilityConfig {
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
                 index: None,
-                runtime: ("Utility".to_string(), "pallet_utility::Pallet<Runtime>".to_string()),
+                runtime: (
+                    "Utility".to_string(),
+                    "pallet_utility::Pallet<Runtime>".to_string(),
+                ),
             },
             pallet_traits: vec![
                 ("RuntimeEvent".to_string(), "RuntimeEvent".to_string()),

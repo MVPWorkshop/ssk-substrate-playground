@@ -62,7 +62,7 @@ pub struct CargoComplexDependency {
 #[derive(Debug, Clone)]
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
-    pub additional_pallets: Option<Vec<HashMap<String, bool>>>,
+    pub additional_pallets: Option<Vec<HashMap<ESupportedPallets, bool>>>,
     pub additional_deps: Option<Vec<CargoSimpleDependency>>,
 }
 

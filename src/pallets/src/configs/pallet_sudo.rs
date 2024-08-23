@@ -6,7 +6,7 @@ use chrono::Utc;
 pub enum PalletSudoTraits {
     RuntimeEvent,
     RuntimeCall,
-    WeightInfo
+    WeightInfo,
 }
 
 #[derive(Debug, Clone)]
@@ -37,8 +37,13 @@ impl PalletSudoConfig {
                 pallet_traits: vec![
                     (String::from("RuntimeEvent"), String::from("RuntimeEvent")),
                     (String::from("RuntimeCall"), String::from("RuntimeCall")),
-                    (String::from("WeightInfo"), String::from("pallet_sudo::weights::SubstrateWeight<Runtime>")),
-                ].into_iter().collect(),
+                    (
+                        String::from("WeightInfo"),
+                        String::from("pallet_sudo::weights::SubstrateWeight<Runtime>"),
+                    ),
+                ]
+                .into_iter()
+                .collect(),
 
                 additional_runtime_lib_code: None,
                 construct_runtime: PalletConstructRuntimeConfig {
@@ -47,9 +52,9 @@ impl PalletSudoConfig {
                 },
                 genesis_config: Some(PalletGenesisConfig {
                     config_struct_name: String::from("sudo"),
-                    struct_fields: vec![
-                        ("key".to_string(), "Some(root_key)".to_string()),
-                    ].into_iter().collect(),
+                    struct_fields: vec![("key".to_string(), "Some(root_key)".to_string())]
+                        .into_iter()
+                        .collect(),
                 }),
                 additional_chain_spec_code: None,
             },
@@ -69,4 +74,3 @@ impl PalletSudoConfig {
         }
     }
 }
-

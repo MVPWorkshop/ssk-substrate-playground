@@ -15,7 +15,7 @@ pub enum PalletBalancesTraits {
     FreezeIdentifier,
     MaxFreezes,
     RuntimeHoldReason,
-    RuntimeFreezeReason
+    RuntimeFreezeReason,
 }
 
 #[derive(Debug, Clone)]
@@ -52,21 +52,50 @@ impl PalletBalancesConfig {
                     (String::from("Balance"), String::from("Balance")),
                     (String::from("RuntimeEvent"), String::from("RuntimeEvent")),
                     (String::from("DustRemoval"), String::from("()")),
-                    (String::from("ExistentialDeposit"), String::from("ConstU128<EXISTENTIAL_DEPOSIT>")),
+                    (
+                        String::from("ExistentialDeposit"),
+                        String::from("ConstU128<EXISTENTIAL_DEPOSIT>"),
+                    ),
                     (String::from("AccountStore"), String::from("System")),
-                    (String::from("WeightInfo"), String::from("pallet_balances::weights::SubstrateWeight<Runtime>")),
-                    (String::from("FreezeIdentifier"), String::from("RuntimeFreezeReason")),
-                    (String::from("MaxFreezes"), String::from("VariantCountOf<RuntimeFreezeReason>")),
-                    (String::from("RuntimeHoldReason"), String::from("RuntimeHoldReason")),
-                    (String::from("RuntimeFreezeReason"), String::from("RuntimeHoldReason")),
-                ].into_iter().collect(),
+                    (
+                        String::from("WeightInfo"),
+                        String::from("pallet_balances::weights::SubstrateWeight<Runtime>"),
+                    ),
+                    (
+                        String::from("FreezeIdentifier"),
+                        String::from("RuntimeFreezeReason"),
+                    ),
+                    (
+                        String::from("MaxFreezes"),
+                        String::from("VariantCountOf<RuntimeFreezeReason>"),
+                    ),
+                    (
+                        String::from("RuntimeHoldReason"),
+                        String::from("RuntimeHoldReason"),
+                    ),
+                    (
+                        String::from("RuntimeFreezeReason"),
+                        String::from("RuntimeHoldReason"),
+                    ),
+                ]
+                .into_iter()
+                .collect(),
 
                 additional_runtime_lib_code: None,
                 construct_runtime: PalletConstructRuntimeConfig {
                     index: None,
                     runtime: ("Balances".to_string(), "pallet_balances".to_string()),
                 },
-                genesis_config: None,
+                genesis_config: Some(PalletGenesisConfig {
+                    config_struct_name: String::from("balances"),
+                    struct_fields: vec![(
+                        "balances".to_string(),
+                        "endowed_accounts.iter().cloned().map(|k| (k, 1u64 << 60)).collect::<Vec<_>>(),"
+                            .to_string(),
+                    )]
+                        .into_iter()
+                        .collect(),
+                }),
                 additional_chain_spec_code: None,
             },
             dependencies: PalletDependencyConfig {

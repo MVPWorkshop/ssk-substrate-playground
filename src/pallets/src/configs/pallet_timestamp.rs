@@ -6,9 +6,8 @@ pub enum PalletTimestampTraits {
     Moment,
     OnTimestampSet,
     MinimumPeriod,
-    WeightInfo
+    WeightInfo,
 }
-
 
 #[derive(Debug, Clone)]
 pub struct PalletTimestampConfig {
@@ -41,9 +40,14 @@ impl PalletTimestampConfig {
                 pallet_traits: vec![
                     (String::from("Moment"), String::from("u64")),
                     (String::from("OnTimestampSet"), String::from("Aura")),
-                    (String::from("MinimumPeriod"), String::from("ConstU64<{ SLOT_DURATION / 2 }>")),
+                    (
+                        String::from("MinimumPeriod"),
+                        String::from("ConstU64<{ SLOT_DURATION / 2 }>"),
+                    ),
                     (String::from("WeightInfo"), String::from("()")),
-                ].into_iter().collect(),
+                ]
+                .into_iter()
+                .collect(),
 
                 additional_runtime_lib_code: None,
                 construct_runtime: PalletConstructRuntimeConfig {

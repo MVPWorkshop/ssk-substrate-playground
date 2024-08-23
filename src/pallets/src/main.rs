@@ -1,8 +1,8 @@
 use actix_web::{web, App, HttpServer};
-use pallets_configs::configs::pallet_utility::PalletUtilityConfig;
 use pallets_configs::configs::pallet_aura::PalletAuraConfig;
-use pallets_configs::configs::pallet_timestamp::PalletTimestampConfig;
 use pallets_configs::configs::pallet_balances::PalletBalancesConfig;
+use pallets_configs::configs::pallet_timestamp::PalletTimestampConfig;
+use pallets_configs::configs::pallet_utility::PalletUtilityConfig;
 use pallets_configs::types::PalletConfig;
 use pallets_configs::utils::pallets_config_to_model;
 use std::process;
@@ -42,5 +42,4 @@ fn main() {
     });
 
     println!("Pallet Utility Model: {:?}", utility_model);
-
 }
