@@ -8,4 +8,6 @@ pub mod configs {
     pub mod pallet_utility;
 
     pub mod pallet_balances;
+
+    pub mod pallet_transaction_payment;
 }

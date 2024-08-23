@@ -41,7 +41,7 @@ impl PalletBalancesConfig {
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
                 categories: Some(vec![PalletCategories::Assets].into()),
-                short_description: String::from("FRAME Balances consensus pallet"),
+                short_description: String::from("FRAME Balances pallet"),
                 description: String::from(pallet_description),
             },
             runtime: PalletRuntimeConfig {
@@ -54,7 +54,7 @@ impl PalletBalancesConfig {
                     (String::from("DustRemoval"), String::from("()")),
                     (
                         String::from("ExistentialDeposit"),
-                        String::from("ConstU128<EXISTENTIAL_DEPOSIT>"),
+                        String::from("ConstU128<500>"),
                     ),
                     (String::from("AccountStore"), String::from("System")),
                     (
