@@ -4,7 +4,9 @@ use pallets_configs::configs::pallet_balances::PalletBalancesConfig;
 use pallets_configs::configs::pallet_timestamp::PalletTimestampConfig;
 use pallets_configs::configs::pallet_utility::PalletUtilityConfig;
 use pallets_configs::types::PalletConfig;
-use pallets_configs::utils::pallets_config_to_model;
+use pallets_configs::util::pallets_config_to_model;
+use pallets_configs::utils::manifest::ManifestPalletConfig;
+use pallets_configs::utils::manifest::SubstrateManifestUtil;
 use std::process;
 
 async fn start_server() {
@@ -26,7 +28,7 @@ fn main() {
     //     process::exit(1);
     // });
     let pallet_utility_config = PalletUtilityConfig::new();
-    println!("Pallet Utility Config: {:?}", pallet_utility_config);
+    // println!("Pallet Utility Config: {:?}", pallet_utility_config);
 
     // let pallet_timestamp_config = PalletTimestampConfig::new();
     // println!("Pallet Timestamp Config: {:?}", pallet_timestamp_config);
@@ -42,4 +44,23 @@ fn main() {
     // });
     //
     // println!("Pallet Utility Model: {:?}", utility_model);
+
+    let pallet_config = ManifestPalletConfig {
+        name: "utility_pallet".to_string(),
+        dependencies: pallet_utility_config.dependencies,
+    };
+
+    let mut runtime_manifest = r#"
+[dependencies]
+serde = "1.0"
+
+[features]
+default = ["std"]
+std = ["serde/std"]
+"#
+    .to_string();
+
+    let mut util = SubstrateManifestUtil::new(pallet_config, runtime_manifest);
+    let updated_manifest = util.generate_code();
+    println!("{}", updated_manifest);
 }
