@@ -1,5 +1,6 @@
 use super::super::types::*;
 use chrono::Utc;
+use std::fmt;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PalletUtilityTraits {
@@ -9,16 +10,16 @@ pub enum PalletUtilityTraits {
     WeightInfo,
 }
 
-//
-// impl fmt::Display for PalletUtilityTraits {
-//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//         match self {
-//             PalletUtilityTraits::Event => write!(f, "Event"),
-//             PalletUtilityTraits::Call => write!(f, "Call"),
-//             PalletUtilityTraits::WeightInfo => write!(f, "WeightInfo"),
-//         }
-//     }
-// }
+impl fmt::Display for PalletUtilityTraits {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            PalletUtilityTraits::RuntimeEvent => write!(f, "RuntimeEvent"),
+            PalletUtilityTraits::RuntimeCall => write!(f, "RuntimeCall"),
+            PalletUtilityTraits::PalletsOrigin => write!(f, "PalletsOrigin"),
+            PalletUtilityTraits::WeightInfo => write!(f, "WeightInfo"),
+        }
+    }
+}
 #[derive(Debug, Clone)]
 pub struct PalletUtilityConfig {
     pub name: String,
@@ -71,11 +72,20 @@ impl PalletUtilityConfig {
                 ),
             },
             pallet_traits: vec![
-                ("RuntimeEvent".to_string(), "RuntimeEvent".to_string()),
-                ("RuntimeCall".to_string(), "RuntimeCall".to_string()),
-                ("PalletsOrigin".to_string(), "OriginCaller".to_string()),
                 (
-                    "WeightInfo".to_string(),
+                    PalletUtilityTraits::RuntimeEvent.to_string(),
+                    "RuntimeEvent".to_string(),
+                ),
+                (
+                    PalletUtilityTraits::RuntimeCall.to_string(),
+                    "RuntimeCall".to_string(),
+                ),
+                (
+                    PalletUtilityTraits::PalletsOrigin.to_string(),
+                    "OriginCaller".to_string(),
+                ),
+                (
+                    PalletUtilityTraits::WeightInfo.to_string(),
                     "pallet_utility::weights::SubstrateWeight<Runtime>".to_string(),
                 ),
             ]
