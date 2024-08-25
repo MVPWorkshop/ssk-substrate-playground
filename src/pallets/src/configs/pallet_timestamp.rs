@@ -62,7 +62,7 @@ impl PalletTimestampConfig {
                     package: String::from("pallet-timestamp"),
                     version: None,
                     alias: String::from("pallet-timestamp"),
-                    default_features: None,
+                    default_features: false,
                     git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
                     tag: Some("polkadot-v1.14.0".to_string()),
                     branch: None,

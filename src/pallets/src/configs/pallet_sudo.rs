@@ -63,7 +63,7 @@ impl PalletSudoConfig {
                     package: String::from("pallet-sudo"),
                     version: None,
                     alias: String::from("pallet-sudo"),
-                    default_features: None,
+                    default_features: false,
                     git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
                     tag: Some("polkadot-v1.14.0".to_string()),
                     branch: None,

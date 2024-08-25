@@ -53,7 +53,7 @@ pub struct CargoComplexDependency {
     pub package: String,
     pub version: Option<String>,
     pub alias: String,
-    pub default_features: Option<Vec<String>>,
+    pub default_features: bool,
     pub git_repo: Option<String>,
     pub tag: Option<String>,
     pub branch: Option<String>,
@@ -62,7 +62,7 @@ pub struct CargoComplexDependency {
 #[derive(Debug, Clone)]
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
-    pub additional_pallets: Option<Vec<HashMap<ESupportedPallets, bool>>>,
+    pub additional_pallets: Option<Vec<CargoComplexDependency>>,
     pub additional_deps: Option<Vec<CargoSimpleDependency>>,
 }
 

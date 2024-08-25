@@ -103,7 +103,7 @@ impl PalletBalancesConfig {
                     package: String::from("pallet-balances"),
                     version: None,
                     alias: String::from("pallet-balances"),
-                    default_features: None,
+                    default_features: false,
                     git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
                     tag: Some("polkadot-v1.14.0".to_string()),
                     branch: None,
