@@ -2,18 +2,30 @@ use super::super::types::*;
 use regex::Regex;
 use std::collections::HashMap;
 
+/// Represents the configuration for a manifest pallet.
 #[derive(Debug, Clone)]
 pub struct ManifestPalletConfig {
     pub name: String,
     pub dependencies: PalletDependencyConfig,
 }
 
+/// Utility for managing and updating a Substrate runtime manifest with pallet dependencies.
 pub struct SubstrateManifestUtil {
     pallet_config: ManifestPalletConfig,
     runtime_manifest: String,
 }
 
 impl SubstrateManifestUtil {
+    /// Creates a new instance of `SubstrateManifestUtil`.
+    ///
+    /// # Arguments
+    ///
+    /// * `pallet_config` - Configuration for the pallet.
+    /// * `runtime_manifest` - The current content of the runtime's manifest file.
+    ///
+    /// # Returns
+    ///
+    /// A new instance of `SubstrateManifestUtil`.
     pub fn new(pallet_config: ManifestPalletConfig, runtime_manifest: String) -> Self {
         SubstrateManifestUtil {
             pallet_config,
@@ -21,6 +33,15 @@ impl SubstrateManifestUtil {
         }
     }
 
+    /// Generates a formatted string representing a complex dependency configuration for the pallet.
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - A reference to a `CargoComplexDependency` containing the configuration details.
+    ///
+    /// # Returns
+    ///
+    /// A string representing the dependency in the inline TOML format.
     fn generate_complex_dependency_config(&self, config: &CargoComplexDependency) -> String {
         let mut dependency_code = format!("{} = {{ ", config.alias);
 
@@ -36,6 +57,7 @@ impl SubstrateManifestUtil {
             dependency_code += &format!("branch = '{}', ", branch);
         }
 
+        // Not required for now maybe helpful in future configurations.
         // dependency_code += &format!("version = '{:?}', ", config.version);
         dependency_code += &format!("default-features = {}", config.default_features);
 
@@ -45,6 +67,11 @@ impl SubstrateManifestUtil {
         dependency_code
     }
 
+    /// Retrieves the regular expression for matching the `[features]` section in the manifest.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing the `Regex` if the `[features]` section is found, or an error message.
     fn get_manifest_features_code(&self) -> Result<Regex, &'static str> {
         let re = Regex::new(r"\[features\][\s\S]+std\s+=\s+\[(?P<std_deps>[\s\S]+)\]").unwrap();
         if re.is_match(&self.runtime_manifest) {
@@ -54,6 +81,11 @@ impl SubstrateManifestUtil {
         }
     }
 
+    /// Retrieves the regular expression for matching the `[dependencies]` section in the manifest.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing the `Regex` if the `[dependencies]` section is found, or an error message.
     fn get_manifest_simple_deps(&self) -> Result<Regex, &'static str> {
         let re = Regex::new(r"\[dependencies\]").unwrap();
         if re.is_match(&self.runtime_manifest) {
@@ -63,6 +95,10 @@ impl SubstrateManifestUtil {
         }
     }
 
+    /// Adds the main pallet's dependency to the runtime manifest.
+    ///
+    /// This function generates the necessary configuration and updates the `[features]` and
+    /// `[dependencies]` sections of the manifest.
     fn add_pallet_to_manifest(&mut self) {
         let dependency_code =
             self.generate_complex_dependency_config(&self.pallet_config.dependencies.pallet);
@@ -93,6 +129,10 @@ impl SubstrateManifestUtil {
             .replace(old_manifest_features_code, &new_manifest_features_code);
     }
 
+    /// Adds additional dependencies to the runtime manifest.
+    ///
+    /// This function handles both simple and complex dependencies and updates the `[features]` and
+    /// `[dependencies]` sections accordingly.
     fn add_additional_dependencies(&mut self) {
         if let Some(ref additional_pallets) = self.pallet_config.dependencies.additional_pallets {
             let manifest_features = self.get_manifest_features_code().unwrap();
@@ -146,6 +186,14 @@ impl SubstrateManifestUtil {
         }
     }
 
+    /// Generates the updated runtime manifest code.
+    ///
+    /// This function calls the necessary internal methods to add the pallet and its dependencies to
+    /// the runtime manifest and returns the updated manifest content.
+    ///
+    /// # Returns
+    ///
+    /// A string containing the updated runtime manifest.
     pub fn generate_code(&mut self) -> String {
         self.add_pallet_to_manifest();
         self.add_additional_dependencies();
