@@ -2,6 +2,47 @@ use super::super::types::*;
 use regex::Regex;
 use std::collections::HashMap;
 
+/// # Substrate Manifest Utility Module
+///
+/// This module provides utilities for managing and updating the runtime manifest of a Substrate-based blockchain project.
+/// It allows for the dynamic addition of pallet dependencies and their configurations into the runtime's manifest file.
+///
+/// ## Overview
+///
+/// The primary structure in this module is `SubstrateManifestUtil`, which facilitates the process of:
+/// - Adding the main pallet's dependency to the manifest
+/// - Incorporating additional dependencies that may be required by the runtime
+///
+/// The manifest is updated with both simple and complex dependencies, supporting inline TOML formatting for better readability.
+///
+/// ## Key Structures
+///
+/// - `ManifestPalletConfig`: Represents the configuration for a manifest pallet, including its dependencies.
+/// - `SubstrateManifestUtil`: Utility struct that manages the process of adding and updating pallet dependencies in the runtime manifest.
+///
+/// ## Key Methods
+///
+/// - `generate_complex_dependency_config`: Generates the TOML configuration string for a complex pallet dependency.
+/// - `get_manifest_features_code`: Retrieves the `[features]` section from the manifest, using regular expressions.
+/// - `add_pallet_to_manifest`: Adds the main pallet dependency to the runtime manifest, updating relevant sections.
+/// - `add_additional_dependencies`: Adds any additional dependencies required by the pallet to the manifest.
+/// - `generate_code`: Generates and returns the final updated manifest code after all dependencies are added.
+///
+/// ## Usage Example
+///
+/// ```rust
+/// // Create a new instance of SubstrateManifestUtil
+/// let manifest_util = SubstrateManifestUtil::new(pallet_config, runtime_manifest);
+///
+/// // Generate the updated manifest code
+/// let updated_manifest = manifest_util.generate_code();
+///
+/// // The updated_manifest now contains the new dependencies and can be written back to the manifest file.
+/// ```
+///
+/// This module is particularly useful in scenarios where pallet dependencies need to be managed programmatically,
+/// ensuring that the runtime manifest is kept up to date with the latest requirements.
+
 /// Represents the configuration for a manifest pallet.
 #[derive(Debug, Clone)]
 pub struct ManifestPalletConfig {
