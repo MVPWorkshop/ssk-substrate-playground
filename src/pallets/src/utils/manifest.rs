@@ -22,19 +22,25 @@ impl SubstrateManifestUtil {
     }
 
     fn generate_complex_dependency_config(&self, config: &CargoComplexDependency) -> String {
-        let mut dependency_code = format!("[dependencies.{}]\n", config.alias);
-        dependency_code += &format!("default-features = {}\n", config.default_features);
+        let mut dependency_code = format!("{} = {{ ", config.alias);
+
         if let Some(ref git_repo) = config.git_repo {
-            dependency_code += &format!("git = '{}'\n", git_repo);
+            dependency_code += &format!("git = '{}', ", git_repo);
         }
-        dependency_code += &format!("package = '{}'\n", config.package);
+
         if let Some(ref tag) = config.tag {
-            dependency_code += &format!("tag = '{}'\n", tag);
+            dependency_code += &format!("tag = '{}', ", tag);
         }
+
         if let Some(ref branch) = config.branch {
-            dependency_code += &format!("branch = '{}'\n", branch);
+            dependency_code += &format!("branch = '{}', ", branch);
         }
-        dependency_code += &format!("version = '{:?}'\n\n", config.version);
+
+        // dependency_code += &format!("version = '{:?}', ", config.version);
+        dependency_code += &format!("default-features = {}", config.default_features);
+
+        // Close the inline table
+        dependency_code += " }\n";
 
         dependency_code
     }
