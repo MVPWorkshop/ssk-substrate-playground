@@ -114,7 +114,7 @@ impl SubstrateManifestUtil {
     ///
     /// A `Result` containing the `Regex` if the `[features]` section is found, or an error message.
     fn get_manifest_features_code(&self) -> Result<Regex, &'static str> {
-        let re = Regex::new(r"\[features\][\s\S]+std\s+=\s+\[(?P<std_deps>[\s\S]+)\]").unwrap();
+        let re = Regex::new(r"\[features\][\s\S]+std\s+=\s+\[(?P<std_deps>[^\]]+)\]").unwrap();
         if re.is_match(&self.runtime_manifest) {
             Ok(re)
         } else {
@@ -144,7 +144,7 @@ impl SubstrateManifestUtil {
         let dependency_code =
             self.generate_complex_dependency_config(&self.pallet_config.dependencies.pallet);
         let std_code = format!(
-            "    '{}/std',\n",
+            "       '{}/std',\n",
             self.pallet_config.dependencies.pallet.alias
         );
 
