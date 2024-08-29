@@ -28,7 +28,7 @@ impl SubstrateRuntimeUtil {
                 r"impl\s+{}::Config\s+for\s+Runtime\s*\{{[\s\S]+?\}}",
                 pallet_config.dependencies.pallet.alias
             ))
-            .unwrap(),
+                .unwrap(),
             construct_runtime: Regex::new(r"mod\s+runtime\s*\{[\s\S]+?\}").unwrap(),
             additional_code: Regex::new(r"\A(?:.*\n){4}").unwrap(),
             additional_genesis_variables: Regex::new(r"(?s)(^.*\n?){3}").unwrap(),
@@ -152,6 +152,37 @@ impl SubstrateRuntimeUtil {
         self.update_construct_runtime(construct_runtime, update);
     }
 
+    fn add_additional_code(
+        &mut self,
+        existing_code: String,
+        additional_code: &Option<Vec<String>>,
+        test_regex: &Regex,
+    ) -> String {
+        if additional_code.is_none() {
+            return existing_code;
+        }
+
+        let mut additional_runtime_code = String::new();
+
+
+        for code in additional_code.as_ref().unwrap() {
+            additional_runtime_code.push_str(&format!("{}\n", code));
+        }
+
+
+        if let Some(additional_code_regex) = test_regex.find(&existing_code) {
+            let position_of_additional_code = additional_code_regex.end();
+            return format!(
+                "{}\n\n{}{}",
+                &existing_code[..position_of_additional_code],
+                additional_runtime_code,
+                &existing_code[position_of_additional_code..],
+            );
+        } else {
+            existing_code
+        }
+    }
+
     fn replace_existing_genesis_field_value(
         &mut self,
         struct_field_name: &str,
@@ -162,7 +193,7 @@ impl SubstrateRuntimeUtil {
             r"{}:[\s\S]+?(?P<fieldLine>{}: \s(?P<fieldValue>[\S ]+),)",
             struct_field_name, genesis_field_name
         ))
-        .unwrap();
+            .unwrap();
 
         if let Some(genesis_struct_test) = find_genesis_struct.find(&self.chain_spec_code) {
             let struct_ = genesis_struct_test.as_str().to_string();
@@ -237,10 +268,33 @@ impl SubstrateRuntimeUtil {
     }
 
     pub fn generate_code(&mut self) -> GeneratedRuntime {
-        self.check_if_pallet_implemented();
-        self.add_pallet_traits();
-        self.add_pallet_to_construct_runtime();
-        self.add_chain_spec_code();
+        if !self.check_if_pallet_implemented() {
+
+            // self.check_if_pallet_implemented();
+            self.add_pallet_traits();
+            self.add_pallet_to_construct_runtime();
+            self.add_chain_spec_code();
+
+            // Extract the additional code and chain spec code for modification
+            let additional_runtime_lib_code = self.pallet_config.runtime.additional_runtime_lib_code.clone();
+            let additional_chain_spec_code = self.pallet_config.runtime.additional_chain_spec_code.clone();
+
+
+            // Apply additional code modifications
+            self.runtime_code = self.add_additional_code(
+                self.runtime_code.clone(),
+                &additional_runtime_lib_code,
+                &self.regex.additional_code.clone(),
+            );
+
+
+            // Apply additional genesis variables modifications
+            self.chain_spec_code = self.add_additional_code(
+                self.chain_spec_code.clone(),
+                &additional_chain_spec_code,
+                &self.regex.additional_code.clone(),
+            );
+        }
 
         GeneratedRuntime {
             updated_runtime_code: self.runtime_code.clone(),
