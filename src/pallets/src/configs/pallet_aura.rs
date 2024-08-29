@@ -74,6 +74,7 @@ impl PalletAuraConfig {
                         .into_iter()
                         .collect(),
                 ),
+                runtime_api_code: None,
             },
             dependencies: PalletDependencyConfig {
                 pallet: CargoComplexDependency {

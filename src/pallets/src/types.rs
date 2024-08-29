@@ -40,6 +40,7 @@ pub struct PalletRuntimeConfig {
     pub genesis_config: Option<PalletGenesisConfig>,
     pub additional_chain_spec_code: Option<Vec<String>>,
     pub additional_runtime_lib_code: Option<Vec<String>>,
+    pub runtime_api_code: Option<String>,
 }
 
 #[derive(Debug, Clone)]

@@ -61,6 +61,7 @@ impl PalletTransactionPaymentConfig {
                 },
                 genesis_config: None,
                 additional_chain_spec_code: None,
+                runtime_api_code: None,
             },
 
             dependencies: PalletDependencyConfig {

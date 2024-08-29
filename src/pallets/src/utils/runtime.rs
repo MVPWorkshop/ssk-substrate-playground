@@ -19,6 +19,7 @@ struct RegexCollection {
     additional_code: Regex,
     additional_genesis_variables: Regex,
     genesis_config: Regex,
+    runtime_api: Regex,
 }
 
 impl SubstrateRuntimeUtil {
@@ -33,6 +34,7 @@ impl SubstrateRuntimeUtil {
             additional_code: Regex::new(r"\A(?:.*\n){4}").unwrap(),
             additional_genesis_variables: Regex::new(r"(?s)(^.*\n?){3}").unwrap(),
             genesis_config: Regex::new(r"serde_json::json!\(\{(?:[^{}]|\{[^{}]*\})*\}\)").unwrap(),
+            runtime_api: Regex::new(r"(?s)impl_runtime_apis!.*").unwrap(),
         };
 
         if !regex.construct_runtime.is_match(&runtime_code) {
@@ -183,6 +185,32 @@ impl SubstrateRuntimeUtil {
         }
     }
 
+    fn add_runtime_api_code(
+        &mut self,
+        existing_code: String,
+        runtime_api: &Option<String>,
+        test_regex: &Regex,
+    ) -> String {
+        if runtime_api.is_none() {
+            return existing_code;
+        }
+
+        let mut add_runtime_api = String::new();
+        add_runtime_api.push_str(&format!("{}\n", runtime_api.clone().unwrap()));
+
+
+        if let Some(additional_code_regex) = test_regex.find(&existing_code) {
+            let position_of_additional_code = additional_code_regex.end() - 2;
+            return format!(
+                "{}\n{}{}",
+                &existing_code[..position_of_additional_code],
+                add_runtime_api,
+                &existing_code[position_of_additional_code..],
+            );
+        } else {
+            existing_code
+        }
+    }
     fn replace_existing_genesis_field_value(
         &mut self,
         struct_field_name: &str,
@@ -278,6 +306,7 @@ impl SubstrateRuntimeUtil {
             // Extract the additional code and chain spec code for modification
             let additional_runtime_lib_code = self.pallet_config.runtime.additional_runtime_lib_code.clone();
             let additional_chain_spec_code = self.pallet_config.runtime.additional_chain_spec_code.clone();
+            let runtime_api_code = self.pallet_config.runtime.runtime_api_code.clone();
 
 
             // Apply additional code modifications
@@ -293,6 +322,13 @@ impl SubstrateRuntimeUtil {
                 self.chain_spec_code.clone(),
                 &additional_chain_spec_code,
                 &self.regex.additional_code.clone(),
+            );
+
+            // Apply runtime apis modifications
+            self.runtime_code = self.add_runtime_api_code(
+                self.runtime_code.clone(),
+                &runtime_api_code,
+                &self.regex.runtime_api.clone(),
             );
         }
 

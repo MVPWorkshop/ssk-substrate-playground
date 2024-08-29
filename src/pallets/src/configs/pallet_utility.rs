@@ -94,6 +94,7 @@ impl PalletUtilityConfig {
             genesis_config: None,
             additional_chain_spec_code: None,
             additional_runtime_lib_code: None,
+            runtime_api_code: None,
         };
 
         PalletUtilityConfig {
