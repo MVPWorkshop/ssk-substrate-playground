@@ -53,7 +53,7 @@ impl PalletUtilityConfig {
             pallet: CargoComplexDependency {
                 package: "pallet-utility".to_string(),
                 version: None,
-                alias: "pallet-utility".to_string(),
+                alias: "utility".to_string(),
                 default_features: false,
                 git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
                 tag: Some("polkadot-v1.14.0".to_string()),
@@ -65,7 +65,7 @@ impl PalletUtilityConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: None,
+                index: Some(8),
                 runtime: (
                     "Utility".to_string(),
                     "pallet_utility::Pallet<Runtime>".to_string(),
