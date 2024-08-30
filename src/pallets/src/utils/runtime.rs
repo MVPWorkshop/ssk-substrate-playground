@@ -67,7 +67,7 @@ impl SubstrateRuntimeUtil {
 
     fn add_pallet_traits(&mut self) {
         let mut trait_implementation = format!(
-            "\n\nimpl {}::Trait for Runtime {{\n",
+            "\n\nimpl {}::Config for Runtime {{\n",
             to_snake_case(&self.pallet_alias())
         );
         // let mut parameter_types = String::from("parameter_types! {\n");
@@ -129,10 +129,10 @@ impl SubstrateRuntimeUtil {
 
     fn add_pallet_to_construct_runtime(&mut self) {
         let mut construct_runtime_module = format!(
-            "{}  #[runtime::pallet_index({})]\n  {}{}: {},",
-            tabs(2),
+            "{} #[runtime::pallet_index({})]\n {}pub type {} = {};",
+            tabs(1),
             self.pallet_config.runtime.construct_runtime.index.unwrap(),
-            tabs(2),
+            tabs(1),
             self.pallet_config.runtime.construct_runtime.runtime.0,
             self.pallet_config.runtime.construct_runtime.runtime.1,
         );

@@ -53,7 +53,7 @@ impl PalletUtilityConfig {
             pallet: CargoComplexDependency {
                 package: "pallet-utility".to_string(),
                 version: None,
-                alias: "utility".to_string(),
+                alias: "pallet utility".to_string(),
                 default_features: false,
                 git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
                 tag: Some("polkadot-v1.14.0".to_string()),
