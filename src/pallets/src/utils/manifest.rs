@@ -84,7 +84,7 @@ impl SubstrateManifestUtil {
     ///
     /// A string representing the dependency in the inline TOML format.
     fn generate_complex_dependency_config(&self, config: &CargoComplexDependency) -> String {
-        let mut dependency_code = format!("{} = {{ ", config.alias);
+        let mut dependency_code = format!("{} = {{ ", create_pallet_name(&config.alias));
 
         if let Some(ref git_repo) = config.git_repo {
             dependency_code += &format!("git = '{}', ", git_repo);
@@ -103,7 +103,7 @@ impl SubstrateManifestUtil {
         dependency_code += &format!("default-features = {}", config.default_features);
 
         // Close the inline table
-        dependency_code += " }\n";
+        dependency_code += " }\n\n\n";
 
         dependency_code
     }
@@ -136,25 +136,36 @@ impl SubstrateManifestUtil {
         }
     }
 
+    fn get_manifest_runtime(&self) -> String {
+        if let Some((before, _)) = &self.runtime_manifest.split_once("[build-dependencies]") {
+            return before.to_string();
+        } else {
+            "".to_string()
+        }
+    }
+
     /// Adds the main pallet's dependency to the runtime manifest.
     ///
     /// This function generates the necessary configuration and updates the `[features]` and
     /// `[dependencies]` sections of the manifest.
     fn add_pallet_to_manifest(&mut self) {
-        let dependency_code =
-            self.generate_complex_dependency_config(&self.pallet_config.dependencies.pallet);
+        let dependency_code = self
+            .generate_complex_dependency_config(&self.pallet_config.dependencies.pallet)
+            .to_string();
         let std_code = format!(
             "       '{}/std',\n",
-            self.pallet_config.dependencies.pallet.alias
+            create_pallet_name(&self.pallet_config.dependencies.pallet.alias)
         );
 
-        let manifest_features = self.get_manifest_features_code().unwrap();
-        let old_manifest_features_code = manifest_features
-            .find(&self.runtime_manifest)
-            .unwrap()
-            .as_str();
-        let mut new_manifest_features_code = dependency_code + old_manifest_features_code;
+        let manifest_runtime_features = self.get_manifest_runtime();
+        let mut new_manifest_runtime_code = manifest_runtime_features.clone() + &dependency_code;
 
+        print!("{}", new_manifest_runtime_code);
+        self.runtime_manifest = self
+            .runtime_manifest
+            .replace(&manifest_runtime_features, &new_manifest_runtime_code);
+
+        let manifest_features = self.get_manifest_features_code().unwrap();
         let old_std = manifest_features
             .captures(&self.runtime_manifest)
             .unwrap()
@@ -163,11 +174,9 @@ impl SubstrateManifestUtil {
             .as_str();
         let new_std = format!("{}{}", old_std, std_code);
 
-        new_manifest_features_code = new_manifest_features_code.replace(old_std, &new_std);
-
         self.runtime_manifest = self
             .runtime_manifest
-            .replace(old_manifest_features_code, &new_manifest_features_code);
+            .replace(&old_std.to_string(), &new_std);
     }
 
     /// Adds additional dependencies to the runtime manifest.
@@ -240,4 +249,8 @@ impl SubstrateManifestUtil {
         self.add_additional_dependencies();
         self.runtime_manifest.clone()
     }
+}
+
+fn create_pallet_name(s: &str) -> String {
+    s.to_lowercase().replace(" ", "-")
 }
