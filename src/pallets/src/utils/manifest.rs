@@ -160,7 +160,6 @@ impl SubstrateManifestUtil {
         let manifest_runtime_features = self.get_manifest_runtime();
         let mut new_manifest_runtime_code = manifest_runtime_features.clone() + &dependency_code;
 
-        print!("{}", new_manifest_runtime_code);
         self.runtime_manifest = self
             .runtime_manifest
             .replace(&manifest_runtime_features, &new_manifest_runtime_code);
