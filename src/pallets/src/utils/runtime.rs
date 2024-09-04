@@ -12,6 +12,7 @@ pub struct SubstrateRuntimeUtil {
     regex: RegexCollection,
 }
 
+#[allow(unused)]
 struct RegexCollection {
     pallet_trait: Regex,
     construct_runtime: Regex,
