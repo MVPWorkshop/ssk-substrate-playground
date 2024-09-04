@@ -8,6 +8,7 @@ use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 use crate::types::ESupportedPallets;
 use std::path::Path;
+use log::{error, info};
 
 /// Creates a new project directory and copies a basic template into it.
 ///
@@ -19,10 +20,11 @@ pub fn create_new_project(project_name: String) {
     let base_path = Path::new("../../generated_code");
 
     // Create a new folder for the project.
-    match create_new_folder(base_path, &project_name) {
-        Ok(_) => println!("Created new project folder!"),
-        Err(e) => eprintln!("Error creating folder: {}", e),
+    if let Err(e) = create_new_folder(base_path, &project_name) {
+        error!("Failed to create project folder '{}': {}", project_name, e);
+        return;
     }
+    info!("Created new project folder '{}'", project_name);
 
     // Source path for the template to be copied.
     let src = Path::new("../../templates/solochain/basic");
@@ -31,10 +33,11 @@ pub fn create_new_project(project_name: String) {
     let dest = Path::new(&path);
 
     // Copy the basic template to the new project folder.
-    match copy_dir_recursive(src, dest) {
-        Ok(_) => println!("Project created successfully!"),
-        Err(e) => eprintln!("Error in creating the project: {}", e),
+    if let Err(e) = copy_dir_recursive(src, dest) {
+        error!("Failed to copy template for project '{}': {}", project_name, e);
+        return;
     }
+    info!("Project '{}' created successfully", project_name);
 }
 
 /// Adds specified pallets to the project by modifying relevant files.
@@ -60,23 +63,38 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         };
 
         // Read and update the manifest file.
-        match read_file_to_string(&manifest_path) {
-            Ok(content) => {
-                let mut util = SubstrateManifestUtil::new(pallet_manifest_config, content);
-                let updated_manifest = util.generate_code();
-                match replace_file_content(Path::new(&manifest_path), &updated_manifest) {
-                    Ok(_) => println!("Manifest updated successfully."),
-                    Err(e) => eprintln!("Error replacing manifest content: {}", e),
-                }
-            }
+        let content = match read_file_to_string(&manifest_path) {
+            Ok(content) => content,
             Err(e) => {
-                println!("Failed to read the manifest file: {}", e);
+                error!("Failed to read the manifest file '{}': {}", manifest_path, e);
+                continue;
             }
+        };
+
+        let mut util = SubstrateManifestUtil::new(pallet_manifest_config, content);
+        let updated_manifest = util.generate_code();
+        if let Err(e) = replace_file_content(Path::new(&manifest_path), &updated_manifest) {
+            error!("Failed to replace manifest content in '{}': {}", manifest_path, e);
+            continue;
         }
+        info!("Manifest file '{}' updated successfully", manifest_path);
 
         // Read runtime and chain spec files.
-        let runtime_string = read_file_to_string(&runtime_file_path).unwrap();
-        let chain_spec_string = read_file_to_string(&chain_spec_file_path).unwrap();
+        let runtime_string = match read_file_to_string(&runtime_file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                error!("Failed to read the runtime file '{}': {}", runtime_file_path, e);
+                continue;
+            }
+        };
+
+        let chain_spec_string = match read_file_to_string(&chain_spec_file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                error!("Failed to read the chain spec file '{}': {}", chain_spec_file_path, e);
+                continue;
+            }
+        };
 
         // Generate new runtime code with the added pallet.
         let mut pallet_config =
@@ -85,17 +103,19 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
 
         // Replace runtime code with the new generated code.
         let runtime_path = Path::new(&runtime_file_path);
-        match replace_file_content(runtime_path, &updated_code.updated_runtime_code) {
-            Ok(_) => println!("Runtime updated successfully."),
-            Err(e) => eprintln!("Error replacing runtime content: {}", e),
+        if let Err(e) = replace_file_content(runtime_path, &updated_code.updated_runtime_code) {
+            error!("Failed to replace runtime content in '{}': {}", runtime_file_path, e);
+            continue;
         }
+        info!("Runtime file '{}' updated successfully", runtime_file_path);
 
         // Replace chain spec code with the new generated code.
         let chain_spec_path = Path::new(&chain_spec_file_path);
-        match replace_file_content(chain_spec_path, &updated_code.updated_chain_spec_code) {
-            Ok(_) => println!("Chain spec updated successfully."),
-            Err(e) => eprintln!("Error replacing chain spec content: {}", e),
+        if let Err(e) = replace_file_content(chain_spec_path, &updated_code.updated_chain_spec_code) {
+            error!("Failed to replace chain spec content in '{}': {}", chain_spec_file_path, e);
+            continue;
         }
+        info!("Chain spec file '{}' updated successfully", chain_spec_file_path);
     }
 }
 
@@ -143,9 +163,12 @@ pub fn generate_project(project_name: String, pallets: Vec<ESupportedPallets>) {
     // Create a new project directory and copy the template.
     create_new_project(project_name.clone());
 
+    print!("Created project: {}\n", project_name.clone());
+
     // Generate configurations for the specified pallets.
     let pallet_configs = get_pallet_configs(pallets);
 
     // Add the pallets to the new project.
-    add_pallets(project_name, pallet_configs);
+    add_pallets(project_name.clone(), pallet_configs);
+    print!("Added pallets to the project: {}\n", project_name);
 }
