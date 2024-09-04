@@ -1,6 +1,5 @@
 use super::super::types::*;
 use regex::Regex;
-use std::collections::HashMap;
 
 /// # Substrate Manifest Utility Module
 ///
@@ -158,7 +157,7 @@ impl SubstrateManifestUtil {
         );
 
         let manifest_runtime_features = self.get_manifest_runtime();
-        let mut new_manifest_runtime_code = manifest_runtime_features.clone() + &dependency_code;
+        let new_manifest_runtime_code = manifest_runtime_features.clone() + &dependency_code;
 
         self.runtime_manifest = self
             .runtime_manifest

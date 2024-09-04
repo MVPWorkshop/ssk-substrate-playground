@@ -1,7 +1,7 @@
 use std::fs;
 use std::fs::File;
 use std::io::{self, Read, Write};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// Reads the contents of a file and returns it as a `String`.
 ///

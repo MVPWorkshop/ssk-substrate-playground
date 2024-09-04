@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
@@ -19,6 +18,7 @@ pub struct PalletConstructRuntimeConfig {
     pub runtime: (String, String),
 }
 
+#[allow(unused)]
 #[derive(Debug, Clone)]
 pub struct PalletTraitsConfig {
     custom_name: Option<String>,
@@ -43,6 +43,7 @@ pub struct PalletRuntimeConfig {
     pub runtime_api_code: Option<String>,
 }
 
+#[allow(unused)]
 #[derive(Debug, Clone)]
 pub struct CargoSimpleDependency {
     package: String,

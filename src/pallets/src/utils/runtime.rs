@@ -1,6 +1,5 @@
 use crate::types::*;
 use regex::Regex;
-use std::collections::HashMap;
 
 pub struct GeneratedRuntime {
     pub updated_runtime_code: String,
@@ -109,7 +108,7 @@ impl SubstrateRuntimeUtil {
         trait_implementation.push_str("}\n\n");
         // parameter_types.push_str("}\n\n");
 
-        let mut current_construct_runtime = self
+        let current_construct_runtime = self
             .regex
             .construct_runtime
             .find(&self.runtime_code)
@@ -128,7 +127,7 @@ impl SubstrateRuntimeUtil {
     }
 
     fn add_pallet_to_construct_runtime(&mut self) {
-        let mut construct_runtime_module = format!(
+        let construct_runtime_module = format!(
             "{} #[runtime::pallet_index({})]\n {}pub type {} = {};",
             tabs(1),
             self.pallet_config.runtime.construct_runtime.index.unwrap(),
@@ -137,7 +136,7 @@ impl SubstrateRuntimeUtil {
             self.pallet_config.runtime.construct_runtime.runtime.1,
         );
 
-        let mut construct_runtime = self
+        let construct_runtime = self
             .regex
             .construct_runtime
             .find(&self.runtime_code)
@@ -292,7 +291,7 @@ impl SubstrateRuntimeUtil {
         }
     }
 
-    pub fn generate_code(&mut self) -> GeneratedRuntime {
+    pub fn generate_runtime_code(&mut self) -> GeneratedRuntime {
         if !self.check_if_pallet_implemented() {
             // self.check_if_pallet_implemented();
             self.add_pallet_traits();
@@ -346,6 +345,7 @@ fn to_snake_case(s: &str) -> String {
     s.to_lowercase().replace(" ", "_")
 }
 
+#[allow(unused)]
 fn to_pascal_case(s: &str) -> String {
     // Convert to pascal case
     s.split('_')
