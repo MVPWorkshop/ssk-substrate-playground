@@ -1,5 +1,5 @@
 [package]
-name = "pallets-configs"
+name = "substrate-runtime-builder"
 version = "0.1.0"
 edition = "2021"
 

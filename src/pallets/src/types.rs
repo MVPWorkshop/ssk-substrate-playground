@@ -115,46 +115,17 @@ pub struct PalletConfig {
 
 #[derive(Debug, Clone)]
 pub enum ESupportedPallets {
-    PalletContract,
-    PalletBalance,
-    PalletNicks,
-    PalletAura,
-    PalletGrandpa,
-    PalletRandomnessCollectiveFlip,
-    PalletSudo,
-    PalletTimestamp,
-    PalletTransactionPayment,
-    PalletRecovery,
-    PalletVesting,
-    PalletAssets,
-    PalletSession,
-    PalletBabe,
-    PalletAuthorityDiscovery,
-    PalletAuthorship,
-    PalletFinalityTracker,
-    PalletOffences,
-    PalletImOnline,
-    PalletAtomicSwap,
-    PalletStaking,
-    PalletMultisig,
     PalletUtility,
-    PalletIndices,
-    PalletCollective,
-    PalletElectionsPhragmen,
-    PalletElections,
-    PalletMembership,
-    PalletTreasury,
-    PalletIdentity,
-    PalletScheduler,
-    PalletDemocracy,
-    PalletSociety,
-    PalletScoredPool,
-    PalletEvm,
-    PalletProxy,
-    PalletDid,
-    PalletRegistrar,
-    PalletProductRegistry,
-    PalletProductTracking,
-    PalletRbac,
-    PalletValidatorSet,
+    Unknown,
+}
+
+impl TryFrom<&str> for ESupportedPallets {
+    type Error = ();
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        match value {
+            "Utility" => Ok(ESupportedPallets::PalletUtility),
+            _ => Ok(ESupportedPallets::Unknown),
+        }
+    }
 }
