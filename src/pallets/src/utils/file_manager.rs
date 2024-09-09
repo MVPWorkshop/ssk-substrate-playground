@@ -1,8 +1,8 @@
+use log::{error, info};
 use std::fs;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::path::Path;
-use log::{error, info};
 
 /// Reads the contents of a file and returns it as a `String`.
 ///
@@ -121,7 +121,8 @@ pub fn replace_file_content(file_path: &Path, new_content: &str) -> io::Result<(
     let mut file = match fs::OpenOptions::new()
         .write(true)
         .truncate(true)
-        .open(file_path) {
+        .open(file_path)
+    {
         Ok(f) => f,
         Err(e) => {
             error!("Failed to open file '{}': {}", file_path.display(), e);
@@ -130,10 +131,17 @@ pub fn replace_file_content(file_path: &Path, new_content: &str) -> io::Result<(
     };
 
     if let Err(e) = file.write_all(new_content.as_bytes()) {
-        error!("Failed to write new content to file '{}': {}", file_path.display(), e);
+        error!(
+            "Failed to write new content to file '{}': {}",
+            file_path.display(),
+            e
+        );
         return Err(e);
     }
 
-    info!("File content replaced successfully in '{}'", file_path.display());
+    info!(
+        "File content replaced successfully in '{}'",
+        file_path.display()
+    );
     Ok(())
 }

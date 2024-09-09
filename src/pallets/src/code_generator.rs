@@ -7,8 +7,8 @@ use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 use crate::types::ESupportedPallets;
-use std::path::Path;
 use log::{error, info};
+use std::path::Path;
 
 /// Creates a new project directory and copies a basic template into it.
 ///
@@ -34,7 +34,10 @@ pub fn create_new_project(project_name: String) {
 
     // Copy the basic template to the new project folder.
     if let Err(e) = copy_dir_recursive(src, dest) {
-        error!("Failed to copy template for project '{}': {}", project_name, e);
+        error!(
+            "Failed to copy template for project '{}': {}",
+            project_name, e
+        );
         return;
     }
     info!("Project '{}' created successfully", project_name);
@@ -66,7 +69,10 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let content = match read_file_to_string(&manifest_path) {
             Ok(content) => content,
             Err(e) => {
-                error!("Failed to read the manifest file '{}': {}", manifest_path, e);
+                error!(
+                    "Failed to read the manifest file '{}': {}",
+                    manifest_path, e
+                );
                 continue;
             }
         };
@@ -74,7 +80,10 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let mut util = SubstrateManifestUtil::new(pallet_manifest_config, content);
         let updated_manifest = util.generate_code();
         if let Err(e) = replace_file_content(Path::new(&manifest_path), &updated_manifest) {
-            error!("Failed to replace manifest content in '{}': {}", manifest_path, e);
+            error!(
+                "Failed to replace manifest content in '{}': {}",
+                manifest_path, e
+            );
             continue;
         }
         info!("Manifest file '{}' updated successfully", manifest_path);
@@ -83,7 +92,10 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let runtime_string = match read_file_to_string(&runtime_file_path) {
             Ok(content) => content,
             Err(e) => {
-                error!("Failed to read the runtime file '{}': {}", runtime_file_path, e);
+                error!(
+                    "Failed to read the runtime file '{}': {}",
+                    runtime_file_path, e
+                );
                 continue;
             }
         };
@@ -91,7 +103,10 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let chain_spec_string = match read_file_to_string(&chain_spec_file_path) {
             Ok(content) => content,
             Err(e) => {
-                error!("Failed to read the chain spec file '{}': {}", chain_spec_file_path, e);
+                error!(
+                    "Failed to read the chain spec file '{}': {}",
+                    chain_spec_file_path, e
+                );
                 continue;
             }
         };
@@ -104,18 +119,28 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         // Replace runtime code with the new generated code.
         let runtime_path = Path::new(&runtime_file_path);
         if let Err(e) = replace_file_content(runtime_path, &updated_code.updated_runtime_code) {
-            error!("Failed to replace runtime content in '{}': {}", runtime_file_path, e);
+            error!(
+                "Failed to replace runtime content in '{}': {}",
+                runtime_file_path, e
+            );
             continue;
         }
         info!("Runtime file '{}' updated successfully", runtime_file_path);
 
         // Replace chain spec code with the new generated code.
         let chain_spec_path = Path::new(&chain_spec_file_path);
-        if let Err(e) = replace_file_content(chain_spec_path, &updated_code.updated_chain_spec_code) {
-            error!("Failed to replace chain spec content in '{}': {}", chain_spec_file_path, e);
+        if let Err(e) = replace_file_content(chain_spec_path, &updated_code.updated_chain_spec_code)
+        {
+            error!(
+                "Failed to replace chain spec content in '{}': {}",
+                chain_spec_file_path, e
+            );
             continue;
         }
-        info!("Chain spec file '{}' updated successfully", chain_spec_file_path);
+        info!(
+            "Chain spec file '{}' updated successfully",
+            chain_spec_file_path
+        );
     }
 }
 
