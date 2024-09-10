@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use substrate_runtime_builder::code_generator::generate_project;
 use substrate_runtime_builder::types::ESupportedPallets;
 
-// Define a struct for the user with a vector of places
+// Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
 struct NewProject {
     name: String,
@@ -16,23 +16,38 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
     format!("Hello, {}!", name)
 }
 
-// A function to create a new user with a list of places
+// A function to create a new project with a list of pallets
 async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
-    // Initialize an empty vector of enum type `Message`
-    let mut pallets: Vec<ESupportedPallets> = Vec::new();
+    // Clone project data for use in the blocking thread
+    let project_name = project.name.clone();
+    let pallet_names = project.pallets.clone();
 
-    for pallet in &project.pallets {
-        match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown) {
-            ESupportedPallets::PalletUtility => {
-                // Push enum variants into the vector
-                pallets.push(ESupportedPallets::PalletUtility);
+    // Spawn a blocking task for generating the project
+    let result = web::block(move || {
+        // Initialize an empty vector of enum type `Message`
+        let mut pallets: Vec<ESupportedPallets> = Vec::new();
+
+        for pallet in &pallet_names {
+            match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown) {
+                ESupportedPallets::PalletUtility => {
+                    // Push enum variants into the vector
+                    pallets.push(ESupportedPallets::PalletUtility);
+                }
+                _ => continue,
             }
-            _ => continue,
         }
-    }
 
-    generate_project(project.name.clone(), pallets);
-    return HttpResponse::Ok().body("New project with Utility pallet is generated on location");
+        // Generate the project (blocking operation)
+        generate_project(project_name.clone(), pallets);
+        let message = format!("{} project generated successfully", project_name);
+        Ok::<_, ()>(message)
+    })
+        .await;
+
+    match result {
+        Ok(message) => HttpResponse::Ok().body(message),
+        Err(_) => HttpResponse::InternalServerError().body("Error generating the project"),
+    }
 }
 
 #[actix_web::main]
@@ -45,7 +60,8 @@ async fn main() -> std::io::Result<()> {
             .route("/", web::get().to(greet_user))
             .route("/generate-project", web::post().to(generate_a_project))
     })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
+        .workers(4) // Set the number of workers (threads) to handle requests
+        .bind("127.0.0.1:8080")?
+        .run()
+        .await
 }
