@@ -44,8 +44,10 @@ The server will start at http://127.0.0.1:8080. You should see the following mes
 
 ```bash 
 Starting server at http://127.0.0.1:8080
-The server is now running, and you can make API requests to generate and download Substrate projects.
 ```
+
+The server is now running, and you can make API requests to generate and download Substrate projects.
+
 
 ## API Endpoints
 
