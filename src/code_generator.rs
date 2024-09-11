@@ -17,7 +17,7 @@ use std::path::Path;
 /// * `project_name` - The name of the project to be created.
 pub fn create_new_project(project_name: String) {
     // Base path for generated projects.
-    let base_path = Path::new("../../generated_code");
+    let base_path = Path::new("generated_code");
 
     // Create a new folder for the project.
     if let Err(e) = create_new_folder(base_path, &project_name) {
@@ -27,9 +27,9 @@ pub fn create_new_project(project_name: String) {
     info!("Created new project folder '{}'", project_name);
 
     // Source path for the template to be copied.
-    let src = Path::new("../../templates/solochain/basic");
+    let src = Path::new("templates/solochain/basic");
     // Destination path for the new project.
-    let path = format!("../../generated_code/{}", project_name);
+    let path = format!("generated_code/{}", project_name);
     let dest = Path::new(&path);
 
     // Copy the basic template to the new project folder.
@@ -52,7 +52,7 @@ pub fn create_new_project(project_name: String) {
 pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
     for pallet_config in pallet_configs {
         // Project directory path.
-        let project_directory = format!("../../generated_code/{}", project_name);
+        let project_directory = format!("generated_code/{}", project_name);
 
         // File paths for runtime, chain spec, and manifest.
         let runtime_file_path = project_directory.clone() + "/runtime/src/lib.rs";
