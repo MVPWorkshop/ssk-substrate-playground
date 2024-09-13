@@ -13,24 +13,23 @@ struct NewProject {
 // A function to greet a user by their name (path parameter)
 async fn greet_user(path: web::Path<String>) -> impl Responder {
     let name = path.into_inner();
-    format!("Hello, {}!", name)
+    HttpResponse::Ok()
+        .content_type("text/plain")
+        .body(format!("Hello, {}!", name)) // Now return HttpResponse directly in Actix 4
 }
 
 // A function to create a new project with a list of pallets
 async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
-    // Clone project data for use in the blocking thread
     let project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
 
     // Spawn a blocking task for generating the project
-    let result = web::block(move || {
-        // Initialize an empty vector of enum type `Message`
+    let result = actix_web::web::block(move || {
         let mut pallets: Vec<ESupportedPallets> = Vec::new();
 
         for pallet in &pallet_names {
             match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown) {
                 ESupportedPallets::PalletUtility => {
-                    // Push enum variants into the vector
                     pallets.push(ESupportedPallets::PalletUtility);
                 }
                 _ => continue,
@@ -39,13 +38,12 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
         // Generate the project (blocking operation)
         generate_project(project_name.clone(), pallets);
-        let message = format!("{} project generated successfully", project_name);
-        Ok::<_, ()>(message)
-    })
-        .await;
+        // Return the success message as a String
+        format!("{} project generated successfully", project_name)
+    }).await;
 
     match result {
-        Ok(message) => HttpResponse::Ok().body(message),
+        Ok(message) => HttpResponse::Ok().body(message), // Here message is a String
         Err(_) => HttpResponse::InternalServerError().body("Error generating the project"),
     }
 }

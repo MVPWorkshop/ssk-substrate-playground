@@ -5,11 +5,19 @@ edition = "2021"
 
 [dependencies]
 log = "0.4.22"
-serde = "1.0"
 tokio = "1.0"
 warp = "0.3"
 uuid = { version = "0.8", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-actix-web = "3.3.2"
+actix-web = "4.0"
 time = "0.3"
 regex = "1.10.6"
+# For handling JSON requests and responses
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# For spawning blocking tasks (web::block)
+actix-rt = "2.8"
+
+# Optional: if using error handling, you might want this crate
+thiserror = "1.0"
