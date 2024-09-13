@@ -50,7 +50,8 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    println!("Starting server at http://127.0.0.1:8080");
+    // Print a message to indicate that the server is starting
+    println!("Starting server at http://0.0.0.0:8080");
 
     HttpServer::new(|| {
         App::new()
@@ -62,7 +63,7 @@ async fn main() -> std::io::Result<()> {
             )
     })
     .workers(4)
-    .bind("127.0.0.1:8080")?
+    .bind("0.0.0.0:8080")?
     .run()
     .await
 }
