@@ -21,3 +21,9 @@ actix-rt = "2.8"
 
 # Optional: if using error handling, you might want this crate
 thiserror = "1.0"
+
+actix-files = "0.6"
+
+zip = "0.6"  # Add this line
+
+
