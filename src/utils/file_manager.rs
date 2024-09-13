@@ -1,8 +1,12 @@
+use actix_files::NamedFile;
+use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use log::{error, info};
 use std::fs;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::path::Path;
+use std::path::PathBuf;
+use zip::{write::FileOptions, ZipWriter};
 
 /// Reads the contents of a file and returns it as a `String`.
 ///
@@ -143,5 +147,116 @@ pub fn replace_file_content(file_path: &Path, new_content: &str) -> io::Result<(
         "File content replaced successfully in '{}'",
         file_path.display()
     );
+    Ok(())
+}
+
+/// Asynchronously downloads the generated project as a ZIP file.
+///
+/// This function checks if the specified project directory exists. If it does,
+/// it creates a ZIP file containing all the files and subdirectories within
+/// that directory. The ZIP file is then served as a response to the client.
+///
+/// # Arguments
+///
+/// * `req` - The HTTP request object.
+/// * `path` - The web path containing the project name.
+///
+/// # Returns
+///
+/// Returns an HTTP response indicating the success or failure of the download.
+pub async fn download_project(req: HttpRequest, path: web::Path<String>) -> impl Responder {
+    let project_name = path.into_inner();
+    let project_path = PathBuf::from(format!("./generated_code/{}", project_name)); // Adjust the path as needed
+
+    if project_path.is_dir() {
+        let zip_path = format!("./generated_code/{}.zip", project_name);
+        if let Err(e) = zip_directory(&project_path, &zip_path) {
+            eprintln!("Error creating ZIP: {}", e); // Log the error to the console
+            return HttpResponse::InternalServerError().body(format!("Error creating ZIP: {}", e));
+        }
+
+        match NamedFile::open(zip_path) {
+            Ok(file) => file.into_response(&req),
+            Err(e) => {
+                eprintln!("Error opening ZIP file: {}", e); // Log the error to the console
+                HttpResponse::InternalServerError().body("Error opening ZIP file")
+            }
+        }
+    } else {
+        eprintln!("Project directory not found: {}", project_path.display()); // Log the missing directory
+        HttpResponse::NotFound().body("Project not found")
+    }
+}
+
+/// Creates a ZIP file from a specified directory.
+///
+/// This function takes the source directory and the destination path for the
+/// ZIP file. It recursively adds all files and subdirectories to the ZIP
+/// archive.
+///
+/// # Arguments
+///
+/// * `source` - The path to the directory to be zipped.
+/// * `destination` - The path where the ZIP file will be created.
+///
+/// # Returns
+///
+/// Returns an `io::Result<()>`, indicating success or failure of the operation.
+fn zip_directory(source: &Path, destination: &str) -> io::Result<()> {
+    let zip_file = fs::File::create(destination)?;
+    let mut zip = ZipWriter::new(zip_file);
+
+    let options = FileOptions::default()
+        .compression_method(zip::CompressionMethod::Stored)
+        .unix_permissions(0o755)
+        .large_file(true);
+
+    // Walk through the directory and add files and subdirectories to the ZIP
+    add_to_zip(&mut zip, source, source, &options)?;
+
+    zip.finish()?;
+    Ok(())
+}
+
+/// Recursively adds files and directories to the ZIP archive.
+///
+/// This function is called by `zip_directory` to traverse the directory tree
+/// and add each file and directory to the ZIP archive.
+///
+/// # Arguments
+///
+/// * `zip` - A mutable reference to the ZipWriter instance.
+/// * `base_path` - The base path used to create relative paths for the ZIP entries.
+/// * `path` - The current path being processed.
+/// * `options` - The file options used for adding files to the ZIP.
+///
+/// # Returns
+///
+/// Returns an `io::Result<()>`, indicating success or failure of the operation.
+fn add_to_zip(
+    zip: &mut ZipWriter<fs::File>,
+    base_path: &Path,
+    path: &Path,
+    options: &FileOptions,
+) -> io::Result<()> {
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
+        let entry_path = entry.path();
+
+        // Create the relative path for the ZIP file
+        let relative_path = entry_path.strip_prefix(base_path).unwrap();
+
+        // If the entry is a directory, recursively add its contents
+        if entry_path.is_dir() {
+            zip.add_directory(relative_path.to_string_lossy(), *options)?;
+            add_to_zip(zip, base_path, &entry_path, options)?;
+        } else {
+            // Add the file to the ZIP
+            zip.start_file(relative_path.to_string_lossy(), *options)?;
+            let mut f = fs::File::open(&entry_path)?;
+            io::copy(&mut f, zip)?;
+        }
+    }
+
     Ok(())
 }
