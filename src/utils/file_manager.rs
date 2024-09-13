@@ -1,8 +1,12 @@
+use actix_files::NamedFile;
+use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use log::{error, info};
 use std::fs;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::path::Path;
+use std::path::PathBuf;
+use zip::{write::FileOptions, ZipWriter};
 
 /// Reads the contents of a file and returns it as a `String`.
 ///
@@ -146,7 +150,20 @@ pub fn replace_file_content(file_path: &Path, new_content: &str) -> io::Result<(
     Ok(())
 }
 
-// A function to download the generated project as a ZIP file
+/// Asynchronously downloads the generated project as a ZIP file.
+///
+/// This function checks if the specified project directory exists. If it does,
+/// it creates a ZIP file containing all the files and subdirectories within
+/// that directory. The ZIP file is then served as a response to the client.
+///
+/// # Arguments
+///
+/// * `req` - The HTTP request object.
+/// * `path` - The web path containing the project name.
+///
+/// # Returns
+///
+/// Returns an HTTP response indicating the success or failure of the download.
 pub async fn download_project(req: HttpRequest, path: web::Path<String>) -> impl Responder {
     let project_name = path.into_inner();
     let project_path = PathBuf::from(format!("./generated_code/{}", project_name)); // Adjust the path as needed
@@ -171,12 +188,20 @@ pub async fn download_project(req: HttpRequest, path: web::Path<String>) -> impl
     }
 }
 
-use actix_files::NamedFile;
-use actix_web::{web, HttpRequest, HttpResponse, Responder};
-use std::path::PathBuf;
-use zip::{write::FileOptions, ZipWriter};
-
-// Function to create a ZIP file from a directory
+/// Creates a ZIP file from a specified directory.
+///
+/// This function takes the source directory and the destination path for the
+/// ZIP file. It recursively adds all files and subdirectories to the ZIP
+/// archive.
+///
+/// # Arguments
+///
+/// * `source` - The path to the directory to be zipped.
+/// * `destination` - The path where the ZIP file will be created.
+///
+/// # Returns
+///
+/// Returns an `io::Result<()>`, indicating success or failure of the operation.
 fn zip_directory(source: &Path, destination: &str) -> io::Result<()> {
     let zip_file = fs::File::create(destination)?;
     let mut zip = ZipWriter::new(zip_file);
@@ -193,6 +218,21 @@ fn zip_directory(source: &Path, destination: &str) -> io::Result<()> {
     Ok(())
 }
 
+/// Recursively adds files and directories to the ZIP archive.
+///
+/// This function is called by `zip_directory` to traverse the directory tree
+/// and add each file and directory to the ZIP archive.
+///
+/// # Arguments
+///
+/// * `zip` - A mutable reference to the ZipWriter instance.
+/// * `base_path` - The base path used to create relative paths for the ZIP entries.
+/// * `path` - The current path being processed.
+/// * `options` - The file options used for adding files to the ZIP.
+///
+/// # Returns
+///
+/// Returns an `io::Result<()>`, indicating success or failure of the operation.
 fn add_to_zip(
     zip: &mut ZipWriter<fs::File>,
     base_path: &Path,
