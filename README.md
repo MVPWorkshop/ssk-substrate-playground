@@ -97,7 +97,7 @@ After generating the project, you can download it as a zip file using this endpo
 #### Example Request:
 
 ```bash
-curl -O http://127.0.0.1:8080/download-project/my_project
+curl -o my_project.zip http://127.0.0.1:8080/download-project/my_project
 ```
 
 This will download my_project.zip to your current directory.

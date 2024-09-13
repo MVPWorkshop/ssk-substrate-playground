@@ -1,12 +1,12 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder, HttpRequest};
 use actix_files::NamedFile;
+use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use serde::{Deserialize, Serialize};
+use std::fs::{self};
+use std::io::{self};
+use std::path::{Path, PathBuf};
 use substrate_runtime_builder::code_generator::generate_project;
 use substrate_runtime_builder::types::ESupportedPallets;
-use std::path::{Path, PathBuf};
-use zip::{ZipWriter, write::FileOptions};
-use std::fs::{self, File};
-use std::io::{self, Write};
+use zip::{write::FileOptions, ZipWriter};
 
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
@@ -32,7 +32,8 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
         let mut pallets: Vec<ESupportedPallets> = Vec::new();
 
         for pallet in &pallet_names {
-            match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown) {
+            match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown)
+            {
                 ESupportedPallets::PalletUtility => {
                     pallets.push(ESupportedPallets::PalletUtility);
                 }
@@ -42,7 +43,8 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
         generate_project(project_name.clone(), pallets);
         format!("{} project generated successfully", project_name)
-    }).await;
+    })
+    .await;
 
     match result {
         Ok(message) => HttpResponse::Ok().body(message),
@@ -77,7 +79,7 @@ async fn download_project(req: HttpRequest, path: web::Path<String>) -> impl Res
 
 // Function to create a ZIP file from a directory
 fn zip_directory(source: &Path, destination: &str) -> io::Result<()> {
-    let zip_file = File::create(destination)?;
+    let zip_file = fs::File::create(destination)?;
     let mut zip = ZipWriter::new(zip_file);
 
     let options = FileOptions::default()
@@ -85,19 +87,38 @@ fn zip_directory(source: &Path, destination: &str) -> io::Result<()> {
         .unix_permissions(0o755)
         .large_file(true);
 
-    for entry in fs::read_dir(source)? {
-        let entry = entry?;
-        let path = entry.path();
+    // Walk through the directory and add files and subdirectories to the ZIP
+    add_to_zip(&mut zip, source, source, &options)?;
 
-        if path.is_file() {
-            let name = path.strip_prefix(source).unwrap();
-            zip.start_file(name.to_string_lossy(), options)?;
-            let mut f = File::open(&path)?;
-            io::copy(&mut f, &mut zip)?;
+    zip.finish()?;
+    Ok(())
+}
+
+fn add_to_zip(
+    zip: &mut ZipWriter<fs::File>,
+    base_path: &Path,
+    path: &Path,
+    options: &FileOptions,
+) -> io::Result<()> {
+    for entry in fs::read_dir(path)? {
+        let entry = entry?;
+        let entry_path = entry.path();
+
+        // Create the relative path for the ZIP file
+        let relative_path = entry_path.strip_prefix(base_path).unwrap();
+
+        // If the entry is a directory, recursively add its contents
+        if entry_path.is_dir() {
+            zip.add_directory(relative_path.to_string_lossy(), *options)?;
+            add_to_zip(zip, base_path, &entry_path, options)?;
+        } else {
+            // Add the file to the ZIP
+            zip.start_file(relative_path.to_string_lossy(), *options)?;
+            let mut f = fs::File::open(&entry_path)?;
+            io::copy(&mut f, zip)?;
         }
     }
 
-    zip.finish()?;
     Ok(())
 }
 
@@ -109,10 +130,13 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .route("/", web::get().to(greet_user))
             .route("/generate-project", web::post().to(generate_a_project))
-            .route("/download-project/{project_name}", web::get().to(download_project))
+            .route(
+                "/download-project/{project_name}",
+                web::get().to(download_project),
+            )
     })
-        .workers(4)
-        .bind("127.0.0.1:8080")?
-        .run()
-        .await
+    .workers(4)
+    .bind("127.0.0.1:8080")?
+    .run()
+    .await
 }
