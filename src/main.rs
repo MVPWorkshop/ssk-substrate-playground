@@ -51,7 +51,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Print a message to indicate that the server is starting
-    println!("Starting server at http://127.0.0.1:8080");
+    println!("Starting server at http://0.0.0.0:8080");
 
     HttpServer::new(|| {
         App::new()
@@ -59,7 +59,7 @@ async fn main() -> std::io::Result<()> {
             .route("/generate-project", web::post().to(generate_a_project))
     })
         .workers(4) // Set the number of workers (threads) to handle requests
-        .bind("127.0.0.1:8080")?
+        .bind("0.0.0.0:8080")? // for docker image issues
         .run()
         .await
 }
