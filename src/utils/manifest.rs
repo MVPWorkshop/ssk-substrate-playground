@@ -27,18 +27,6 @@ use regex::Regex;
 /// - `add_additional_dependencies`: Adds any additional dependencies required by the pallet to the manifest.
 /// - `generate_code`: Generates and returns the final updated manifest code after all dependencies are added.
 ///
-/// ## Usage Example
-///
-/// ```rust
-/// // Create a new instance of SubstrateManifestUtil
-/// let manifest_util = SubstrateManifestUtil::new(pallet_config, runtime_manifest);
-///
-/// // Generate the updated manifest code
-/// let updated_manifest = manifest_util.generate_code();
-///
-/// // The updated_manifest now contains the new dependencies and can be written back to the manifest file.
-/// ```
-///
 /// This module is particularly useful in scenarios where pallet dependencies need to be managed programmatically,
 /// ensuring that the runtime manifest is kept up to date with the latest requirements.
 
