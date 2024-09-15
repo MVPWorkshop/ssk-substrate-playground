@@ -18,13 +18,6 @@ use zip::{write::FileOptions, ZipWriter};
 ///
 /// * `Ok(String)` containing the file content if the file was read successfully.
 /// * `Err(io::Error)` if an error occurs during file opening or reading.
-///
-/// # Example
-///
-/// ```
-/// let content = read_file_to_string("example.txt")?;
-/// println!("{}", content);
-/// ```
 pub fn read_file_to_string(file_path: &str) -> io::Result<String> {
     // Open the file in read-only mode
     let mut file = File::open(file_path)?;
@@ -50,12 +43,6 @@ pub fn read_file_to_string(file_path: &str) -> io::Result<String> {
 ///
 /// * `Ok(())` if the directory and its contents were copied successfully.
 /// * `Err(io::Error)` if an error occurs during directory creation, reading, or copying.
-///
-/// # Example
-///
-/// ```
-/// copy_dir_recursive(Path::new("source_dir"), Path::new("destination_dir"))?;
-/// ```
 pub fn copy_dir_recursive(src: &Path, dest: &Path) -> io::Result<()> {
     if !dest.exists() {
         fs::create_dir_all(dest)?;
@@ -87,12 +74,6 @@ pub fn copy_dir_recursive(src: &Path, dest: &Path) -> io::Result<()> {
 ///
 /// * `Ok(())` if the folder was created successfully or if it already exists.
 /// * `Err(io::Error)` if an error occurs during folder creation.
-///
-/// # Example
-///
-/// ```
-/// create_new_folder(Path::new("base_dir"), "new_folder")?;
-/// ```
 pub fn create_new_folder(base_path: &Path, folder_name: &str) -> io::Result<()> {
     let new_folder_path = base_path.join(folder_name);
     if new_folder_path.exists() {
@@ -115,12 +96,6 @@ pub fn create_new_folder(base_path: &Path, folder_name: &str) -> io::Result<()> 
 ///
 /// * `Ok(())` if the file content was replaced successfully.
 /// * `Err(io::Error)` if an error occurs during file opening or writing.
-///
-/// # Example
-///
-/// ```
-/// replace_file_content(Path::new("example.txt"), "New content")?;
-/// ```
 pub fn replace_file_content(file_path: &Path, new_content: &str) -> io::Result<()> {
     let mut file = match fs::OpenOptions::new()
         .write(true)

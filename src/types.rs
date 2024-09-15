@@ -74,7 +74,7 @@ pub enum SubstrateVersion {
     Two,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PalletCategories {
     Accounts,
     Assets,
@@ -86,7 +86,7 @@ pub enum PalletCategories {
     Other,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum CommonAuthors {
     ParityTechnologies,
     IndividualDevelopers,
