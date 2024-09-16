@@ -37,7 +37,7 @@ After you build the project, you can use the following command to explore its
 parameters and subcommands:
 
 ```sh
-./target/release/node-template -h
+./target/release/solochain-template-node -h
 ```
 
 You can generate and view the [Rust
@@ -54,7 +54,7 @@ The following command starts a single-node development chain that doesn't
 persist state:
 
 ```sh
-./target/release/node-template --dev
+./target/release/solochain-template-node --dev
 ```
 
 To purge the development chain's state, run the following command:
