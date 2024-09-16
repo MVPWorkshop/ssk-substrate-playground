@@ -116,6 +116,7 @@ pub struct PalletConfig {
 #[derive(Debug, Clone)]
 pub enum ESupportedPallets {
     PalletUtility,
+    PalletIdentity,
     Unknown,
 }
 
@@ -125,6 +126,7 @@ impl TryFrom<&str> for ESupportedPallets {
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
             "Utility" => Ok(ESupportedPallets::PalletUtility),
+            "Identity" => Ok(ESupportedPallets::PalletIdentity),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
