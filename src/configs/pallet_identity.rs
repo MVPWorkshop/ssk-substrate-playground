@@ -110,27 +110,27 @@ impl PalletIdentityConfig {
                 ),
                 (
                     PalletIdentityTraits::BasicDeposit.to_string(),
-                    "1 * 1000".to_string(),
+                    "ConstU128<{ 1 * 1000 }>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::ByteDeposit.to_string(),
-                    "1000".to_string(),
+                    "ConstU128<{ 1 * 1000 }>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::SubAccountDeposit.to_string(),
-                    "100 * 1000".to_string(),
+                    "ConstU128<{ 100 * 1000 }>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::MaxSubAccounts.to_string(),
-                    "100".to_string(),
+                    "ConstU32<100>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::IdentityInformation.to_string(),
-                    "IdentityInfo<100>".to_string(),
+                    "IdentityInfo<ConstU32<100>>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::MaxRegistrars.to_string(),
-                    "20".to_string(),
+                    "ConstU32<20>".to_string(),
                 ),
                 (PalletIdentityTraits::Slashed.to_string(), "()".to_string()),
                 (
@@ -151,11 +151,11 @@ impl PalletIdentityConfig {
                 ),
                 (
                     PalletIdentityTraits::UsernameAuthorityOrigin.to_string(),
-                    "ConstU32<{ 7 * DAYS }>".to_string(),
+                    "EnsureRoot<Self::AccountId>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::PendingUsernameExpiration.to_string(),
-                    "EnsureRoot<Self::AccountId>".to_string(),
+                    "ConstU32<{ 7 * DAYS }>".to_string(),
                 ),
                 (
                     PalletIdentityTraits::MaxSuffixLength.to_string(),

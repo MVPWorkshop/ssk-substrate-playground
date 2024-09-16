@@ -33,9 +33,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                 ESupportedPallets::PalletUtility => {
                     pallets.push(ESupportedPallets::PalletUtility);
                 },
-                // ESupportedPallets::PalletIdentity => {
-                //     pallets.push(ESupportedPallets::PalletIdentity);
-                // }
+                ESupportedPallets::PalletIdentity => {
+                    pallets.push(ESupportedPallets::PalletIdentity);
+                }
                 _ => continue,
             }
         }
