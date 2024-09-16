@@ -1,5 +1,5 @@
-use super::configs::pallet_utility::PalletUtilityConfig;
 use super::configs::pallet_identity::PalletIdentityConfig;
+use super::configs::pallet_utility::PalletUtilityConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
@@ -171,7 +171,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                     dependencies: config.dependencies.clone(),
                 };
                 pallets_config.push(pallet_config);
-            },
+            }
             ESupportedPallets::PalletIdentity => {
                 // Get configuration for the identity pallet.
                 let config = PalletIdentityConfig::new();
