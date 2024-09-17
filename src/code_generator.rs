@@ -1,3 +1,4 @@
+use super::configs::pallet_identity::PalletIdentityConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
@@ -160,14 +161,27 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
         match pallet {
             ESupportedPallets::PalletUtility => {
                 // Get configuration for the utility pallet.
-                let pallet_utility_config = PalletUtilityConfig::new();
+                let config = PalletUtilityConfig::new();
 
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
-                    name: pallet_utility_config.name,
-                    metadata: pallet_utility_config.metadata,
-                    runtime: pallet_utility_config.runtime,
-                    dependencies: pallet_utility_config.dependencies.clone(),
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletIdentity => {
+                // Get configuration for the identity pallet.
+                let config = PalletIdentityConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
                 };
                 pallets_config.push(pallet_config);
             }
