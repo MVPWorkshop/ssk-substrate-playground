@@ -3,12 +3,15 @@ use serde::{Deserialize, Serialize};
 use substrate_runtime_builder::code_generator::generate_project;
 use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::download_project;
-
+use substrate_runtime_builder::utils::file_manager::push_to_github;
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
 struct NewProject {
     name: String,
     pallets: Vec<String>,
+    push_to_git: Option<bool>,
+    github_username: String,  
+    github_token: String, 
 }
 
 // A function to greet a user by their name (path parameter)
@@ -17,33 +20,50 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
     HttpResponse::Ok()
         .content_type("text/plain")
         .body(format!("Hello, {}!", name))
+        
 }
 
 // A function to create a new project with a list of pallets
 async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
     let project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
+    let push_to_git = project.push_to_git.unwrap_or(false);
 
-    let result = actix_web::web::block(move || {
-        let mut pallets: Vec<ESupportedPallets> = Vec::new();
+    println!("push_to_git value: {}", push_to_git);
 
-        for pallet in &pallet_names {
-            match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown)
-            {
-                ESupportedPallets::PalletUtility => {
-                    pallets.push(ESupportedPallets::PalletUtility);
+    let github_username = project.github_username.clone();  
+    let github_token = project.github_token.clone();  
+  
+    let result = actix_web::web::block({
+        let project_name = project_name.clone();  // Clone to avoid ownership issues
+        move || {
+            let mut pallets: Vec<ESupportedPallets> = Vec::new();
+
+            for pallet in &pallet_names {
+                match ESupportedPallets::try_from(pallet.as_str()).unwrap_or(ESupportedPallets::Unknown)
+                {
+                    ESupportedPallets::PalletUtility => {
+                        pallets.push(ESupportedPallets::PalletUtility);
+                    }
+                    ESupportedPallets::PalletIdentity => {
+                        pallets.push(ESupportedPallets::PalletIdentity);
+                    }
+                    _ => continue,
                 }
-                ESupportedPallets::PalletIdentity => {
-                    pallets.push(ESupportedPallets::PalletIdentity);
-                }
-                _ => continue,
             }
+            
+            generate_project(project_name.clone(), pallets); // Clone project_name here
+            format!("{} project generated successfully", project_name)
         }
-
-        generate_project(project_name.clone(), pallets);
-        format!("{} project generated successfully", project_name)
     })
     .await;
+
+    // Clone project_name again for the GitHub push function
+    if push_to_git {
+        if let Err(e) = push_to_github(&project_name, &github_username, &github_token) {
+            return HttpResponse::InternalServerError().body(format!("Error pushing to GitHub: {}", e));
+        }
+    }
 
     match result {
         Ok(message) => HttpResponse::Ok().body(message),

@@ -1,13 +1,13 @@
 use actix_files::NamedFile;
-use actix_web::{web, HttpRequest, HttpResponse, Responder};
+use actix_web::{web, HttpRequest, HttpResponse, Responder,Result,Error};
 use log::{error, info};
 use std::fs;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::path::Path;
 use std::path::PathBuf;
+use std::process::Command;
 use zip::{write::FileOptions, ZipWriter};
-
 /// Reads the contents of a file and returns it as a `String`.
 ///
 /// # Arguments
@@ -234,4 +234,129 @@ fn add_to_zip(
     }
 
     Ok(())
+}
+pub fn push_to_github(project_name: &str,github_username: &str, github_token: &str) -> Result<HttpResponse, Error> {
+    
+    println!("Ulazimo u push_to_github funkciju");
+
+    let project_dir = format!("generated_code/{}", project_name);
+    println!("Project dir: {}", project_dir);
+    
+    // Proveri da li direktorijum projekta postoji
+    if !Path::new(&project_dir).exists() {
+        println!("Direktorijum projekta ne postoji.");
+        return Ok(HttpResponse::NotFound().body(format!("Project {} not found", project_dir)));
+    }
+    println!("Direktorijum projekta postoji.");
+    
+    // Inicijalizuj Git repozitorijum
+    let init_output = Command::new("git")
+        .arg("init")
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            println!("Greška prilikom inicijalizacije Git repozitorijuma: {:?}", e);
+            actix_web::error::ErrorInternalServerError(format!("Failed to initialize Git repository: {:?}", e))
+        })?;
+    if !init_output.status.success() {
+        println!("Git inicijalizacija nije uspela.");
+        return Ok(HttpResponse::InternalServerError().body("Git initialization failed"));
+    }
+    println!("Git repozitorijum uspešno inicijalizovan.");
+    
+    // Dodaj fajlove u repozitorijum
+// Dodaj fajlove u repozitorijum
+let add_output = Command::new("git")
+    .arg("add")
+    .arg(".")
+    .current_dir(&project_dir)
+    .output()
+    .map_err(|e| {
+        println!("Git add error: {:?}", e);
+        actix_web::error::ErrorInternalServerError(format!("Failed to add files to Git: {:?}", e))
+    })?;
+
+println!("Git add output: {:?}", String::from_utf8_lossy(&add_output.stdout));
+
+if !add_output.status.success() {
+    return Ok(HttpResponse::InternalServerError().body("Git add failed"));
+}
+
+println!("Proveri sadržaj direktorijuma pre git add:");
+let entries = std::fs::read_dir(&project_dir).unwrap();
+for entry in entries {
+    println!("Fajl/folder: {:?}", entry.unwrap().path());
+}
+
+
+    
+    // Komituj promene
+// Komituj promene
+let commit_output = Command::new("git")
+    .arg("commit")
+    .arg("-m")
+    .arg("Initial commit of generated project")
+    .current_dir(&project_dir)
+    .output()
+    .map_err(|e| {
+        println!("Greška prilikom komitovanja fajlova: {:?}", e);
+        actix_web::error::ErrorInternalServerError(format!("Failed to commit files: {:?}", e))
+    })?;
+
+// Dodaj ispis izlaza komande
+if !commit_output.status.success() {
+    println!("Git commit error: {:?}", commit_output);
+    return Ok(HttpResponse::InternalServerError().body(format!(
+        "Git commit failed: {:?}",
+        String::from_utf8_lossy(&commit_output.stderr)
+    )));
+}
+
+println!("Promene uspešno komitovane.");
+
+    
+    // Dolaziš do dodavanja remote URL-a
+    println!("Pripremamo remote URL...");
+    let remote_url = format!(
+        "https://{}:{}@github.com/{}/{}.git",
+        github_username, github_token, github_username, project_name
+    );
+    println!("Remote URL: {}", remote_url);
+    
+
+
+    let remote_output = Command::new("git")
+        .arg("remote")
+        .arg("add")
+        .arg("origin")
+        .arg(&remote_url)
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            actix_web::error::ErrorInternalServerError(format!("Failed to add remote: {:?}", e))
+        })?;
+
+    if !remote_output.status.success() {
+        return Ok(HttpResponse::InternalServerError().body("Failed to add remote to GitHub"));
+    }
+
+    println!("caocao");
+
+    // Pusuj kod na GitHub koristeći token
+    let push_output = Command::new("git")
+        .arg("push")
+        .arg("-u")
+        .arg("origin")
+        .arg("main")
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            println!("Git push error: {:?}", e);
+            actix_web::error::ErrorInternalServerError(format!("Failed to push to GitHub: {:?}", e))
+        })?;
+    if !push_output.status.success() {
+        return Ok(HttpResponse::InternalServerError().body("Git push failed"));
+    }
+
+    Ok(HttpResponse::Ok().body(format!("Project {} successfully pushed to GitHub", project_name)))
 }
