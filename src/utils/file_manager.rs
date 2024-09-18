@@ -347,16 +347,21 @@ println!("Promene uspešno komitovane.");
         .arg("push")
         .arg("-u")
         .arg("origin")
-        .arg("main")
+        .arg("impl-github")
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
             println!("Git push error: {:?}", e);
             actix_web::error::ErrorInternalServerError(format!("Failed to push to GitHub: {:?}", e))
         })?;
-    if !push_output.status.success() {
-        return Ok(HttpResponse::InternalServerError().body("Git push failed"));
-    }
+        if !push_output.status.success() {
+            println!("Git push error: {:?}", String::from_utf8_lossy(&push_output.stderr));
+            return Ok(HttpResponse::InternalServerError().body(format!(
+                "Git push failed: {:?}",
+                String::from_utf8_lossy(&push_output.stderr)
+            )));
+        }
+        
 
     Ok(HttpResponse::Ok().body(format!("Project {} successfully pushed to GitHub", project_name)))
 }
