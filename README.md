@@ -14,7 +14,7 @@ Before running this project, ensure that you have the following installed on you
 
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-- [Substrate](https://docs.substrate.io/main-docs/install/)
+- [Substrate](https://github.com/paritytech/polkadot-sdk-solochain-template)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Getting Started
