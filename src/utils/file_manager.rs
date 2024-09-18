@@ -8,7 +8,9 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 use zip::{write::FileOptions, ZipWriter};
-/// Reads the contents of a file and returns it as a `String`.
+use reqwest::Client;
+use serde_json::json;
+/// Reads the contents of a file and returns it as a `String`.s
 ///
 /// # Arguments
 ///
@@ -340,14 +342,33 @@ println!("Promene uspešno komitovane.");
         return Ok(HttpResponse::InternalServerError().body("Failed to add remote to GitHub"));
     }
 
+
+    let branch_output = Command::new("git")
+    .arg("branch")
+    .arg("-M")
+    .arg("main")
+    .current_dir(&project_dir)
+    .output()
+    .map_err(|e| {
+        println!("Git branch error: {:?}", e);
+        actix_web::error::ErrorInternalServerError(format!("Failed to create or move to main branch: {:?}", e))
+    })?;
+
+    if !branch_output.status.success() {
+        println!("Git branch creation or move error: {:?}", branch_output);
+        return Ok(HttpResponse::InternalServerError().body("Git branch creation or move failed"));
+    }
+
+
     println!("caocao");
+
 
     // Pusuj kod na GitHub koristeći token
     let push_output = Command::new("git")
         .arg("push")
         .arg("-u")
         .arg("origin")
-        .arg("impl-github")
+        .arg("main")
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
@@ -364,4 +385,48 @@ println!("Promene uspešno komitovane.");
         
 
     Ok(HttpResponse::Ok().body(format!("Project {} successfully pushed to GitHub", project_name)))
+}
+
+
+pub async fn create_github_repo(
+    github_username: &str,
+    github_token: &str,
+    repo_name: &str,
+) -> Result<HttpResponse, Error> {
+    let client = Client::new();
+    let url = "https://api.github.com/user/repos".to_string();
+
+    let body = json!({
+        "name": repo_name,
+        "private": false,  // Set to true if you want the repository to be private
+    });
+
+    let response = client
+        .post(&url)
+        .basic_auth(github_username, Some(github_token))
+        .header("User-Agent", github_username)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| {
+            actix_web::error::ErrorInternalServerError(format!("Request failed: {}", e))
+        })?;
+
+    if response.status().is_success() {
+        println!("Successfully created GitHub repository: {}", repo_name);
+        Ok(HttpResponse::Ok().body(format!(
+            "GitHub repository '{}' created successfully",
+            repo_name
+        )))
+    } else {
+        let error_message = response
+            .text()
+            .await
+            .map_err(|e| actix_web::error::ErrorInternalServerError(format!("Failed to read response: {}", e)))?;
+        println!("Failed to create GitHub repository: {}", error_message);
+        Ok(HttpResponse::InternalServerError().body(format!(
+            "Failed to create GitHub repository: {}",
+            error_message
+        )))
+    }
 }

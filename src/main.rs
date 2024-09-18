@@ -4,6 +4,8 @@ use substrate_runtime_builder::code_generator::generate_project;
 use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
+use substrate_runtime_builder::utils::file_manager::create_github_repo;
+
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
 struct NewProject {
@@ -60,6 +62,10 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
     // Clone project_name again for the GitHub push function
     if push_to_git {
+        match create_github_repo(&github_username, &github_token, &project_name).await {
+            Ok(_) => println!("GitHub repo created"),
+            Err(e) => return HttpResponse::InternalServerError().body(format!("Error creating GitHub repo: {}", e)),
+        }
         if let Err(e) = push_to_github(&project_name, &github_username, &github_token) {
             return HttpResponse::InternalServerError().body(format!("Error pushing to GitHub: {}", e));
         }
