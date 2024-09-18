@@ -287,6 +287,23 @@ impl pallet_identity::Config for Runtime {
 	type WeightInfo = pallet_identity::weights::SubstrateWeight<Runtime>;
 }
 
+parameter_types! {
+	// One storage item; key size is 32; value is size 4+4+16+32 bytes = 56 bytes.
+	pub const DepositBase: Balance = 1 * 1000;
+	// Additional storage item size of 32 bytes.
+	pub const DepositFactor: Balance = 1 * 1000;
+}
+
+impl pallet_multisig::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type RuntimeCall = RuntimeCall;
+	type Currency = Balances;
+	type DepositBase = DepositBase;
+	type DepositFactor = DepositFactor;
+	type MaxSignatories = ConstU32<100>;
+	type WeightInfo = pallet_multisig::weights::SubstrateWeight<Runtime>;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -331,6 +348,9 @@ mod runtime {
 
 	#[runtime::pallet_index(9)]
 	pub type Identity = pallet_identity::Pallet<Runtime>;
+
+	#[runtime::pallet_index(10)]
+	pub type Multisig = pallet_multisig::Pallet<Runtime>;
 }
 
 /// The address format for describing accounts.
