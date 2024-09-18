@@ -1,5 +1,6 @@
 use super::configs::pallet_identity::PalletIdentityConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
+use crate::configs::pallet_multisig::PalletMultisigConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
@@ -175,6 +176,19 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletIdentity => {
                 // Get configuration for the identity pallet.
                 let config = PalletIdentityConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletMultisig => {
+                // Get configuration for the multisig pallet.
+                let config = PalletMultisigConfig::new();
 
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {

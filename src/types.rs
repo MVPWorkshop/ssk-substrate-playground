@@ -117,6 +117,7 @@ pub struct PalletConfig {
 pub enum ESupportedPallets {
     PalletUtility,
     PalletIdentity,
+    PalletMultisig,
     Unknown,
 }
 
@@ -127,6 +128,7 @@ impl TryFrom<&str> for ESupportedPallets {
         match value {
             "Utility" => Ok(ESupportedPallets::PalletUtility),
             "Identity" => Ok(ESupportedPallets::PalletIdentity),
+            "Multisig" => Ok(ESupportedPallets::PalletMultisig),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
