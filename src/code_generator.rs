@@ -1,6 +1,5 @@
 use super::configs::pallet_identity::PalletIdentityConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
-use crate::configs::pallet_multisig::PalletMultisigConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
@@ -8,6 +7,7 @@ use super::utils::file_manager::{
 use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
+use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::types::ESupportedPallets;
 use log::{error, info};
 use std::path::Path;
