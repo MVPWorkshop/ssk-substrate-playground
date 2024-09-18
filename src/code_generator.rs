@@ -7,6 +7,7 @@ use super::utils::file_manager::{
 use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
+use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::types::ESupportedPallets;
 use log::{error, info};
 use std::path::Path;
@@ -175,6 +176,19 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletIdentity => {
                 // Get configuration for the identity pallet.
                 let config = PalletIdentityConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletMultisig => {
+                // Get configuration for the multisig pallet.
+                let config = PalletMultisigConfig::new();
 
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
