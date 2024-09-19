@@ -27,17 +27,15 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
 
 // A function to create a new project with a list of pallets
 async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
+
     let project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
     let push_to_git = project.push_to_git.unwrap_or(false);
-
-    println!("push_to_git value: {}", push_to_git);
-
     let github_username = project.github_username.clone();  
     let github_token = project.github_token.clone();  
   
     let result = actix_web::web::block({
-        let project_name = project_name.clone();  // Clone to avoid ownership issues
+        let project_name = project_name.clone();  
         move || {
             let mut pallets: Vec<ESupportedPallets> = Vec::new();
 
@@ -53,19 +51,21 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     _ => continue,
                 }
             }
-            
-            generate_project(project_name.clone(), pallets); // Clone project_name here
+             // Calls the function to generate the project with the given name and pallets
+            generate_project(project_name.clone(), pallets); 
             format!("{} project generated successfully", project_name)
         }
     })
     .await;
 
-    // Clone project_name again for the GitHub push function
+    // If push_to_git is true, create a GitHub repository and push the code
     if push_to_git {
+        // Create a GitHub repository using the username, token, and project name
         match create_github_repo(&github_username, &github_token, &project_name).await {
             Ok(_) => println!("GitHub repo created"),
             Err(e) => return HttpResponse::InternalServerError().body(format!("Error creating GitHub repo: {}", e)),
         }
+        // Attempt to push the code to GitHub
         if let Err(e) = push_to_github(&project_name, &github_username, &github_token) {
             return HttpResponse::InternalServerError().body(format!("Error pushing to GitHub: {}", e));
         }

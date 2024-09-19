@@ -237,21 +237,36 @@ fn add_to_zip(
 
     Ok(())
 }
+
+/// Pushes the generated project to a GitHub repository.
+///
+/// This function initializes a Git repository, adds files, commits them, and pushes them to a GitHub repository.
+/// It requires the project name, GitHub username, and GitHub token for authentication.
+///
+/// # Arguments
+///
+/// * `project_name` - The name of the project to push.
+/// * `github_username` - The GitHub username used for authentication.
+/// * `github_token` - The GitHub personal access token used for authentication.
+///
+/// # Returns
+///
+/// Returns a `Result<HttpResponse, Error>`, indicating success or failure of the operation.
+
+
 pub fn push_to_github(project_name: &str,github_username: &str, github_token: &str) -> Result<HttpResponse, Error> {
     
-    println!("Ulazimo u push_to_github funkciju");
-
+    // Construct the project directory path
     let project_dir = format!("generated_code/{}", project_name);
     println!("Project dir: {}", project_dir);
     
-    // Proveri da li direktorijum projekta postoji
+    // Check if the project directory exists
     if !Path::new(&project_dir).exists() {
-        println!("Direktorijum projekta ne postoji.");
         return Ok(HttpResponse::NotFound().body(format!("Project {} not found", project_dir)));
     }
-    println!("Direktorijum projekta postoji.");
+
     
-    // Inicijalizuj Git repozitorijum
+    // Initialize the Git repository in the project directory
     let init_output = Command::new("git")
         .arg("init")
         .current_dir(&project_dir)
@@ -266,59 +281,55 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
     }
     println!("Git repozitorijum uspešno inicijalizovan.");
     
-    // Dodaj fajlove u repozitorijum
-// Dodaj fajlove u repozitorijum
-let add_output = Command::new("git")
-    .arg("add")
-    .arg(".")
-    .current_dir(&project_dir)
-    .output()
-    .map_err(|e| {
-        println!("Git add error: {:?}", e);
-        actix_web::error::ErrorInternalServerError(format!("Failed to add files to Git: {:?}", e))
-    })?;
+    // Add all files in the project directory to the Git repository
+    let add_output = Command::new("git")
+        .arg("add")
+        .arg(".")
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            println!("Git add error: {:?}", e);
+            actix_web::error::ErrorInternalServerError(format!("Failed to add files to Git: {:?}", e))
+        })?;
 
-println!("Git add output: {:?}", String::from_utf8_lossy(&add_output.stdout));
+    println!("Git add output: {:?}", String::from_utf8_lossy(&add_output.stdout));
 
-if !add_output.status.success() {
-    return Ok(HttpResponse::InternalServerError().body("Git add failed"));
-}
+    if !add_output.status.success() {
+        return Ok(HttpResponse::InternalServerError().body("Git add failed"));
+    }
 
-println!("Proveri sadržaj direktorijuma pre git add:");
-let entries = std::fs::read_dir(&project_dir).unwrap();
-for entry in entries {
-    println!("Fajl/folder: {:?}", entry.unwrap().path());
-}
+    // Debug: check the contents of the directory before adding files
+    println!("Checking directory contents before git add:");
+    let entries = std::fs::read_dir(&project_dir).unwrap();
+    for entry in entries {
+        println!("File/folder: {:?}", entry.unwrap().path());
+    }
 
 
-    
-    // Komituj promene
-// Komituj promene
-let commit_output = Command::new("git")
-    .arg("commit")
-    .arg("-m")
-    .arg("Initial commit of generated project")
-    .current_dir(&project_dir)
-    .output()
-    .map_err(|e| {
-        println!("Greška prilikom komitovanja fajlova: {:?}", e);
-        actix_web::error::ErrorInternalServerError(format!("Failed to commit files: {:?}", e))
-    })?;
+        
+    // Commit the changes in the repository with a message
+    let commit_output = Command::new("git")
+        .arg("commit")
+        .arg("-m")
+        .arg("Initial commit of generated project")
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            println!("Greška prilikom komitovanja fajlova: {:?}", e);
+            actix_web::error::ErrorInternalServerError(format!("Failed to commit files: {:?}", e))
+        })?;
 
-// Dodaj ispis izlaza komande
-if !commit_output.status.success() {
-    println!("Git commit error: {:?}", commit_output);
-    return Ok(HttpResponse::InternalServerError().body(format!(
-        "Git commit failed: {:?}",
-        String::from_utf8_lossy(&commit_output.stderr)
-    )));
-}
+    if !commit_output.status.success() {
+        println!("Git commit error: {:?}", commit_output);
+        return Ok(HttpResponse::InternalServerError().body(format!(
+            "Git commit failed: {:?}",
+            String::from_utf8_lossy(&commit_output.stderr)
+        )));
+    }
 
-println!("Promene uspešno komitovane.");
-
-    
-    // Dolaziš do dodavanja remote URL-a
-    println!("Pripremamo remote URL...");
+        
+    // Prepare the remote URL for pushing to GitHub
+    println!("Preparing remote URL...");
     let remote_url = format!(
         "https://{}:{}@github.com/{}/{}.git",
         github_username, github_token, github_username, project_name
@@ -326,7 +337,7 @@ println!("Promene uspešno komitovane.");
     println!("Remote URL: {}", remote_url);
     
 
-
+    // Add the remote origin for the GitHub repository
     let remote_output = Command::new("git")
         .arg("remote")
         .arg("add")
@@ -342,7 +353,7 @@ println!("Promene uspešno komitovane.");
         return Ok(HttpResponse::InternalServerError().body("Failed to add remote to GitHub"));
     }
 
-
+    // Set the branch to 'main'
     let branch_output = Command::new("git")
     .arg("branch")
     .arg("-M")
@@ -360,10 +371,8 @@ println!("Promene uspešno komitovane.");
     }
 
 
-    println!("caocao");
 
-
-    // Pusuj kod na GitHub koristeći token
+    // Push the changes to the GitHub repository using the provided credentials
     let push_output = Command::new("git")
         .arg("push")
         .arg("-u")
@@ -388,11 +397,29 @@ println!("Promene uspešno komitovane.");
 }
 
 
+
+/// Creates a new GitHub repository using the GitHub API.
+///
+/// This function sends an HTTP POST request to the GitHub API to create a new repository
+/// under the user's account. It uses basic authentication with the provided username and token.
+///
+/// # Arguments
+///
+/// * `github_username` - The GitHub username of the user creating the repository.
+/// * `github_token` - The GitHub personal access token for authentication.
+/// * `repo_name` - The name of the repository to create.
+///
+/// # Returns
+///
+/// Returns a `Result<HttpResponse, Error>`, indicating success or failure of the repository creation.
+
+
 pub async fn create_github_repo(
     github_username: &str,
     github_token: &str,
     repo_name: &str,
 ) -> Result<HttpResponse, Error> {
+
     let client = Client::new();
     let url = "https://api.github.com/user/repos".to_string();
 
@@ -400,7 +427,7 @@ pub async fn create_github_repo(
         "name": repo_name,
         "private": false,  // Set to true if you want the repository to be private
     });
-
+     // Send the POST request to the GitHub API to create the repository
     let response = client
         .post(&url)
         .basic_auth(github_username, Some(github_token))
