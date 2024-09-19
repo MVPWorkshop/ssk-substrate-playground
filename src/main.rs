@@ -65,9 +65,10 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
             Ok(_) => println!("GitHub repo created"),
             Err(e) => return HttpResponse::InternalServerError().body(format!("Error creating GitHub repo: {}", e)),
         }
-        // Attempt to push the code to GitHub
-        if let Err(e) = push_to_github(&project_name, &github_username, &github_token) {
-            return HttpResponse::InternalServerError().body(format!("Error pushing to GitHub: {}", e));
+         // Attempt to push the code to GitHub
+        match push_to_github(&project_name, &github_username, &github_token) {
+            Ok(_) => println!("Successfully pushed to GitHub"),  // Log success when the push is successful
+            Err(e) => return HttpResponse::InternalServerError().body(format!("Error pushing to GitHub: {}", e)),
         }
     }
 
