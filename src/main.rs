@@ -39,6 +39,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                 ESupportedPallets::PalletMultisig => {
                     pallets.push(ESupportedPallets::PalletMultisig);
                 }
+                ESupportedPallets::PalletProxy => {
+                    pallets.push(ESupportedPallets::PalletProxy);
+                }
                 _ => continue,
             }
         }

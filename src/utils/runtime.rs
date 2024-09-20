@@ -67,7 +67,7 @@ impl SubstrateRuntimeUtil {
 
     fn add_pallet_traits(&mut self) {
         let mut trait_implementation = format!(
-            "\n\nimpl {}::Config for Runtime {{\n",
+            "\nimpl {}::Config for Runtime {{\n",
             to_snake_case(&self.pallet_alias())
         );
         // let mut parameter_types = String::from("parameter_types! {\n");
@@ -106,7 +106,7 @@ impl SubstrateRuntimeUtil {
             }
         }
 
-        trait_implementation.push_str("}\n\n");
+        trait_implementation.push_str("}\n");
         // parameter_types.push_str("}\n\n");
 
         let current_construct_runtime = self
@@ -118,6 +118,18 @@ impl SubstrateRuntimeUtil {
             .to_string();
 
         let mut construct_runtime = current_construct_runtime.clone() + &trait_implementation;
+
+        let additional_pallet_impl_code = self
+            .pallet_config
+            .runtime
+            .additional_pallet_impl_code
+            .clone();
+
+        if additional_pallet_impl_code.is_some() {
+            construct_runtime = current_construct_runtime.clone()
+                + &additional_pallet_impl_code.clone().unwrap()
+                + &trait_implementation;
+        }
 
         if custom_parameter_counter > 0 {
             // construct_runtime = parameter_types + &construct_runtime;
@@ -173,7 +185,7 @@ impl SubstrateRuntimeUtil {
         if let Some(additional_code_regex) = test_regex.find(&existing_code) {
             let position_of_additional_code = additional_code_regex.end();
             return format!(
-                "{}\n\n{}{}",
+                "{}{}{}",
                 &existing_code[..position_of_additional_code],
                 additional_runtime_code,
                 &existing_code[position_of_additional_code..],

@@ -90,7 +90,7 @@ impl SubstrateManifestUtil {
         dependency_code += &format!("default-features = {}", config.default_features);
 
         // Close the inline table
-        dependency_code += " }\n\n\n";
+        dependency_code += " }\n";
 
         dependency_code
     }

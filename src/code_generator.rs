@@ -1,4 +1,5 @@
 use super::configs::pallet_identity::PalletIdentityConfig;
+use super::configs::pallet_proxy::PalletProxyConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
@@ -189,6 +190,19 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletMultisig => {
                 // Get configuration for the multisig pallet.
                 let config = PalletMultisigConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletProxy => {
+                // Get configuration for the proxy pallet.
+                let config = PalletProxyConfig::new();
 
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
