@@ -205,3 +205,179 @@ impl InstanceFilter<RuntimeCall> for ProxyType {
 "
     .to_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_pallet_proxy_traits_display() {
+        assert_eq!(PalletProxyTraits::RuntimeEvent.to_string(), "RuntimeEvent");
+        assert_eq!(PalletProxyTraits::RuntimeCall.to_string(), "RuntimeCall");
+        assert_eq!(PalletProxyTraits::Currency.to_string(), "Currency");
+        assert_eq!(PalletProxyTraits::ProxyType.to_string(), "ProxyType");
+        assert_eq!(
+            PalletProxyTraits::ProxyDepositBase.to_string(),
+            "ProxyDepositBase"
+        );
+        assert_eq!(
+            PalletProxyTraits::ProxyDepositFactor.to_string(),
+            "ProxyDepositFactor"
+        );
+        assert_eq!(PalletProxyTraits::MaxProxies.to_string(), "MaxProxies");
+        assert_eq!(PalletProxyTraits::MaxPending.to_string(), "MaxPending");
+        assert_eq!(PalletProxyTraits::CallHasher.to_string(), "CallHasher");
+        assert_eq!(
+            PalletProxyTraits::AnnouncementDepositBase.to_string(),
+            "AnnouncementDepositBase"
+        );
+        assert_eq!(
+            PalletProxyTraits::AnnouncementDepositFactor.to_string(),
+            "AnnouncementDepositFactor"
+        );
+        assert_eq!(PalletProxyTraits::WeightInfo.to_string(), "WeightInfo");
+    }
+
+    // Test case for PalletProxyConfig::new() method
+    #[test]
+    fn test_pallet_proxy_config_new() {
+        let pallet_proxy_config = PalletProxyConfig::new();
+
+        // Test the name
+        assert_eq!(pallet_proxy_config.name, "Pallet proxy");
+
+        // Test metadata
+        assert_eq!(
+            pallet_proxy_config.metadata.short_description,
+            "FRAME proxy pallet"
+        );
+        assert_eq!(pallet_proxy_config.metadata.size, 10500);
+        assert_eq!(
+            pallet_proxy_config.metadata.authors[0],
+            CommonAuthors::ParityTechnologies
+        );
+        assert_eq!(
+            pallet_proxy_config.metadata.categories.clone().unwrap()[0],
+            PalletCategories::Runtime
+        );
+        assert_eq!(
+            pallet_proxy_config.metadata.license.clone().unwrap(),
+            "Apache-2.0"
+        );
+
+        // Ensure description matches
+        let expected_description = [
+            "A pallet allowing accounts to give permission to other accounts to dispatch types of calls from their signed origin."
+        ].join("\n");
+        assert_eq!(
+            pallet_proxy_config.metadata.description,
+            expected_description
+        );
+
+        // Test dependencies
+        assert_eq!(
+            pallet_proxy_config.dependencies.pallet.package,
+            "pallet-proxy"
+        );
+        assert_eq!(
+            pallet_proxy_config.dependencies.pallet.alias,
+            "pallet proxy"
+        );
+        assert_eq!(
+            pallet_proxy_config
+                .dependencies
+                .pallet
+                .git_repo
+                .clone()
+                .unwrap(),
+            "https://github.com/paritytech/polkadot-sdk.git"
+        );
+        assert_eq!(
+            pallet_proxy_config.dependencies.pallet.tag.clone().unwrap(),
+            "polkadot-v1.14.0"
+        );
+
+        // Test runtime configuration
+        let runtime_traits = &pallet_proxy_config.runtime.pallet_traits;
+        assert_eq!(runtime_traits.get("RuntimeEvent").unwrap(), "RuntimeEvent");
+        assert_eq!(runtime_traits.get("RuntimeCall").unwrap(), "RuntimeCall");
+        assert_eq!(runtime_traits.get("Currency").unwrap(), "Balances");
+        assert_eq!(runtime_traits.get("ProxyType").unwrap(), "ProxyType");
+        assert_eq!(
+            runtime_traits.get("ProxyDepositBase").unwrap(),
+            "ProxyDepositBase"
+        );
+        assert_eq!(
+            runtime_traits.get("ProxyDepositFactor").unwrap(),
+            "ProxyDepositFactor"
+        );
+        assert_eq!(runtime_traits.get("MaxProxies").unwrap(), "ConstU32<32>");
+        assert_eq!(runtime_traits.get("MaxPending").unwrap(), "ConstU32<32>");
+        assert_eq!(runtime_traits.get("CallHasher").unwrap(), "BlakeTwo256");
+        assert_eq!(
+            runtime_traits.get("AnnouncementDepositBase").unwrap(),
+            "AnnouncementDepositBase"
+        );
+        assert_eq!(
+            runtime_traits.get("AnnouncementDepositFactor").unwrap(),
+            "AnnouncementDepositFactor"
+        );
+        assert_eq!(
+            runtime_traits.get("WeightInfo").unwrap(),
+            "pallet_proxy::weights::SubstrateWeight<Runtime>"
+        );
+
+        // Test runtime construct configuration
+        assert_eq!(
+            pallet_proxy_config.runtime.construct_runtime.index.unwrap(),
+            11
+        );
+        assert_eq!(
+            pallet_proxy_config.runtime.construct_runtime.runtime.0,
+            "Proxy"
+        );
+        assert_eq!(
+            pallet_proxy_config.runtime.construct_runtime.runtime.1,
+            "pallet_proxy::Pallet<Runtime>"
+        );
+    }
+
+    // Test case for additional runtime library code
+    #[test]
+    fn test_pallet_proxy_additional_runtime_lib_code() {
+        let pallet_proxy_config = PalletProxyConfig::new();
+        let additional_runtime_lib_code = pallet_proxy_config
+            .runtime
+            .additional_runtime_lib_code
+            .clone()
+            .unwrap();
+
+        assert!(additional_runtime_lib_code
+            .contains(&String::from("use codec::{Decode, Encode, MaxEncodedLen};")));
+        assert!(additional_runtime_lib_code
+            .contains(&String::from("use frame_support::traits::InstanceFilter;")));
+        assert!(
+            additional_runtime_lib_code.contains(&String::from("use sp_runtime::RuntimeDebug;"))
+        );
+    }
+
+    // Test case for additional implementation code
+    #[test]
+    fn test_pallet_proxy_additional_implementation_code() {
+        let additional_implementation_code = get_additional_implementation_code();
+
+        assert!(additional_implementation_code
+            .contains("pub const ProxyDepositBase: Balance = deposit(1, 8);"));
+        assert!(additional_implementation_code
+            .contains("pub const ProxyDepositFactor: Balance = deposit(0, 33);"));
+        assert!(additional_implementation_code
+            .contains("pub const AnnouncementDepositBase: Balance = deposit(1, 8);"));
+        assert!(additional_implementation_code
+            .contains("pub const AnnouncementDepositFactor: Balance = deposit(0, 66);"));
+
+        assert!(additional_implementation_code.contains("impl Default for ProxyType {"));
+        assert!(additional_implementation_code.contains("fn default() -> Self {"));
+        assert!(additional_implementation_code
+            .contains("impl InstanceFilter<RuntimeCall> for ProxyType {"));
+    }
+}
