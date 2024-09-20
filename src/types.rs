@@ -37,6 +37,7 @@ pub struct PalletGenesisConfig {
 pub struct PalletRuntimeConfig {
     pub construct_runtime: PalletConstructRuntimeConfig,
     pub pallet_traits: HashMap<String, String>,
+    pub additional_pallet_impl_code: Option<String>,
     pub genesis_config: Option<PalletGenesisConfig>,
     pub additional_chain_spec_code: Option<Vec<String>>,
     pub additional_runtime_lib_code: Option<Vec<String>>,
@@ -118,6 +119,7 @@ pub enum ESupportedPallets {
     PalletUtility,
     PalletIdentity,
     PalletMultisig,
+    PalletProxy,
     Unknown,
 }
 
@@ -129,6 +131,7 @@ impl TryFrom<&str> for ESupportedPallets {
             "Utility" => Ok(ESupportedPallets::PalletUtility),
             "Identity" => Ok(ESupportedPallets::PalletIdentity),
             "Multisig" => Ok(ESupportedPallets::PalletMultisig),
+            "Proxy" => Ok(ESupportedPallets::PalletProxy),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
