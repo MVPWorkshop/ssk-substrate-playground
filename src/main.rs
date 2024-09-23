@@ -59,12 +59,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
 // A function to return the list of supported pallets
 async fn list_supported_pallets() -> impl Responder {
-    let supported_pallets = vec![
-        "Utility",
-        "Identity",
-        "Multisig",
-        "Proxy",
-    ];
+    let supported_pallets = vec!["Utility", "Identity", "Multisig", "Proxy"];
 
     HttpResponse::Ok().json(supported_pallets)
 }
