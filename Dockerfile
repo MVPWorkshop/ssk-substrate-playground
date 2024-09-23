@@ -16,8 +16,9 @@ FROM rust:latest
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the binary from the builder stage
+# Copy the binary and templates from the builder stage
 COPY --from=builder /app/target/release/substrate-runtime-builder /usr/local/bin/substrate-runtime-builder
+COPY --from=builder /app/templates /app/templates
 
 # Expose the necessary ports
 EXPOSE 8080
