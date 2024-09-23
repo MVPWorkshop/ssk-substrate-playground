@@ -24,10 +24,10 @@ pub fn create_new_project(project_name: String) {
 
     // Create a new folder for the project.
     if let Err(e) = create_new_folder(base_path, &project_name) {
-        error!("Failed to create project folder '{}': {}", project_name, e);
+        println!("Failed to create project folder '{}': {}", project_name, e);
         return;
     }
-    info!("Created new project folder '{}'", project_name);
+    println!("Created new project folder '{}'", project_name);
 
     // Source path for the template to be copied.
     let src = Path::new("templates/solochain/basic");
@@ -37,13 +37,13 @@ pub fn create_new_project(project_name: String) {
 
     // Copy the basic template to the new project folder.
     if let Err(e) = copy_dir_recursive(src, dest) {
-        error!(
+        println!(
             "Failed to copy template for project '{}': {}",
             project_name, e
         );
         return;
     }
-    info!("Project '{}' created successfully", project_name);
+    println!("Project '{}' created successfully", project_name);
 }
 
 /// Adds specified pallets to the project by modifying relevant files.
@@ -72,7 +72,7 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let content = match read_file_to_string(&manifest_path) {
             Ok(content) => content,
             Err(e) => {
-                error!(
+                println!(
                     "Failed to read the manifest file '{}': {}",
                     manifest_path, e
                 );
@@ -83,19 +83,19 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let mut util = SubstrateManifestUtil::new(pallet_manifest_config, content);
         let updated_manifest = util.generate_code();
         if let Err(e) = replace_file_content(Path::new(&manifest_path), &updated_manifest) {
-            error!(
+            println!(
                 "Failed to replace manifest content in '{}': {}",
                 manifest_path, e
             );
             continue;
         }
-        info!("Manifest file '{}' updated successfully", manifest_path);
+        println!("Manifest file '{}' updated successfully", manifest_path);
 
         // Read runtime and chain spec files.
         let runtime_string = match read_file_to_string(&runtime_file_path) {
             Ok(content) => content,
             Err(e) => {
-                error!(
+                println!(
                     "Failed to read the runtime file '{}': {}",
                     runtime_file_path, e
                 );
@@ -106,7 +106,7 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         let chain_spec_string = match read_file_to_string(&chain_spec_file_path) {
             Ok(content) => content,
             Err(e) => {
-                error!(
+                println!(
                     "Failed to read the chain spec file '{}': {}",
                     chain_spec_file_path, e
                 );
@@ -122,25 +122,25 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         // Replace runtime code with the new generated code.
         let runtime_path = Path::new(&runtime_file_path);
         if let Err(e) = replace_file_content(runtime_path, &updated_code.updated_runtime_code) {
-            error!(
+            println!(
                 "Failed to replace runtime content in '{}': {}",
                 runtime_file_path, e
             );
             continue;
         }
-        info!("Runtime file '{}' updated successfully", runtime_file_path);
+        println!("Runtime file '{}' updated successfully", runtime_file_path);
 
         // Replace chain spec code with the new generated code.
         let chain_spec_path = Path::new(&chain_spec_file_path);
         if let Err(e) = replace_file_content(chain_spec_path, &updated_code.updated_chain_spec_code)
         {
-            error!(
+            println!(
                 "Failed to replace chain spec content in '{}': {}",
                 chain_spec_file_path, e
             );
             continue;
         }
-        info!(
+        println!(
             "Chain spec file '{}' updated successfully",
             chain_spec_file_path
         );
