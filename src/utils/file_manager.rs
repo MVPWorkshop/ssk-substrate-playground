@@ -1,6 +1,8 @@
 use actix_files::NamedFile;
-use actix_web::{web, HttpRequest, HttpResponse, Responder,Result,Error};
+use actix_web::{web, Error, HttpRequest, HttpResponse, Responder, Result};
 use log::{error, info};
+use reqwest::Client;
+use serde_json::json;
 use std::fs;
 use std::fs::File;
 use std::io::{self, Read, Write};
@@ -8,8 +10,6 @@ use std::path::Path;
 use std::path::PathBuf;
 use std::process::Command;
 use zip::{write::FileOptions, ZipWriter};
-use reqwest::Client;
-use serde_json::json;
 /// Reads the contents of a file and returns it as a `String`.s
 ///
 /// # Arguments
@@ -253,39 +253,45 @@ fn add_to_zip(
 ///
 /// Returns a `Result<HttpResponse, Error>`, indicating success or failure of the operation.
 
-
-pub fn push_to_github(project_name: &str,github_username: &str, github_token: &str) -> Result<HttpResponse, Error> {
-    
+pub fn push_to_github(
+    project_name: &str,
+    github_username: &str,
+    github_token: &str,
+) -> Result<HttpResponse, Error> {
     // Construct the project directory path
     let project_dir = format!("generated_code/{}", project_name);
-    
+
     // Check if the project directory exists
     if !Path::new(&project_dir).exists() {
         return Ok(HttpResponse::NotFound().body(format!("Project {} not found", project_dir)));
     }
 
-   
-   // Initialize Git repository in the project directory
+    // Initialize Git repository in the project directory
     let init_output = Command::new("git")
         .arg("init")
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
-            error!("Failed to initialize Git repository in '{}': {:?}", project_dir, e);
-            actix_web::error::ErrorInternalServerError(format!("Failed to initialize Git repository: {:?}", e))
+            error!(
+                "Failed to initialize Git repository in '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to initialize Git repository: {:?}",
+                e
+            ))
         })?;
 
     // Check if Git initialization was successful
     if !init_output.status.success() {
         error!("Git initialization failed for directory '{}'.", project_dir);
         return Ok(HttpResponse::InternalServerError().body("Git initialization failed"));
-        }
+    }
 
-    info!("Git repository successfully initialized in '{}'.", project_dir);
-
-    
-  
-    
+    info!(
+        "Git repository successfully initialized in '{}'.",
+        project_dir
+    );
 
     // Add all files in the project directory to the Git repository
     let add_output = Command::new("git")
@@ -294,19 +300,29 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
-            error!("Error adding files to Git repository in directory '{}': {:?}", project_dir, e);
-            actix_web::error::ErrorInternalServerError(format!("Failed to add files to Git: {:?}", e))
+            error!(
+                "Error adding files to Git repository in directory '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to add files to Git: {:?}",
+                e
+            ))
         })?;
 
     if !add_output.status.success() {
         error!(
             "Git 'add' command failed in directory '{}'. Output: {:?}",
-            project_dir, String::from_utf8_lossy(&add_output.stderr)
+            project_dir,
+            String::from_utf8_lossy(&add_output.stderr)
         );
-            return Ok(HttpResponse::InternalServerError().body("Git add failed"));
-        }
+        return Ok(HttpResponse::InternalServerError().body("Git add failed"));
+    }
 
-    info!("Files successfully added to the Git repository in directory '{}'.", project_dir);
+    info!(
+        "Files successfully added to the Git repository in directory '{}'.",
+        project_dir
+    );
 
     // Debug: check the contents of the directory before the `git add` command
     info!("Checking directory contents before 'git add':");
@@ -319,11 +335,11 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
                 }
             }
         }
-         Err(e) => error!("Error reading contents of directory '{}': {:?}", project_dir, e),
+        Err(e) => error!(
+            "Error reading contents of directory '{}': {:?}",
+            project_dir, e
+        ),
     }
-
-
-  
 
     // Commit the changes in the repository with a message
     let commit_output = Command::new("git")
@@ -333,7 +349,10 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
-            error!("Error committing files in directory '{}': {:?}", project_dir, e);
+            error!(
+                "Error committing files in directory '{}': {:?}",
+                project_dir, e
+            );
             actix_web::error::ErrorInternalServerError(format!("Failed to commit files: {:?}", e))
         })?;
 
@@ -341,7 +360,8 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
     if !commit_output.status.success() {
         error!(
             "Git 'commit' command failed in directory '{}'. Output: {:?}",
-            project_dir, String::from_utf8_lossy(&commit_output.stderr)
+            project_dir,
+            String::from_utf8_lossy(&commit_output.stderr)
         );
         return Ok(HttpResponse::InternalServerError().body(format!(
             "Git commit failed: {:?}",
@@ -349,18 +369,17 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
         )));
     }
 
-    info!("Changes successfully committed in directory '{}'.", project_dir);
+    info!(
+        "Changes successfully committed in directory '{}'.",
+        project_dir
+    );
 
-
-        
     // Prepare the remote URL for pushing to GitHub
 
     let remote_url = format!(
         "https://{}:{}@github.com/{}/{}.git",
         github_username, github_token, github_username, project_name
     );
-    
-
 
     // Add the remote origin for the GitHub repository
     let remote_output = Command::new("git")
@@ -371,23 +390,29 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
-            error!("Failed to add remote origin in directory '{}': {:?}", project_dir, e);
-            actix_web::error::ErrorInternalServerError(format!("Failed to add remote origin: {:?}", e))
+            error!(
+                "Failed to add remote origin in directory '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to add remote origin: {:?}",
+                e
+            ))
         })?;
 
     if !remote_output.status.success() {
         error!(
             "Git 'remote add' command failed in directory '{}'. Output: {:?}",
-            project_dir, String::from_utf8_lossy(&remote_output.stderr)
+            project_dir,
+            String::from_utf8_lossy(&remote_output.stderr)
         );
-         return Ok(HttpResponse::InternalServerError().body("Failed to add remote to GitHub"));
-        }
+        return Ok(HttpResponse::InternalServerError().body("Failed to add remote to GitHub"));
+    }
 
-    info!("Remote origin successfully added in directory '{}'.", project_dir);
-
-
-
-
+    info!(
+        "Remote origin successfully added in directory '{}'.",
+        project_dir
+    );
 
     // Set the branch to 'main'
     let branch_output = Command::new("git")
@@ -397,22 +422,31 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
-            error!("Failed to set branch to 'main' in directory '{}': {:?}", project_dir, e);
-            actix_web::error::ErrorInternalServerError(format!("Failed to set branch to 'main': {:?}", e))
+            error!(
+                "Failed to set branch to 'main' in directory '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to set branch to 'main': {:?}",
+                e
+            ))
         })?;
 
     if !branch_output.status.success() {
         error!(
             "Git 'branch -M main' command failed in directory '{}'. Output: {:?}",
-            project_dir, String::from_utf8_lossy(&branch_output.stderr)
+            project_dir,
+            String::from_utf8_lossy(&branch_output.stderr)
         );
-        return Ok(HttpResponse::InternalServerError().body("Git branch creation or move to 'main' failed"));
+        return Ok(HttpResponse::InternalServerError()
+            .body("Git branch creation or move to 'main' failed"));
     }
 
-    info!("Branch successfully set to 'main' in directory '{}'.", project_dir);
+    info!(
+        "Branch successfully set to 'main' in directory '{}'.",
+        project_dir
+    );
 
-
-    
     // Push the changes to the GitHub repository using the provided credentials
     let push_output = Command::new("git")
         .arg("push")
@@ -422,29 +456,36 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
         .current_dir(&project_dir)
         .output()
         .map_err(|e| {
-            error!("Failed to push changes to GitHub from directory '{}': {:?}", project_dir, e);
+            error!(
+                "Failed to push changes to GitHub from directory '{}': {:?}",
+                project_dir, e
+            );
             actix_web::error::ErrorInternalServerError(format!("Failed to push to GitHub: {:?}", e))
         })?;
 
     if !push_output.status.success() {
         error!(
             "Git 'push' command failed for directory '{}'. Output: {:?}",
-            project_dir, String::from_utf8_lossy(&push_output.stderr)
+            project_dir,
+            String::from_utf8_lossy(&push_output.stderr)
         );
         return Ok(HttpResponse::InternalServerError().body(format!(
-          "Git push failed: {:?}",
-          String::from_utf8_lossy(&push_output.stderr)
-    )));
+            "Git push failed: {:?}",
+            String::from_utf8_lossy(&push_output.stderr)
+        )));
     }
 
-    info!("Project '{}' successfully pushed to GitHub from directory '{}'.", project_name, project_dir);
+    info!(
+        "Project '{}' successfully pushed to GitHub from directory '{}'.",
+        project_name, project_dir
+    );
 
     // Return a success HTTP response
-    Ok(HttpResponse::Ok().body(format!("Project {} successfully pushed to GitHub", project_name)))
-
+    Ok(HttpResponse::Ok().body(format!(
+        "Project {} successfully pushed to GitHub",
+        project_name
+    )))
 }
-
-
 
 /// Creates a new GitHub repository using the GitHub API.
 ///
@@ -461,13 +502,11 @@ pub fn push_to_github(project_name: &str,github_username: &str, github_token: &s
 ///
 /// Returns a `Result<HttpResponse, Error>`, indicating success or failure of the repository creation.
 
-
 pub async fn create_github_repo(
     github_username: &str,
     github_token: &str,
     repo_name: &str,
 ) -> Result<HttpResponse, Error> {
-
     let client = Client::new();
     let url = "https://api.github.com/user/repos".to_string();
 
@@ -499,17 +538,14 @@ pub async fn create_github_repo(
             repo_name
         )))
     } else {
-        let error_message = response
-            .text()
-            .await
-            .map_err(|e| {
-                error!(
-                    "Failed to read response when creating GitHub repository '{}': {}",
-                    repo_name, e
-                );
-                actix_web::error::ErrorInternalServerError(format!("Failed to read response: {}", e))
-            })?;
-        
+        let error_message = response.text().await.map_err(|e| {
+            error!(
+                "Failed to read response when creating GitHub repository '{}': {}",
+                repo_name, e
+            );
+            actix_web::error::ErrorInternalServerError(format!("Failed to read response: {}", e))
+        })?;
+
         error!(
             "Failed to create GitHub repository '{}': {}",
             repo_name, error_message
