@@ -1,6 +1,7 @@
 use super::configs::pallet_identity::PalletIdentityConfig;
 use super::configs::pallet_proxy::PalletProxyConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
+use super::configs::pallet_uniques::PalletUniquesConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
@@ -203,6 +204,19 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletProxy => {
                 // Get configuration for the proxy pallet.
                 let config = PalletProxyConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletUniques => {
+                // Get configuration for the utility pallet.
+                let config = PalletUniquesConfig::new();
 
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {

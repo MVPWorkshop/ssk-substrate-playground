@@ -84,6 +84,7 @@ pub enum PalletCategories {
     Identity,
     Runtime,
     SmartContracts,
+    Uniques,
     Other,
 }
 
@@ -120,6 +121,7 @@ pub enum ESupportedPallets {
     PalletIdentity,
     PalletMultisig,
     PalletProxy,
+    PalletUniques,
     Unknown,
 }
 
@@ -132,6 +134,7 @@ impl TryFrom<&str> for ESupportedPallets {
             "Identity" => Ok(ESupportedPallets::PalletIdentity),
             "Multisig" => Ok(ESupportedPallets::PalletMultisig),
             "Proxy" => Ok(ESupportedPallets::PalletProxy),
+            "Uniques" => Ok(ESupportedPallets::PalletUniques),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
