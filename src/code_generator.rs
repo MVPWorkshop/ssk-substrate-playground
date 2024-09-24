@@ -1,4 +1,5 @@
 use super::configs::pallet_identity::PalletIdentityConfig;
+use super::configs::pallet_proxy::PalletProxyConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
@@ -7,6 +8,7 @@ use super::utils::file_manager::{
 use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
+use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::types::ESupportedPallets;
 use log::{error, info};
 use std::path::Path;
@@ -58,7 +60,7 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
         // File paths for runtime, chain spec, and manifest.
         let runtime_file_path = project_directory.clone() + "/runtime/src/lib.rs";
         let chain_spec_file_path = project_directory.clone() + "/node/src/chain_spec.rs";
-        let manifest_path = project_directory + "/runtime/cargo.toml";
+        let manifest_path = project_directory + "/runtime/Cargo.toml";
 
         // Create manifest configuration for the pallet.
         let pallet_manifest_config = ManifestPalletConfig {
@@ -175,6 +177,32 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletIdentity => {
                 // Get configuration for the identity pallet.
                 let config = PalletIdentityConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletMultisig => {
+                // Get configuration for the multisig pallet.
+                let config = PalletMultisigConfig::new();
+
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletProxy => {
+                // Get configuration for the proxy pallet.
+                let config = PalletProxyConfig::new();
 
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {

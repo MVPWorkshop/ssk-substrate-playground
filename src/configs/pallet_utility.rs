@@ -91,6 +91,7 @@ impl PalletUtilityConfig {
             ]
             .into_iter()
             .collect(),
+            additional_pallet_impl_code: None,
             genesis_config: None,
             additional_chain_spec_code: None,
             additional_runtime_lib_code: None,

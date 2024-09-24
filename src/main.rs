@@ -45,11 +45,16 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletUtility => {
                         pallets.push(ESupportedPallets::PalletUtility);
                     }
-                    ESupportedPallets::PalletIdentity => {
-                        pallets.push(ESupportedPallets::PalletIdentity);
-                    }
-                    _ => continue,
+                ESupportedPallets::PalletIdentity => {
+                    pallets.push(ESupportedPallets::PalletIdentity);
                 }
+                ESupportedPallets::PalletMultisig => {
+                    pallets.push(ESupportedPallets::PalletMultisig);
+                }
+                ESupportedPallets::PalletProxy => {
+                    pallets.push(ESupportedPallets::PalletProxy);
+                }
+                _ => continue,
             }
              // Calls the function to generate the project with the given name and pallets
             generate_project(project_name.clone(), pallets); 
@@ -78,6 +83,13 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
     }
 }
 
+// A function to return the list of supported pallets
+async fn list_supported_pallets() -> impl Responder {
+    let supported_pallets = vec!["Utility", "Identity", "Multisig", "Proxy"];
+
+    HttpResponse::Ok().json(supported_pallets)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Print a message to indicate that the server is starting
@@ -91,6 +103,7 @@ async fn main() -> std::io::Result<()> {
                 "/download-project/{project_name}",
                 web::get().to(download_project),
             )
+            .route("/supported-pallets", web::get().to(list_supported_pallets))
     })
     .workers(4)
     .bind("0.0.0.0:8080")?

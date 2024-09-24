@@ -14,7 +14,7 @@ Before running this project, ensure that you have the following installed on you
 
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-- [Substrate](https://docs.substrate.io/main-docs/install/)
+- [Substrate](https://github.com/paritytech/polkadot-sdk-solochain-template)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
 ## Getting Started
@@ -62,8 +62,12 @@ Request Body (JSON):
 {
     "name": "your_project_name",
     "pallets": [
-        "PalletUtility",
-        "PalletIdentity"
+        "Utility",
+        "Identity",
+        "Multisig",
+        "Proxy",
+        "Uniques",
+        "Nfts"
     ]
 }
 ```
@@ -76,7 +80,7 @@ bash
 ```
 curl -X POST http://127.0.0.1:8080/generate-project \
 -H "Content-Type: application/json" \
--d '{"name": "my_project", "pallets": ["PalletUtility", "PalletIdentity"]}'
+-d '{"name": "my_project", "pallets": ["Utility", "Identity"]}'
 ```
 
 #### Response:
