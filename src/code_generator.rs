@@ -215,7 +215,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 pallets_config.push(pallet_config);
             }
             ESupportedPallets::PalletUniques => {
-                // Get configuration for the utility pallet.
+                // Get configuration for the uniques pallet.
                 let config = PalletUniquesConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {

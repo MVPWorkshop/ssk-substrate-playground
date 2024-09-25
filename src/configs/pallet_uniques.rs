@@ -154,7 +154,7 @@ impl PalletUniquesConfig {
                 ),
                 (
                     PalletUniquesTraits::Helper.to_string(),
-                    "()".to_string(),  // Placeholder za Helper
+                    "()".to_string(), 
                 ),
                 (
                     PalletUniquesTraits::WeightInfo.to_string(),
