@@ -56,7 +56,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletUniques => {
                         pallets.push(ESupportedPallets::PalletUniques);
                     }
-    
+
                     _ => continue,
                 }
             }

@@ -20,7 +20,7 @@ pub enum PalletUniquesTraits {
     KeyLimit,
     ValueLimit,
     Helper,
-    WeightInfo
+    WeightInfo,
 }
 
 impl fmt::Display for PalletUniquesTraits {
@@ -98,11 +98,11 @@ impl PalletUniquesConfig {
                 ),
                 (
                     PalletUniquesTraits::CollectionId.to_string(),
-                    "ConstU32<100>".to_string(),  
+                    "ConstU32<100>".to_string(),
                 ),
                 (
                     PalletUniquesTraits::ItemId.to_string(),
-                    "ConstU32<1000>".to_string(),  
+                    "ConstU32<1000>".to_string(),
                 ),
                 (
                     PalletUniquesTraits::Currency.to_string(),
@@ -152,15 +152,11 @@ impl PalletUniquesConfig {
                     PalletUniquesTraits::ValueLimit.to_string(),
                     "ConstU32<256>".to_string(),
                 ),
-                (
-                    PalletUniquesTraits::Helper.to_string(),
-                    "()".to_string(), 
-                ),
+                (PalletUniquesTraits::Helper.to_string(), "()".to_string()),
                 (
                     PalletUniquesTraits::WeightInfo.to_string(),
                     "pallet_uniques::weights::SubstrateWeight<Runtime>".to_string(),
                 ),
-              
             ]
             .into_iter()
             .collect(),
@@ -183,8 +179,6 @@ impl PalletUniquesConfig {
     }
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -196,17 +190,35 @@ mod tests {
             PalletUniquesTraits::RuntimeEvent.to_string(),
             "RuntimeEvent"
         );
-        assert_eq!(PalletUniquesTraits::CollectionId.to_string(), "CollectionId");
+        assert_eq!(
+            PalletUniquesTraits::CollectionId.to_string(),
+            "CollectionId"
+        );
         assert_eq!(PalletUniquesTraits::ItemId.to_string(), "ItemId");
         assert_eq!(PalletUniquesTraits::Currency.to_string(), "Currency");
         assert_eq!(PalletUniquesTraits::ForceOrigin.to_string(), "ForceOrigin");
-        assert_eq!(PalletUniquesTraits::CreateOrigin.to_string(), "CreateOrigin");
+        assert_eq!(
+            PalletUniquesTraits::CreateOrigin.to_string(),
+            "CreateOrigin"
+        );
         assert_eq!(PalletUniquesTraits::Locker.to_string(), "Locker");
-        assert_eq!(PalletUniquesTraits::CollectionDeposit.to_string(), "CollectionDeposit");
+        assert_eq!(
+            PalletUniquesTraits::CollectionDeposit.to_string(),
+            "CollectionDeposit"
+        );
         assert_eq!(PalletUniquesTraits::ItemDeposit.to_string(), "ItemDeposit");
-        assert_eq!(PalletUniquesTraits::MetadataDepositBase.to_string(), "MetadataDepositBase");
-        assert_eq!(PalletUniquesTraits::AttributeDepositBase.to_string(), "AttributeDepositBase");
-        assert_eq!(PalletUniquesTraits::DepositPerByte.to_string(), "DepositPerByte");
+        assert_eq!(
+            PalletUniquesTraits::MetadataDepositBase.to_string(),
+            "MetadataDepositBase"
+        );
+        assert_eq!(
+            PalletUniquesTraits::AttributeDepositBase.to_string(),
+            "AttributeDepositBase"
+        );
+        assert_eq!(
+            PalletUniquesTraits::DepositPerByte.to_string(),
+            "DepositPerByte"
+        );
         assert_eq!(PalletUniquesTraits::StringLimit.to_string(), "StringLimit");
         assert_eq!(PalletUniquesTraits::KeyLimit.to_string(), "KeyLimit");
         assert_eq!(PalletUniquesTraits::ValueLimit.to_string(), "ValueLimit");
@@ -227,7 +239,7 @@ mod tests {
             pallet_uniques_config.metadata.short_description,
             "FRAME uniques pallet"
         );
-        assert_eq!(pallet_uniques_config.metadata.size, 10500);  // Assuming a size value
+        assert_eq!(pallet_uniques_config.metadata.size, 10500); // Assuming a size value
         assert_eq!(
             pallet_uniques_config.metadata.authors[0],
             CommonAuthors::ParityTechnologies
@@ -284,21 +296,46 @@ mod tests {
         assert_eq!(runtime_traits.get("CollectionId").unwrap(), "ConstU32<100>");
         assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
         assert_eq!(runtime_traits.get("Currency").unwrap(), "Balances");
-        assert_eq!(runtime_traits.get("ForceOrigin").unwrap(), "EnsureRoot<Self::AccountId>");
-        assert_eq!(runtime_traits.get("CreateOrigin").unwrap(), "EnsureSigned<Self::AccountId>");
-        assert_eq!(runtime_traits.get("Locker").unwrap(), "pallet_uniques::Locker");
-        assert_eq!(runtime_traits.get("CollectionDeposit").unwrap(), "ConstU128<{ 10 * 1000 }>");
-        assert_eq!(runtime_traits.get("ItemDeposit").unwrap(), "ConstU128<{ 1 * 1000 }>");
-        assert_eq!(runtime_traits.get("MetadataDepositBase").unwrap(), "ConstU128<{ 1 * 1000 }>");
-        assert_eq!(runtime_traits.get("AttributeDepositBase").unwrap(), "ConstU128<{ 1 * 1000 }>");
-        assert_eq!(runtime_traits.get("DepositPerByte").unwrap(), "ConstU128<{ 10 }>");
+        assert_eq!(
+            runtime_traits.get("ForceOrigin").unwrap(),
+            "EnsureRoot<Self::AccountId>"
+        );
+        assert_eq!(
+            runtime_traits.get("CreateOrigin").unwrap(),
+            "EnsureSigned<Self::AccountId>"
+        );
+        assert_eq!(
+            runtime_traits.get("Locker").unwrap(),
+            "pallet_uniques::Locker"
+        );
+        assert_eq!(
+            runtime_traits.get("CollectionDeposit").unwrap(),
+            "ConstU128<{ 10 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("ItemDeposit").unwrap(),
+            "ConstU128<{ 1 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("MetadataDepositBase").unwrap(),
+            "ConstU128<{ 1 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("AttributeDepositBase").unwrap(),
+            "ConstU128<{ 1 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("DepositPerByte").unwrap(),
+            "ConstU128<{ 10 }>"
+        );
         assert_eq!(runtime_traits.get("StringLimit").unwrap(), "ConstU32<256>");
         assert_eq!(runtime_traits.get("KeyLimit").unwrap(), "ConstU32<64>");
         assert_eq!(runtime_traits.get("ValueLimit").unwrap(), "ConstU32<256>");
         assert_eq!(runtime_traits.get("Helper").unwrap(), "()");
-        assert_eq!(runtime_traits.get("WeightInfo").unwrap(), "pallet_uniques::weights::SubstrateWeight<Runtime>");
-       
-        
+        assert_eq!(
+            runtime_traits.get("WeightInfo").unwrap(),
+            "pallet_uniques::weights::SubstrateWeight<Runtime>"
+        );
 
         // Test runtime construct configuration
         assert_eq!(
