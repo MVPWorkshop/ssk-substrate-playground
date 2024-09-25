@@ -27,4 +27,5 @@ actix-files = "0.6"
 
 zip = "0.6"  # Add this line
 
+mongodb = "2.7.0"
 
