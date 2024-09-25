@@ -43,7 +43,7 @@ impl PalletSudoConfig {
                 ]
                 .into_iter()
                 .collect(),
-
+                additional_pallet_impl_code: None,
                 additional_runtime_lib_code: None,
                 construct_runtime: PalletConstructRuntimeConfig {
                     index: None,

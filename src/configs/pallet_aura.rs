@@ -51,7 +51,7 @@ impl PalletAuraConfig {
                 ]
                 .into_iter()
                 .collect(),
-
+                additional_pallet_impl_code: None,
                 additional_runtime_lib_code: Some(vec![String::from(
                     "use sp_consensus_aura::sr25519::AuthorityId as AuraId;",
                 )]),

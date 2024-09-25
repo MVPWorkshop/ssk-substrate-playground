@@ -52,6 +52,7 @@ impl PalletTransactionPaymentConfig {
                 ]
                     .into_iter()
                     .collect(),
+                additional_pallet_impl_code: None,
                 additional_runtime_lib_code: Some(vec![String::from(
                     "use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};",
                 )]),
