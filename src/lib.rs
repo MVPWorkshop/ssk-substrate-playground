@@ -13,6 +13,7 @@ pub mod configs {
     // pub mod pallet_timestamp;
     // pub mod pallet_transaction_payment;
     pub mod pallet_utility;
+    pub mod pallet_uniques;
 }
 
 pub mod utils {
