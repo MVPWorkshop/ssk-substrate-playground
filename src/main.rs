@@ -1,6 +1,9 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use mongodb::Collection;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use substrate_runtime_builder::code_generator::generate_project;
+use substrate_runtime_builder::database::{fetch_record, insert_record, Record};
 use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
@@ -53,10 +56,6 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletProxy => {
                         pallets.push(ESupportedPallets::PalletProxy);
                     }
-                    ESupportedPallets::PalletUniques => {
-                        pallets.push(ESupportedPallets::PalletUniques);
-                    }
-
                     _ => continue,
                 }
             }
@@ -102,6 +101,36 @@ async fn list_supported_pallets() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // MongoDB connection parameters
+    let uri = "mongodb+srv://pankajchaudhary:1234567890@dev.wn6dh.mongodb.net/retryWrites=true&w=majority&appName=dev";
+    let db_name = "ParachainRuntimeBuilder";
+    let collection_name = "templates";
+
+    // Establish MongoDB connection before starting the Actix server
+    let client = mongodb::Client::with_uri_str(uri)
+        .await
+        .expect("Failed to connect to MongoDB");
+    let database = client.database(db_name);
+    let collection: Collection<Record> = database.collection(collection_name);
+    let collection = Arc::new(collection);
+
+    // Example: Insert a record into MongoDB
+    let new_record = Record {
+        name: "solochain".to_string(),
+        description: "Basic solochain template".to_string(),
+    };
+    match insert_record(&collection, new_record).await {
+        Ok(_) => println!("Successfully inserted record."),
+        Err(e) => println!("Error inserting record: {}", e),
+    }
+
+    // Example: Fetch a record from MongoDB
+    match fetch_record(&collection, "solochain").await {
+        Ok(Some(record)) => println!("Fetched record: {:?}", record),
+        Ok(None) => println!("No record found."),
+        Err(e) => println!("Error fetching record: {}", e),
+    }
+
     // Print a message to indicate that the server is starting
     println!("Starting server at http://0.0.0.0:8080");
 
