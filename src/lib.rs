@@ -1,7 +1,6 @@
 pub mod code_generator;
 pub mod database;
 pub mod types;
-pub mod util;
 
 pub mod configs {
     pub mod pallet_aura;
