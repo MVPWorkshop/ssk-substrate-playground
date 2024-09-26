@@ -1,6 +1,7 @@
 use mongodb::error::Error;
 use mongodb::{bson::doc, options::ClientOptions, Client, Collection};
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 // Define a struct to represent the document
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,7 +30,10 @@ pub async fn connect_to_db(
 }
 
 // Function to insert a document into the collection
-pub async fn insert_record(collection: &Collection<Record>, record: Record) -> Result<(), Error> {
+pub async fn insert_record(
+    collection: &Collection<HashMap<String, String>>,
+    record: HashMap<String, String>,
+) -> Result<(), Error> {
     let result = collection.insert_one(record, None).await?;
     println!("Inserted document with id: {:?}", result.inserted_id);
     Ok(())

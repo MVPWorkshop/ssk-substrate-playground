@@ -29,3 +29,5 @@ zip = "0.6"  # Add this line
 
 mongodb = "2.7.0"
 
+strum = "0.26"
+strum_macros = "0.26"

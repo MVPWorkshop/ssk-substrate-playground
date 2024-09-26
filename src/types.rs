@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use strum_macros::EnumIter; // Derive macro for enum iteration
 
 #[derive(Debug, Clone)]
 pub enum PalletModuleParts {
@@ -115,7 +116,7 @@ pub struct PalletConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, EnumIter)]
 pub enum ESupportedPallets {
     PalletUtility,
     PalletIdentity,
