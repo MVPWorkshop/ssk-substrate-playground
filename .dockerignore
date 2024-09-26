@@ -15,5 +15,5 @@ Cargo.lock
 *.pdb
 .idea/
 *.DS_store
-
+generated_code/*
 Dockerfile

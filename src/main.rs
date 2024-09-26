@@ -1,6 +1,7 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::{Deserialize, Serialize};
 use substrate_runtime_builder::code_generator::generate_project;
+use substrate_runtime_builder::db_models::insert_pallet_data_to_db;
 use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
@@ -104,6 +105,8 @@ async fn list_supported_pallets() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     // Print a message to indicate that the server is starting
     println!("Starting server at http://0.0.0.0:8080");
+
+    insert_pallet_data_to_db().await;
 
     HttpServer::new(|| {
         App::new()

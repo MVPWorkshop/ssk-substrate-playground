@@ -1,5 +1,6 @@
 pub mod code_generator;
 pub mod database;
+pub mod db_models;
 pub mod types;
 
 pub mod configs {
