@@ -123,6 +123,7 @@ pub enum ESupportedPallets {
     PalletMultisig,
     PalletProxy,
     PalletUniques,
+    PalletMembership,
     Unknown,
 }
 
@@ -136,6 +137,7 @@ impl TryFrom<&str> for ESupportedPallets {
             "Multisig" => Ok(ESupportedPallets::PalletMultisig),
             "Proxy" => Ok(ESupportedPallets::PalletProxy),
             "Uniques" => Ok(ESupportedPallets::PalletUniques),
+            "Membership" => Ok(ESupportedPallets::PalletMembership),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
