@@ -85,7 +85,7 @@ pub enum PalletCategories {
     Identity,
     Runtime,
     SmartContracts,
-    Uniques,
+    NFT,
     Other,
 }
 
