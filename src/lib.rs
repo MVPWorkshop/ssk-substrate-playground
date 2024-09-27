@@ -16,6 +16,8 @@ pub mod configs {
     pub mod pallet_uniques;
     pub mod pallet_utility;
     pub mod pallet_nfts;
+    pub mod pallet_membership;
+
 }
 
 pub mod utils {
