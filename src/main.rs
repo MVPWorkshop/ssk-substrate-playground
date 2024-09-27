@@ -56,6 +56,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     }
                     ESupportedPallets::PalletUniques => {
                         pallets.push(ESupportedPallets::PalletUniques);
+                    } 
+                    ESupportedPallets::PalletNfts => {
+                        pallets.push(ESupportedPallets::PalletNfts);
                     }
 
                     _ => continue,
@@ -96,7 +99,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
 // A function to return the list of supported pallets
 async fn list_supported_pallets() -> impl Responder {
-    let supported_pallets = vec!["Utility", "Identity", "Multisig", "Proxy"];
+    let supported_pallets = vec!["Utility", "Identity", "Multisig", "Proxy","Nfts", "Uniques","Membership"];
 
     HttpResponse::Ok().json(supported_pallets)
 }
@@ -106,7 +109,7 @@ async fn main() -> std::io::Result<()> {
     // Print a message to indicate that the server is starting
     println!("Starting server at http://0.0.0.0:8080");
 
-    insert_pallet_data_to_db().await;
+    //insert_pallet_data_to_db().await;
 
     HttpServer::new(|| {
         App::new()
