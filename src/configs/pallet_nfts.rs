@@ -50,7 +50,9 @@ impl fmt::Display for PalletNftsTraits {
             PalletNftsTraits::KeyLimit => write!(f, "KeyLimit"),
             PalletNftsTraits::ValueLimit => write!(f, "ValueLimit"),
             PalletNftsTraits::ApprovalsLimit => write!(f, "ApprovalsLimit"),
-            PalletNftsTraits::ItemAttributesApprovalsLimit => write!(f, "ItemAttributesApprovalsLimit"),
+            PalletNftsTraits::ItemAttributesApprovalsLimit => {
+                write!(f, "ItemAttributesApprovalsLimit")
+            }
             PalletNftsTraits::MaxTips => write!(f, "MaxTips"),
             PalletNftsTraits::MaxDeadlineDuration => write!(f, "MaxDeadlineDuration"),
             PalletNftsTraits::MaxAttributesPerCall => write!(f, "MaxAttributesPerCall"),
@@ -115,11 +117,11 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::CollectionId.to_string(),
-                    "ConstU32<100>".to_string(), 
+                    "ConstU32<100>".to_string(),
                 ),
                 (
                     PalletNftsTraits::ItemId.to_string(),
-                    "ConstU32<1000>".to_string(), 
+                    "ConstU32<1000>".to_string(),
                 ),
                 (
                     PalletNftsTraits::Currency.to_string(),
@@ -171,27 +173,27 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::ApprovalsLimit.to_string(),
-                    "ConstU32<100>".to_string(),  
+                    "ConstU32<100>".to_string(),
                 ),
                 (
                     PalletNftsTraits::ItemAttributesApprovalsLimit.to_string(),
-                    "ConstU32<100>".to_string(), 
+                    "ConstU32<100>".to_string(),
                 ),
                 (
                     PalletNftsTraits::MaxTips.to_string(),
-                    "ConstU32<10>".to_string(), 
+                    "ConstU32<10>".to_string(),
                 ),
                 (
                     PalletNftsTraits::MaxDeadlineDuration.to_string(),
-                    "ConstU32<1000>".to_string(),  
+                    "ConstU32<1000>".to_string(),
                 ),
                 (
                     PalletNftsTraits::MaxAttributesPerCall.to_string(),
-                    "ConstU32<5>".to_string(),  
+                    "ConstU32<5>".to_string(),
                 ),
                 (
                     PalletNftsTraits::Features.to_string(),
-                    "Feature".to_string(),  
+                    "Feature".to_string(),
                 ),
                 (
                     PalletNftsTraits::OffchainSignature.to_string(),
@@ -201,16 +203,12 @@ impl PalletNftsConfig {
                     PalletNftsTraits::OffchainPublic.to_string(),
                     "<Signature as sp_runtime::traits::Verify>::Signer".to_string(),
                 ),
-                (
-                    PalletNftsTraits::Helper.to_string(),
-                    "()".to_string(),  
-                ),
+                (PalletNftsTraits::Helper.to_string(), "()".to_string()),
                 (
                     PalletNftsTraits::WeightInfo.to_string(),
                     "pallet_nfts::weights::SubstrateWeight<Runtime>".to_string(),
                 ),
             ]
-
             .into_iter()
             .collect(),
             additional_pallet_impl_code: None,
@@ -239,32 +237,59 @@ mod tests {
     // Test case for PalletNftsTraits enum display implementation
     #[test]
     fn test_pallet_nfts_traits_display() {
-        assert_eq!(
-            PalletNftsTraits::RuntimeEvent.to_string(),
-            "RuntimeEvent"
-        );
+        assert_eq!(PalletNftsTraits::RuntimeEvent.to_string(), "RuntimeEvent");
         assert_eq!(PalletNftsTraits::CollectionId.to_string(), "CollectionId");
         assert_eq!(PalletNftsTraits::ItemId.to_string(), "ItemId");
         assert_eq!(PalletNftsTraits::Currency.to_string(), "Currency");
         assert_eq!(PalletNftsTraits::ForceOrigin.to_string(), "ForceOrigin");
         assert_eq!(PalletNftsTraits::CreateOrigin.to_string(), "CreateOrigin");
         assert_eq!(PalletNftsTraits::Locker.to_string(), "Locker");
-        assert_eq!(PalletNftsTraits::CollectionDeposit.to_string(), "CollectionDeposit");
+        assert_eq!(
+            PalletNftsTraits::CollectionDeposit.to_string(),
+            "CollectionDeposit"
+        );
         assert_eq!(PalletNftsTraits::ItemDeposit.to_string(), "ItemDeposit");
-        assert_eq!(PalletNftsTraits::MetadataDepositBase.to_string(), "MetadataDepositBase");
-        assert_eq!(PalletNftsTraits::AttributeDepositBase.to_string(), "AttributeDepositBase");
-        assert_eq!(PalletNftsTraits::DepositPerByte.to_string(), "DepositPerByte");
+        assert_eq!(
+            PalletNftsTraits::MetadataDepositBase.to_string(),
+            "MetadataDepositBase"
+        );
+        assert_eq!(
+            PalletNftsTraits::AttributeDepositBase.to_string(),
+            "AttributeDepositBase"
+        );
+        assert_eq!(
+            PalletNftsTraits::DepositPerByte.to_string(),
+            "DepositPerByte"
+        );
         assert_eq!(PalletNftsTraits::StringLimit.to_string(), "StringLimit");
         assert_eq!(PalletNftsTraits::KeyLimit.to_string(), "KeyLimit");
         assert_eq!(PalletNftsTraits::ValueLimit.to_string(), "ValueLimit");
-        assert_eq!(PalletNftsTraits::ApprovalsLimit.to_string(), "ApprovalsLimit");
-        assert_eq!(PalletNftsTraits::ItemAttributesApprovalsLimit.to_string(), "ItemAttributesApprovalsLimit");
+        assert_eq!(
+            PalletNftsTraits::ApprovalsLimit.to_string(),
+            "ApprovalsLimit"
+        );
+        assert_eq!(
+            PalletNftsTraits::ItemAttributesApprovalsLimit.to_string(),
+            "ItemAttributesApprovalsLimit"
+        );
         assert_eq!(PalletNftsTraits::MaxTips.to_string(), "MaxTips");
-        assert_eq!(PalletNftsTraits::MaxDeadlineDuration.to_string(), "MaxDeadlineDuration");
-        assert_eq!(PalletNftsTraits::MaxAttributesPerCall.to_string(), "MaxAttributesPerCall");
+        assert_eq!(
+            PalletNftsTraits::MaxDeadlineDuration.to_string(),
+            "MaxDeadlineDuration"
+        );
+        assert_eq!(
+            PalletNftsTraits::MaxAttributesPerCall.to_string(),
+            "MaxAttributesPerCall"
+        );
         assert_eq!(PalletNftsTraits::Features.to_string(), "Features");
-        assert_eq!(PalletNftsTraits::OffchainSignature.to_string(), "OffchainSignature");
-        assert_eq!(PalletNftsTraits::OffchainPublic.to_string(), "OffchainPublic");
+        assert_eq!(
+            PalletNftsTraits::OffchainSignature.to_string(),
+            "OffchainSignature"
+        );
+        assert_eq!(
+            PalletNftsTraits::OffchainPublic.to_string(),
+            "OffchainPublic"
+        );
         assert_eq!(PalletNftsTraits::Helper.to_string(), "Helper");
         assert_eq!(PalletNftsTraits::WeightInfo.to_string(), "WeightInfo");
     }
@@ -282,7 +307,7 @@ mod tests {
             pallet_nfts_config.metadata.short_description,
             "FRAME nfts pallet"
         );
-        assert_eq!(pallet_nfts_config.metadata.size, 10500);  
+        assert_eq!(pallet_nfts_config.metadata.size, 10500);
         assert_eq!(
             pallet_nfts_config.metadata.authors[0],
             CommonAuthors::ParityTechnologies
@@ -295,24 +320,21 @@ mod tests {
             pallet_nfts_config.metadata.license.clone().unwrap(),
             "Apache-2.0"
         );
-              // Ensure description matches
-              let expected_description = [
+        // Ensure description matches
+        let expected_description = [
                 "A pallet for dealing with non-fungible assets.",
                 "The NFTs pallet provides functionality for non-fungible tokens' management, including:Collection Creation, NFT Minting, NFT Transfers and Atomic Swaps, NFT Trading methods, Attributes Management, NFT Burning"
              ].join("\n");
-            assert_eq!(
-                pallet_nfts_config.metadata.description,
-                expected_description
-            );
-             // Test dependencies
+        assert_eq!(
+            pallet_nfts_config.metadata.description,
+            expected_description
+        );
+        // Test dependencies
         assert_eq!(
             pallet_nfts_config.dependencies.pallet.package,
             "pallet-nfts"
         );
-        assert_eq!(
-            pallet_nfts_config.dependencies.pallet.alias,
-            "pallet nfts"
-        );
+        assert_eq!(pallet_nfts_config.dependencies.pallet.alias, "pallet nfts");
         assert_eq!(
             pallet_nfts_config
                 .dependencies
@@ -323,12 +345,7 @@ mod tests {
             "https://github.com/paritytech/polkadot-sdk.git"
         );
         assert_eq!(
-            pallet_nfts_config
-                .dependencies
-                .pallet
-                .tag
-                .clone()
-                .unwrap(),
+            pallet_nfts_config.dependencies.pallet.tag.clone().unwrap(),
             "polkadot-v1.14.0"
         );
         // Test runtime configuration
@@ -338,35 +355,73 @@ mod tests {
         assert_eq!(runtime_traits.get("CollectionId").unwrap(), "ConstU32<100>");
         assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
         assert_eq!(runtime_traits.get("Currency").unwrap(), "Balances");
-        assert_eq!(runtime_traits.get("ForceOrigin").unwrap(), "EnsureRoot<Self::AccountId>");
-        assert_eq!(runtime_traits.get("CreateOrigin").unwrap(), "EnsureSigned<Self::AccountId>");
+        assert_eq!(
+            runtime_traits.get("ForceOrigin").unwrap(),
+            "EnsureRoot<Self::AccountId>"
+        );
+        assert_eq!(
+            runtime_traits.get("CreateOrigin").unwrap(),
+            "EnsureSigned<Self::AccountId>"
+        );
         assert_eq!(runtime_traits.get("Locker").unwrap(), "pallet_nfts::Locker");
-        assert_eq!(runtime_traits.get("CollectionDeposit").unwrap(), "ConstU128<{ 10 * 1000 }>");
-        assert_eq!(runtime_traits.get("ItemDeposit").unwrap(), "ConstU128<{ 1 * 1000 }>");
-        assert_eq!(runtime_traits.get("MetadataDepositBase").unwrap(), "ConstU128<{ 1 * 1000 }>");
-        assert_eq!(runtime_traits.get("AttributeDepositBase").unwrap(), "ConstU128<{ 1 * 1000 }>");
-        assert_eq!(runtime_traits.get("DepositPerByte").unwrap(), "ConstU128<{ 10 }>");
+        assert_eq!(
+            runtime_traits.get("CollectionDeposit").unwrap(),
+            "ConstU128<{ 10 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("ItemDeposit").unwrap(),
+            "ConstU128<{ 1 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("MetadataDepositBase").unwrap(),
+            "ConstU128<{ 1 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("AttributeDepositBase").unwrap(),
+            "ConstU128<{ 1 * 1000 }>"
+        );
+        assert_eq!(
+            runtime_traits.get("DepositPerByte").unwrap(),
+            "ConstU128<{ 10 }>"
+        );
         assert_eq!(runtime_traits.get("StringLimit").unwrap(), "ConstU32<256>");
         assert_eq!(runtime_traits.get("KeyLimit").unwrap(), "ConstU32<64>");
         assert_eq!(runtime_traits.get("ValueLimit").unwrap(), "ConstU32<256>");
-        assert_eq!(runtime_traits.get("ApprovalsLimit").unwrap(), "ConstU32<100>");
-        assert_eq!(runtime_traits.get("ItemAttributesApprovalsLimit").unwrap(), "ConstU32<100>");
+        assert_eq!(
+            runtime_traits.get("ApprovalsLimit").unwrap(),
+            "ConstU32<100>"
+        );
+        assert_eq!(
+            runtime_traits.get("ItemAttributesApprovalsLimit").unwrap(),
+            "ConstU32<100>"
+        );
         assert_eq!(runtime_traits.get("MaxTips").unwrap(), "ConstU32<10>");
-        assert_eq!(runtime_traits.get("MaxDeadlineDuration").unwrap(), "ConstU32<1000>");
-        assert_eq!(runtime_traits.get("MaxAttributesPerCall").unwrap(), "ConstU32<5>");
+        assert_eq!(
+            runtime_traits.get("MaxDeadlineDuration").unwrap(),
+            "ConstU32<1000>"
+        );
+        assert_eq!(
+            runtime_traits.get("MaxAttributesPerCall").unwrap(),
+            "ConstU32<5>"
+        );
         assert_eq!(runtime_traits.get("Features").unwrap(), "Feature");
-        assert_eq!(runtime_traits.get("OffchainSignature").unwrap(), "Signature");
-        assert_eq!(runtime_traits.get("OffchainPublic").unwrap(), "<Signature as sp_runtime::traits::Verify>::Signer");
+        assert_eq!(
+            runtime_traits.get("OffchainSignature").unwrap(),
+            "Signature"
+        );
+        assert_eq!(
+            runtime_traits.get("OffchainPublic").unwrap(),
+            "<Signature as sp_runtime::traits::Verify>::Signer"
+        );
         assert_eq!(runtime_traits.get("Helper").unwrap(), "()");
-        assert_eq!(runtime_traits.get("WeightInfo").unwrap(), "pallet_nfts::weights::SubstrateWeight<Runtime>");
+        assert_eq!(
+            runtime_traits.get("WeightInfo").unwrap(),
+            "pallet_nfts::weights::SubstrateWeight<Runtime>"
+        );
 
-          // Test runtime construct configuration
-          assert_eq!(
-            pallet_nfts_config
-                .runtime
-                .construct_runtime
-                .index
-                .unwrap(),
+        // Test runtime construct configuration
+        assert_eq!(
+            pallet_nfts_config.runtime.construct_runtime.index.unwrap(),
             14
         );
         assert_eq!(
@@ -379,4 +434,3 @@ mod tests {
         );
     }
 }
-
