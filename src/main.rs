@@ -6,6 +6,7 @@ use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
+use chrono::Utc;
 
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
@@ -27,11 +28,16 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
 
 // A function to create a new project with a list of pallets
 async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
-    let project_name = project.name.clone();
+    let mut project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
     let push_to_git = project.push_to_git.unwrap_or(false);
     let github_username = project.github_username.clone();
     let github_token = project.github_token.clone();
+    let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
+    
+
+    // Append the username and timestamp to the project name to ensure uniqueness
+    project_name = format!("{}_{}_{}", project_name, github_username, timestamp);
 
     let result = actix_web::web::block({
         let project_name = project_name.clone();
