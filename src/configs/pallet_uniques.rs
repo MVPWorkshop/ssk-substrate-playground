@@ -67,7 +67,7 @@ impl PalletUniquesConfig {
             updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
-            categories: Some(vec![PalletCategories::Uniques]),
+            categories: Some(vec![PalletCategories::NFT]),
         };
 
         let dependencies = PalletDependencyConfig {
@@ -246,7 +246,7 @@ mod tests {
         );
         assert_eq!(
             pallet_uniques_config.metadata.categories.clone().unwrap()[0],
-            PalletCategories::Uniques
+            PalletCategories::NFT
         );
         assert_eq!(
             pallet_uniques_config.metadata.license.clone().unwrap(),
