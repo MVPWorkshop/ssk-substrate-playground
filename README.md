@@ -62,12 +62,14 @@ Request Body (JSON):
 {
     "name": "your_project_name",
     "pallets": [
+        "Assets"
         "Utility",
         "Identity",
         "Multisig",
         "Proxy",
         "Uniques",
-        "Nfts"
+        "Nfts",
+        "Membership"
     ]
 }
 ```
@@ -80,7 +82,10 @@ bash
 ```
 curl -X POST http://127.0.0.1:8080/generate-project \
 -H "Content-Type: application/json" \
--d '{"name": "my_project", "pallets": ["Utility", "Identity"]}'
+-d '{"name": "my_project5", "pallets": ["Utility", "Identity", "Multisig", "Proxy", "Assets"], 
+"push_to_git": false, 
+"github_username": "test", 
+"github_token": "Github_token"}'
 ```
 
 #### Response:
