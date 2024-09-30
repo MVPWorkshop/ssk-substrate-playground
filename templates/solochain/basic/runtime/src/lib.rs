@@ -17,6 +17,15 @@ use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
+use frame_system::EnsureSigned;
+use frame_support::traits::AsEnsureOriginWithArg;
+
+
+use sp_runtime::Percent;
+use frame_support::PalletId;
+use frame_system::EnsureWithSuccess;
+use frame_support::traits::tokens::pay::PayAssetFromAccount;
+use frame_support::traits::tokens::UnityAssetBalanceConversion;
 
 pub use frame_support::{
 	construct_runtime, derive_impl, parameter_types,
@@ -377,6 +386,75 @@ impl pallet_proxy::Config for Runtime {
 	type AnnouncementDepositFactor = AnnouncementDepositFactor;
 }
 
+
+parameter_types! {
+	pub const AssetDeposit: Balance = 100 * DOLLARS;
+	pub const ApprovalDeposit: Balance = 1 * DOLLARS;
+	pub const StringLimit: u32 = 50;
+	pub const MetadataDepositBase: Balance = 10 * DOLLARS;
+	pub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+}
+
+impl pallet_assets::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type Balance = u128;
+	type AssetId = u32;
+	type AssetIdParameter = codec::Compact<u32>;
+	type Currency = Balances;
+	type CreateOrigin = AsEnsureOriginWithArg<EnsureSigned<AccountId>>;
+	type ForceOrigin = EnsureRoot<AccountId>;
+	type AssetDeposit = AssetDeposit;
+	type AssetAccountDeposit = ConstU128<DOLLARS>;
+	type MetadataDepositBase = MetadataDepositBase;
+	type MetadataDepositPerByte = MetadataDepositPerByte;
+	type ApprovalDeposit = ApprovalDeposit;
+	type StringLimit = StringLimit;
+	type Freezer = ();
+	type Extra = ();
+	type CallbackHandle = ();
+	type WeightInfo = pallet_assets::weights::SubstrateWeight<Runtime>;
+	type RemoveItemsLimit = ConstU32<1000>;
+	#[cfg(feature = "runtime-benchmarks")]
+	type BenchmarkHelper = ();
+}
+
+parameter_types! {
+	pub const SpendPeriod: BlockNumber = 1 * DAYS;
+	pub const Burn: Permill = Permill::from_percent(50);
+	pub const TipCountdown: BlockNumber = 1 * DAYS;
+	pub const TipFindersFee: Percent = Percent::from_percent(20);
+	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
+	pub const DataDepositPerByte: Balance = 1 * CENTS;
+	pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
+	pub const MaximumReasonLength: u32 = 300;
+	pub const MaxApprovals: u32 = 100;
+	pub const MaxBalance: Balance = Balance::max_value();
+	pub const SpendPayoutPeriod: BlockNumber = 30 * DAYS;
+	pub TreasuryAccount: AccountId = Treasury::account_id();
+}
+
+impl pallet_treasury::Config for Runtime {
+	type PalletId = TreasuryPalletId;
+	type Currency = Balances;
+	type RejectOrigin = EnsureRoot<AccountId>;
+	type RuntimeEvent = RuntimeEvent;
+	type SpendPeriod = SpendPeriod;
+	type Burn = Burn;
+	type BurnDestination = ();
+	type SpendFunds = ();
+	type WeightInfo = pallet_treasury::weights::SubstrateWeight<Runtime>;
+	type MaxApprovals = MaxApprovals;
+	type SpendOrigin = EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;
+	type AssetKind = u32;
+	type Beneficiary = AccountId;
+	type BeneficiaryLookup = Self::Lookup;
+	type Paymaster = PayAssetFromAccount<Assets, TreasuryAccount>;
+	type BalanceConverter = UnityAssetBalanceConversion;
+	type PayoutPeriod = SpendPayoutPeriod;
+	#[cfg(feature = "runtime-benchmarks")]
+	type BenchmarkHelper = ();
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -427,6 +505,12 @@ mod runtime {
 
 	#[runtime::pallet_index(11)]
 	pub type Proxy = pallet_proxy::Pallet<Runtime>;
+
+	#[runtime::pallet_index(14)]
+	pub type Assets = pallet_assets;
+
+	#[runtime::pallet_index(19)]
+	pub type Treasury = pallet_treasury::Pallet<Runtime>;
 }
 
 /// The address format for describing accounts.
