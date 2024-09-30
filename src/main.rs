@@ -56,14 +56,16 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     }
                     ESupportedPallets::PalletUniques => {
                         pallets.push(ESupportedPallets::PalletUniques);
-                    } 
+                    }
                     ESupportedPallets::PalletNfts => {
                         pallets.push(ESupportedPallets::PalletNfts);
                     }
                     ESupportedPallets::PalletMembership => {
                         pallets.push(ESupportedPallets::PalletMembership);
                     }
-
+                    ESupportedPallets::PalletAssets => {
+                        pallets.push(ESupportedPallets::PalletAssets);
+                    }
                     _ => continue,
                 }
             }
@@ -102,7 +104,16 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 
 // A function to return the list of supported pallets
 async fn list_supported_pallets() -> impl Responder {
-    let supported_pallets = vec!["Utility", "Identity", "Multisig", "Proxy","Nfts", "Uniques","Membership"];
+    let supported_pallets = vec![
+        "Utility",
+        "Identity",
+        "Multisig",
+        "Proxy",
+        "Nfts",
+        "Uniques",
+        "Membership",
+        "Assets",
+    ];
 
     HttpResponse::Ok().json(supported_pallets)
 }

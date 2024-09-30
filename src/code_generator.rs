@@ -1,9 +1,9 @@
 use super::configs::pallet_identity::PalletIdentityConfig;
+use super::configs::pallet_membership::PalletMembershipConfig;
+use super::configs::pallet_nfts::PalletNftsConfig;
 use super::configs::pallet_proxy::PalletProxyConfig;
 use super::configs::pallet_uniques::PalletUniquesConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
-use super::configs::pallet_nfts::PalletNftsConfig;
-use super::configs::pallet_membership::PalletMembershipConfig;
 
 use super::types::PalletConfig;
 use super::utils::file_manager::{
@@ -12,6 +12,7 @@ use super::utils::file_manager::{
 use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
+use crate::configs::pallet_assets::PalletAssetsConfig;
 use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::types::ESupportedPallets;
 use log::{error, info};
@@ -228,7 +229,6 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                     dependencies: config.dependencies.clone(),
                 };
                 pallets_config.push(pallet_config);
-
             }
             ESupportedPallets::PalletMembership => {
                 // Get configuration for the Membership pallet.
@@ -245,6 +245,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletNfts => {
                 // Get configuration for the uniques pallet.
                 let config = PalletNftsConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletAssets => {
+                // Get configuration for the assets pallet.
+                let config = PalletAssetsConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,
