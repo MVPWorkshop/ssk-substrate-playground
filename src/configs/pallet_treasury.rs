@@ -91,7 +91,7 @@ impl PalletTreasuryConfig {
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
                 index: Some(16),
-                runtime: ("Assets".to_string(), "pallet_treasury".to_string()),
+                runtime: ("Treasury".to_string(), "pallet_treasury".to_string()),
             },
             pallet_traits: vec![
                 (
@@ -133,7 +133,7 @@ impl PalletTreasuryConfig {
                 ),
                 (
                     PalletTreasuryTraits::SpendOrigin.to_string(),
-                    "EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>;".to_string(),
+                    "EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>".to_string(),
                 ),
                 (
                     PalletTreasuryTraits::AssetKind.to_string(),
@@ -193,7 +193,7 @@ parameter_types! {
 	pub const TipFindersFee: Percent = Percent::from_percent(20);
 	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
 	pub const DataDepositPerByte: Balance = 1 * CENTS;
-	pub const TreasuryPalletId: PalletId = PalletId(*b'py/trsry');
+	pub const TreasuryPalletId: PalletId = PalletId(*b\"py/trsry\");
 	pub const MaximumReasonLength: u32 = 300;
 	pub const MaxApprovals: u32 = 100;
 	pub const MaxBalance: Balance = Balance::max_value();

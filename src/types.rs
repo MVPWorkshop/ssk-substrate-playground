@@ -126,6 +126,7 @@ pub enum ESupportedPallets {
     PalletNfts,
     PalletMembership,
     PalletAssets,
+    PalletTreasury,
     Unknown,
 }
 
@@ -135,6 +136,7 @@ impl TryFrom<&str> for ESupportedPallets {
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         match value {
             "Assets" => Ok(ESupportedPallets::PalletAssets),
+            "Treasury" => Ok(ESupportedPallets::PalletTreasury),
             "Utility" => Ok(ESupportedPallets::PalletUtility),
             "Identity" => Ok(ESupportedPallets::PalletIdentity),
             "Multisig" => Ok(ESupportedPallets::PalletMultisig),
