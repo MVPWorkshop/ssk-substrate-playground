@@ -269,6 +269,32 @@ pub fn push_to_github(
 
 
 
+        // Initialize Git repository in the project directory
+    let init_output = Command::new("git")
+        .arg("init")
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            println!(
+                "Failed to initialize Git repository in '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to initialize Git repository: {:?}",
+                e
+            ))
+        })?;
+
+    // Check if Git initialization was successful
+    if !init_output.status.success() {
+        println!("Git initialization failed for directory '{}'.", project_dir);
+        return Ok(HttpResponse::InternalServerError().body("Git initialization failed"));
+    }
+
+    println!(
+        "Git repository successfully initialized in '{}'.",
+        project_dir
+    );
 
     // Set Git user email and name
     let config_email_output = Command::new("git")
@@ -327,32 +353,7 @@ pub fn push_to_github(
 
 
 
-    // Initialize Git repository in the project directory
-    let init_output = Command::new("git")
-        .arg("init")
-        .current_dir(&project_dir)
-        .output()
-        .map_err(|e| {
-            println!(
-                "Failed to initialize Git repository in '{}': {:?}",
-                project_dir, e
-            );
-            actix_web::error::ErrorInternalServerError(format!(
-                "Failed to initialize Git repository: {:?}",
-                e
-            ))
-        })?;
 
-    // Check if Git initialization was successful
-    if !init_output.status.success() {
-        println!("Git initialization failed for directory '{}'.", project_dir);
-        return Ok(HttpResponse::InternalServerError().body("Git initialization failed"));
-    }
-
-    println!(
-        "Git repository successfully initialized in '{}'.",
-        project_dir
-    );
 
     // Add all files in the project directory to the Git repository
     let add_output = Command::new("git")
