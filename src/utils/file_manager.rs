@@ -256,6 +256,7 @@ fn add_to_zip(
 pub fn push_to_github(
     project_name: &str,
     github_username: &str,
+    github_email: &str,
     github_token: &str,
 ) -> Result<HttpResponse, Error> {
     // Construct the project directory path
@@ -265,6 +266,66 @@ pub fn push_to_github(
     if !Path::new(&project_dir).exists() {
         return Ok(HttpResponse::NotFound().body(format!("Project {} not found", project_dir)));
     }
+
+
+
+
+    // Set Git user email and name
+    let config_email_output = Command::new("git")
+        .arg("config")
+        .arg("user.email")
+        .arg(github_email)
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            error!(
+                "Failed to set Git user email in '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to set Git user email: {:?}",
+                e
+            ))
+        })?;
+
+    if !config_email_output.status.success() {
+        error!(
+            "Git 'config user.email' failed in directory '{}'. Output: {:?}",
+            project_dir,
+            String::from_utf8_lossy(&config_email_output.stderr)
+        );
+        return Ok(HttpResponse::InternalServerError().body("Git config user.email failed"));
+    }
+
+    let config_name_output = Command::new("git")
+        .arg("config")
+        .arg("user.name")
+        .arg(github_username)
+        .current_dir(&project_dir)
+        .output()
+        .map_err(|e| {
+            error!(
+                "Failed to set Git user name in '{}': {:?}",
+                project_dir, e
+            );
+            actix_web::error::ErrorInternalServerError(format!(
+                "Failed to set Git user name: {:?}",
+                e
+            ))
+        })?;
+
+    if !config_name_output.status.success() {
+        error!(
+            "Git 'config user.name' failed in directory '{}'. Output: {:?}",
+            project_dir,
+            String::from_utf8_lossy(&config_name_output.stderr)
+        );
+        return Ok(HttpResponse::InternalServerError().body("Git config user.name failed"));
+    }
+
+
+
+
 
     // Initialize Git repository in the project directory
     let init_output = Command::new("git")
