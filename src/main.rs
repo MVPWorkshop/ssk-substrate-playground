@@ -75,6 +75,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletBounties => {
                         pallets.push(ESupportedPallets::PalletBounties);
                     }
+                    ESupportedPallets::PalletTreasury => {
+                        pallets.push(ESupportedPallets::PalletTreasury);
+                    }
                     _ => continue,
                 }
             }
@@ -114,6 +117,8 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 // A function to return the list of supported pallets
 async fn list_supported_pallets() -> impl Responder {
     let supported_pallets = vec![
+        "Assets",
+        "Treasury",
         "Utility",
         "Identity",
         "Multisig",
@@ -121,7 +126,6 @@ async fn list_supported_pallets() -> impl Responder {
         "Nfts",
         "Uniques",
         "Membership",
-        "Assets",
     ];
 
     HttpResponse::Ok().json(supported_pallets)
