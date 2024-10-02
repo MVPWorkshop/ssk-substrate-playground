@@ -128,6 +128,7 @@ pub enum ESupportedPallets {
     PalletAssets,
     PalletBounties,
     PalletTreasury,
+    PalletCollective,
     Unknown,
 }
 
@@ -146,6 +147,7 @@ impl TryFrom<&str> for ESupportedPallets {
             "Nfts" => Ok(ESupportedPallets::PalletNfts),
             "Membership" => Ok(ESupportedPallets::PalletMembership),
             "Bounties" => Ok(ESupportedPallets::PalletBounties),
+            "Collective" => Ok(ESupportedPallets::PalletCollective),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
