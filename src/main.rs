@@ -75,6 +75,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletTreasury => {
                         pallets.push(ESupportedPallets::PalletTreasury);
                     }
+                    ESupportedPallets::PalletChildBounties => {
+                        pallets.push(ESupportedPallets::PalletChildBounties);
+                    }
                     _ => continue,
                 }
             }
@@ -123,6 +126,7 @@ async fn list_supported_pallets() -> impl Responder {
         "Nfts",
         "Uniques",
         "Membership",
+        "ChildBounties",
     ];
 
     HttpResponse::Ok().json(supported_pallets)
