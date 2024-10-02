@@ -76,6 +76,7 @@ pallet-multisig = { git = 'https://github.com/paritytech/polkadot-sdk.git', tag 
 pallet-proxy = { git = 'https://github.com/paritytech/polkadot-sdk.git', tag = 'polkadot-v1.14.0', default-features = false }
 pallet-assets = { git = 'https://github.com/paritytech/polkadot-sdk.git', tag = 'polkadot-v1.14.0', default-features = false }
 pallet-treasury = { git = 'https://github.com/paritytech/polkadot-sdk.git', tag = 'polkadot-v1.14.0', default-features = false }
+pallet-vesting = { git = 'https://github.com/paritytech/polkadot-sdk.git', tag = 'polkadot-v1.14.0', default-features = false }
 
 
 [build-dependencies]
@@ -106,6 +107,7 @@ std = [
 	"pallet-proxy/std",
 	"pallet-assets/std",
 	"pallet-treasury/std",
+	"pallet-vesting/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
