@@ -15,6 +15,7 @@ struct NewProject {
     pallets: Vec<String>,
     push_to_git: Option<bool>,
     github_username: String,
+    github_email: String,
     github_token: String,
 }
 
@@ -32,6 +33,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
     let pallet_names = project.pallets.clone();
     let push_to_git = project.push_to_git.unwrap_or(false);
     let github_username = project.github_username.clone();
+    let github_email = project.github_email.clone();
     let github_token = project.github_token.clone();
     let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
     
@@ -99,7 +101,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
             }
         }
         // Attempt to push the code to GitHub
-        match push_to_github(&project_name, &github_username, &github_token) {
+        match push_to_github(&project_name, &github_username, &github_email,&github_token) {
             Ok(_) => println!("Successfully pushed to GitHub"), // Log success when the push is successful
             Err(e) => {
                 return HttpResponse::InternalServerError()
