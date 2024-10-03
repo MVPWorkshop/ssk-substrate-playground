@@ -296,7 +296,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 pallets_config.push(pallet_config);
             }
             ESupportedPallets::PalletChildBounties => {
-                // Get configuration for the treasury pallet.
+                // Get configuration for the child bounties pallet.
                 let config = PalletChildBountiesConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
