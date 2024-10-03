@@ -7,6 +7,8 @@ pub mod configs {
     pub mod pallet_assets;
     pub mod pallet_aura;
     pub mod pallet_balances;
+    pub mod pallet_bounties;
+    pub mod pallet_child_bounties;
     pub mod pallet_grandpa;
     pub mod pallet_identity;
     pub mod pallet_membership;
@@ -21,6 +23,7 @@ pub mod configs {
     pub mod pallet_utility;
     pub mod pallet_bounties;
     pub mod pallet_collective;
+    pub mod pallet_vesting;
 }
 
 pub mod utils {

@@ -60,7 +60,7 @@ impl PalletBountiesConfig {
             updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
-            categories: Some(vec![PalletCategories::Governance]),  
+            categories: Some(vec![PalletCategories::Governance]),
         };
 
         let dependencies = PalletDependencyConfig {
@@ -85,59 +85,58 @@ impl PalletBountiesConfig {
                 ),
             },
             pallet_traits: vec![
-                    (
-                        PalletBountiesTraits::RuntimeEvent.to_string(),
-                        "RuntimeEvent".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::BountyDepositBase.to_string(),
-                        "Get<BalanceOf<Self, I>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::BountyDepositPayoutDelay.to_string(),
-                        "Get<BlockNumberFor<Self>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::BountyUpdatePeriod.to_string(),
-                        "Get<BlockNumberFor<Self>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::CuratorDepositMultiplier.to_string(),
-                        "Get<Permill>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::CuratorDepositMax.to_string(),
-                        "Get<Option<BalanceOf<Self, I>>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::CuratorDepositMin.to_string(),
-                        "Get<Option<BalanceOf<Self, I>>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::BountyValueMinimum.to_string(),
-                        "Get<BalanceOf<Self, I>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::DataDepositPerByte.to_string(),
-                        "Get<BalanceOf<Self, I>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::MaximumReasonLength.to_string(),
-                        "Get<u32>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::WeightInfo.to_string(),
-                        "pallet_bounties::weights::SubstrateWeight<Runtime>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::ChildBountyManager.to_string(),
-                        "ChildBountyManager<BalanceOf<Self, I>>".to_string(),
-                    ),
-                    (
-                        PalletBountiesTraits::OnSlash.to_string(),
-                        "OnUnbalanced<pallet_treasury::NegativeImbalanceOf<Self, I>>".to_string(),
-                    ),
-                
+                (
+                    PalletBountiesTraits::RuntimeEvent.to_string(),
+                    "RuntimeEvent".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::BountyDepositBase.to_string(),
+                    "Get<BalanceOf<Self, I>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::BountyDepositPayoutDelay.to_string(),
+                    "Get<BlockNumberFor<Self>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::BountyUpdatePeriod.to_string(),
+                    "Get<BlockNumberFor<Self>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::CuratorDepositMultiplier.to_string(),
+                    "Get<Permill>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::CuratorDepositMax.to_string(),
+                    "Get<Option<BalanceOf<Self, I>>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::CuratorDepositMin.to_string(),
+                    "Get<Option<BalanceOf<Self, I>>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::BountyValueMinimum.to_string(),
+                    "Get<BalanceOf<Self, I>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::DataDepositPerByte.to_string(),
+                    "Get<BalanceOf<Self, I>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::MaximumReasonLength.to_string(),
+                    "Get<u32>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::WeightInfo.to_string(),
+                    "pallet_bounties::weights::SubstrateWeight<Runtime>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::ChildBountyManager.to_string(),
+                    "ChildBountyManager<BalanceOf<Self, I>>".to_string(),
+                ),
+                (
+                    PalletBountiesTraits::OnSlash.to_string(),
+                    "OnUnbalanced<pallet_treasury::NegativeImbalanceOf<Self, I>>".to_string(),
+                ),
             ]
             .into_iter()
             .collect(),
@@ -159,7 +158,6 @@ impl PalletBountiesConfig {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -221,32 +219,26 @@ mod tests {
     fn test_pallet_bounties_config_new() {
         let pallet_bounties_config = PalletBountiesConfig::new();
 
-       
         assert_eq!(pallet_bounties_config.name, "Pallet bounties");
 
-        
         assert_eq!(
             pallet_bounties_config.metadata.short_description,
             "FRAME bounties pallet"
         );
-        assert_eq!(pallet_bounties_config.metadata.size, 10500); 
+        assert_eq!(pallet_bounties_config.metadata.size, 10500);
         assert_eq!(
             pallet_bounties_config.metadata.authors[0],
             CommonAuthors::ParityTechnologies
         );
         assert_eq!(
-            pallet_bounties_config
-                .metadata
-                .categories
-                .clone()
-                .unwrap()[0],
+            pallet_bounties_config.metadata.categories.clone().unwrap()[0],
             PalletCategories::Governance
         );
         assert_eq!(
             pallet_bounties_config.metadata.license.clone().unwrap(),
             "Apache-2.0"
         );
-        
+
         // Ensure description matches
         let expected_description = [
            "The Bounties pallet facilitates the management and payout of rewards for completing specific tasks or objectives, with a curator overseeing the process, and the ability to create child bounties for splitting larger tasks. It works closely with the Treasury pallet."
@@ -324,7 +316,10 @@ mod tests {
             runtime_traits.get("MaximumReasonLength").unwrap(),
             "Get<u32>"
         );
-        assert_eq!(runtime_traits.get("WeightInfo").unwrap(), "pallet_bounties::weights::SubstrateWeight<Runtime>");
+        assert_eq!(
+            runtime_traits.get("WeightInfo").unwrap(),
+            "pallet_bounties::weights::SubstrateWeight<Runtime>"
+        );
         assert_eq!(
             runtime_traits.get("ChildBountyManager").unwrap(),
             "ChildBountyManager<BalanceOf<Self, I>>"

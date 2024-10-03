@@ -1,10 +1,11 @@
+use super::configs::pallet_bounties::PalletBountiesConfig;
+use super::configs::pallet_child_bounties::PalletChildBountiesConfig;
 use super::configs::pallet_identity::PalletIdentityConfig;
 use super::configs::pallet_membership::PalletMembershipConfig;
 use super::configs::pallet_nfts::PalletNftsConfig;
 use super::configs::pallet_proxy::PalletProxyConfig;
 use super::configs::pallet_uniques::PalletUniquesConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
-use super::configs::pallet_bounties::PalletBountiesConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
@@ -16,6 +17,7 @@ use crate::configs::pallet_assets::PalletAssetsConfig;
 use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_collective::PalletCollectiveConfig;
+use crate::configs::pallet_vesting::PalletVestingConfig;
 use crate::types::ESupportedPallets;
 use log::{error, info};
 use std::path::Path;
@@ -272,7 +274,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletBounties => {
                 // Get configuration for the bounties pallet.
                 let config = PalletBountiesConfig::new();
-               // Create a pallet configuration and add it to the list.
+                // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,
                     metadata: config.metadata,
@@ -281,8 +283,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 };
                 pallets_config.push(pallet_config);
             }
-              
-              
+
             ESupportedPallets::PalletTreasury => {
                 // Get configuration for the treasury pallet.
                 let config = PalletTreasuryConfig::new();
@@ -298,6 +299,30 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletCollective => {
                 // Get configuration for the treasury pallet.
                 let config = PalletCollectiveConfig::new();
+               // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletChildBounties => {
+                // Get configuration for the child bounties pallet.
+                let config = PalletChildBountiesConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletVesting => {
+                // Get configuration for the vesting pallet.
+                let config = PalletVestingConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,

@@ -1,4 +1,5 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use substrate_runtime_builder::code_generator::generate_project;
 use substrate_runtime_builder::db_models::insert_pallet_data_to_db;
@@ -6,7 +7,6 @@ use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
-use chrono::Utc;
 
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
@@ -36,7 +36,6 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
     let github_email = project.github_email.clone();
     let github_token = project.github_token.clone();
     let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
-    
 
     // Append the username and timestamp to the project name to ensure uniqueness
     project_name = format!("{}_{}_{}", project_name, github_username, timestamp);
@@ -83,6 +82,12 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletCollective => {
                         pallets.push(ESupportedPallets::PalletCollective);
                     }
+                    ESupportedPallets::PalletChildBounties => {
+                        pallets.push(ESupportedPallets::PalletChildBounties);
+                    }
+                    ESupportedPallets::PalletVesting => {
+                        pallets.push(ESupportedPallets::PalletVesting);
+                    }
                     _ => continue,
                 }
             }
@@ -104,7 +109,12 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
             }
         }
         // Attempt to push the code to GitHub
-        match push_to_github(&project_name, &github_username, &github_email,&github_token) {
+        match push_to_github(
+            &project_name,
+            &github_username,
+            &github_email,
+            &github_token,
+        ) {
             Ok(_) => println!("Successfully pushed to GitHub"), // Log success when the push is successful
             Err(e) => {
                 return HttpResponse::InternalServerError()
@@ -123,7 +133,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
 async fn list_supported_pallets() -> impl Responder {
     let supported_pallets = vec![
         "Assets",
+        "Bounties",
         "Treasury",
+        "Vesting",
         "Utility",
         "Identity",
         "Multisig",
@@ -132,6 +144,7 @@ async fn list_supported_pallets() -> impl Responder {
         "Uniques",
         "Membership",
         "Collective",
+        "ChildBounties",
     ];
 
     HttpResponse::Ok().json(supported_pallets)
