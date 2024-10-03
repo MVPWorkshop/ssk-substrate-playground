@@ -4,6 +4,7 @@ use super::configs::pallet_nfts::PalletNftsConfig;
 use super::configs::pallet_proxy::PalletProxyConfig;
 use super::configs::pallet_uniques::PalletUniquesConfig;
 use super::configs::pallet_utility::PalletUtilityConfig;
+use super::configs::pallet_child_bounties::PalletChildBountiesConfig;
 use super::configs::pallet_bounties::PalletBountiesConfig;
 use super::types::PalletConfig;
 use super::utils::file_manager::{
@@ -285,6 +286,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletTreasury => {
                 // Get configuration for the treasury pallet.
                 let config = PalletTreasuryConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletChildBounties => {
+                // Get configuration for the child bounties pallet.
+                let config = PalletChildBountiesConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,

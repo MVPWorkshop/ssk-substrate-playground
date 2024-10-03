@@ -19,6 +19,7 @@ pub mod configs {
     pub mod pallet_treasury;
     pub mod pallet_uniques;
     pub mod pallet_utility;
+    pub mod pallet_child_bounties;
     pub mod pallet_bounties;
 }
 
