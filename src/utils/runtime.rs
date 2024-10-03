@@ -21,7 +21,7 @@ struct RegexCollection {
     genesis_config: Regex,
     runtime_api: Regex,
 }
-
+#[allow(unused_variables)]
 impl SubstrateRuntimeUtil {
     pub fn new(pallet_config: PalletConfig, runtime_code: String, chain_spec_code: String) -> Self {
         let regex = RegexCollection {
@@ -66,48 +66,43 @@ impl SubstrateRuntimeUtil {
     }
 
     fn add_pallet_traits(&mut self) {
-        let mut trait_implementation = format!(
-            "\nimpl {}::Config for Runtime {{\n",
-            to_snake_case(&self.pallet_alias())
-        );
-        // let mut parameter_types = String::from("parameter_types! {\n");
-
+        let mut trait_implementation = String::new();
         let mut custom_parameter_counter = 0;
 
-        for (trait_name, trait_value) in &self.pallet_config.runtime.pallet_traits {
-            if trait_value.is_empty() {
-                trait_implementation.push_str(&format!(
-                    "{}type {} = {};\n",
-                    tabs(1),
-                    trait_name,
-                    trait_value
-                ));
-            } else {
-                let param_name = trait_value.clone();
+        println!("{}", self.pallet_config.runtime.pallet_traits.len());
 
-                // Commented the code for parameter types for pallet trait configs.
-                // parameter_types.push_str(&format!(
-                //     "{}pub {} {}: {} = {};\n",
-                //     tabs(1),
-                //     if trait_value.is_empty() { "" } else { "const" },
-                //     param_name,
-                //     trait_value.clone(),
-                //     trait_value.clone(),
-                // ));
+        if self.pallet_config.runtime.pallet_traits.len() > 0 {
+            trait_implementation = format!(
+                "\nimpl {}::Config for Runtime {{\n",
+                to_snake_case(&self.pallet_alias())
+            );
 
-                trait_implementation.push_str(&format!(
-                    "{}type {} = {};\n",
-                    tabs(1),
-                    trait_name,
-                    param_name
-                ));
+            for (trait_name, trait_value) in &self.pallet_config.runtime.pallet_traits {
+                if trait_value.is_empty() {
+                    trait_implementation.push_str(&format!(
+                        "{}type {} = {};\n",
+                        tabs(1),
+                        trait_name,
+                        trait_value
+                    ));
+                } else {
+                    let param_name = trait_value.clone();
 
-                custom_parameter_counter += 1;
+                    trait_implementation.push_str(&format!(
+                        "{}type {} = {};\n",
+                        tabs(1),
+                        trait_name,
+                        param_name
+                    ));
+
+                    custom_parameter_counter += 1;
+                }
             }
+
+            trait_implementation.push_str("}\n");
         }
 
-        trait_implementation.push_str("}\n");
-        // parameter_types.push_str("}\n\n");
+        println!("{}", trait_implementation);
 
         let current_construct_runtime = self
             .regex
@@ -131,10 +126,7 @@ impl SubstrateRuntimeUtil {
                 + &trait_implementation;
         }
 
-        if custom_parameter_counter > 0 {
-            // construct_runtime = parameter_types + &construct_runtime;
-            construct_runtime = construct_runtime;
-        }
+        construct_runtime = construct_runtime;
 
         self.update_construct_runtime(current_construct_runtime, construct_runtime);
     }
