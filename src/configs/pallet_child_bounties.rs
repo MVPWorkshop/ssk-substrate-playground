@@ -14,8 +14,12 @@ impl fmt::Display for PalletChildBountiesTraits {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             PalletChildBountiesTraits::RuntimeEvent => write!(f, "RuntimeEvent"),
-            PalletChildBountiesTraits::MaxActiveChildBountyCount => write!(f, "MaxActiveChildBountyCount"),
-            PalletChildBountiesTraits::ChildBountyValueMinimum => write!(f, "ChildBountyValueMinimum"),
+            PalletChildBountiesTraits::MaxActiveChildBountyCount => {
+                write!(f, "MaxActiveChildBountyCount")
+            }
+            PalletChildBountiesTraits::ChildBountyValueMinimum => {
+                write!(f, "ChildBountyValueMinimum")
+            }
             PalletChildBountiesTraits::WeightInfo => write!(f, "WeightInfo"),
         }
     }
@@ -39,7 +43,7 @@ impl PalletChildBountiesConfig {
             description: pallet_description,
             short_description: "FRAME child bounties pallet".to_string(),
             compatibility: SubstrateVersion::Two,
-            size: 10500, 
+            size: 10500,
             updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
@@ -74,7 +78,7 @@ impl PalletChildBountiesConfig {
                 ),
                 (
                     PalletChildBountiesTraits::MaxActiveChildBountyCount.to_string(),
-                    "ConstU32<5>".to_string(),  
+                    "ConstU32<5>".to_string(),
                 ),
                 (
                     PalletChildBountiesTraits::ChildBountyValueMinimum.to_string(),
@@ -96,7 +100,7 @@ impl PalletChildBountiesConfig {
             ]),
             runtime_api_code: None,
         };
-        
+
         PalletChildBountiesConfig {
             name: "Pallet child bounties".to_string(),
             metadata,
