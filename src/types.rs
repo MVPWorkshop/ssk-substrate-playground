@@ -129,6 +129,7 @@ pub enum ESupportedPallets {
     PalletBounties,
     PalletTreasury,
     PalletChildBounties,
+    PalletVesting,
     Unknown,
 }
 
@@ -139,6 +140,7 @@ impl TryFrom<&str> for ESupportedPallets {
         match value {
             "Assets" => Ok(ESupportedPallets::PalletAssets),
             "Treasury" => Ok(ESupportedPallets::PalletTreasury),
+            "Vesting" => Ok(ESupportedPallets::PalletVesting),
             "Utility" => Ok(ESupportedPallets::PalletUtility),
             "Identity" => Ok(ESupportedPallets::PalletIdentity),
             "Multisig" => Ok(ESupportedPallets::PalletMultisig),
