@@ -69,8 +69,6 @@ impl SubstrateRuntimeUtil {
         let mut trait_implementation = String::new();
         let mut custom_parameter_counter = 0;
 
-        println!("{}", self.pallet_config.runtime.pallet_traits.len());
-
         if self.pallet_config.runtime.pallet_traits.len() > 0 {
             trait_implementation = format!(
                 "\nimpl {}::Config for Runtime {{\n",
@@ -101,8 +99,6 @@ impl SubstrateRuntimeUtil {
 
             trait_implementation.push_str("}\n");
         }
-
-        println!("{}", trait_implementation);
 
         let current_construct_runtime = self
             .regex
