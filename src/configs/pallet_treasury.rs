@@ -91,7 +91,10 @@ impl PalletTreasuryConfig {
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
                 index: Some(16),
-                runtime: ("Treasury".to_string(), "pallet_treasury".to_string()),
+                runtime: (
+                    "Treasury".to_string(),
+                    "pallet_treasury::Pallet<Runtime>".to_string(),
+                ),
             },
             pallet_traits: vec![
                 (

@@ -143,10 +143,9 @@ impl PalletBountiesConfig {
             genesis_config: None,
             additional_pallet_impl_code: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![
-                String::from("use pallet_bounties::legacy::BountiesInfo;"),
-                String::from("use frame_system::EnsureRoot;"),
-            ]),
+            additional_runtime_lib_code: Some(vec![String::from(
+                "use pallet_bounties::legacy::BountiesInfo;",
+            )]),
             runtime_api_code: None,
         };
 

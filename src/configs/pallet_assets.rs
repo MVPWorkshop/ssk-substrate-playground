@@ -94,7 +94,10 @@ impl PalletAssetsConfig {
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
                 index: Some(15),
-                runtime: ("Assets".to_string(), "pallet_assets".to_string()),
+                runtime: (
+                    "Assets".to_string(),
+                    "pallet_assets::Pallet<Runtime>".to_string(),
+                ),
             },
             pallet_traits: vec![
                 (
@@ -163,10 +166,9 @@ impl PalletAssetsConfig {
             additional_pallet_impl_code: Some(get_additional_implementation_code()),
             genesis_config: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![
-                String::from("use frame_support::traits::AsEnsureOriginWithArg;"),
-                String::from("use frame_system::EnsureSigned;"),
-            ]),
+            additional_runtime_lib_code: Some(vec![String::from(
+                "use frame_support::traits::AsEnsureOriginWithArg;",
+            )]),
             runtime_api_code: None,
         };
 

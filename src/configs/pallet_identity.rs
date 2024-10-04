@@ -175,10 +175,9 @@ impl PalletIdentityConfig {
             additional_pallet_impl_code: None,
             genesis_config: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![
-                String::from("use pallet_identity::legacy::IdentityInfo;"),
-                String::from("use frame_system::EnsureRoot;"),
-            ]),
+            additional_runtime_lib_code: Some(vec![String::from(
+                "use pallet_identity::legacy::IdentityInfo;",
+            )]),
             runtime_api_code: None,
         };
 
@@ -412,10 +411,6 @@ mod tests {
         assert_eq!(
             additional_runtime_lib_code[0],
             "use pallet_identity::legacy::IdentityInfo;"
-        );
-        assert_eq!(
-            additional_runtime_lib_code[1],
-            "use frame_system::EnsureRoot;"
         );
     }
 }

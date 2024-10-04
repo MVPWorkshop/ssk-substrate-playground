@@ -65,7 +65,7 @@ impl PalletUtilityConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(8),
+                index: Some(19),
                 runtime: (
                     "Utility".to_string(),
                     "pallet_utility::Pallet<Runtime>".to_string(),
@@ -210,7 +210,7 @@ mod tests {
                 .construct_runtime
                 .index
                 .unwrap(),
-            8
+            19
         );
         assert_eq!(
             pallet_utility_config.runtime.construct_runtime.runtime.0,

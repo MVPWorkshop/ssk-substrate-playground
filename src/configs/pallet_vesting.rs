@@ -82,7 +82,7 @@ impl PalletVestingConfig {
             additional_chain_spec_code: None,
             additional_runtime_lib_code: Some(vec![
                 String::from("use frame_support::traits::WithdrawReasons;"),
-                String::from("use sp_runtime::traits::{ConvertInto};"),
+                String::from("use sp_runtime::traits::ConvertInto;"),
             ]),
             runtime_api_code: None,
         };

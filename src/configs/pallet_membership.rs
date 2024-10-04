@@ -124,10 +124,9 @@ impl PalletMembershipConfig {
             genesis_config: None,
             additional_pallet_impl_code: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![
-                String::from("use pallet_membership::legacy::MembershipInfo;"),
-                String::from("use frame_system::EnsureRoot;"),
-            ]),
+            additional_runtime_lib_code: Some(vec![String::from(
+                "use pallet_membership::legacy::MembershipInfo;",
+            )]),
             runtime_api_code: None,
         };
 
