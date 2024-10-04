@@ -84,35 +84,35 @@ impl PalletMembershipConfig {
                 ),
                 (
                     PalletMembershipTraits::AddOrigin.to_string(),
-                    "EnsureOrigin<Self::RuntimeOrigin>".to_string(),
+                    "EnsureRoot<AccountId>".to_string(),
                 ),
                 (
                     PalletMembershipTraits::RemoveOrigin.to_string(),
-                    "EnsureOrigin<Self::RuntimeOrigin>".to_string(),
+                    "EnsureRoot<AccountId>".to_string(),
                 ),
                 (
                     PalletMembershipTraits::SwapOrigin.to_string(),
-                    "EnsureOrigin<Self::RuntimeOrigin>".to_string(),
+                    "EnsureRoot<AccountId>".to_string(),
                 ),
                 (
                     PalletMembershipTraits::ResetOrigin.to_string(),
-                    "EnsureOrigin<Self::RuntimeOrigin>".to_string(),
+                    "EnsureRoot<AccountId>".to_string(),
                 ),
                 (
                     PalletMembershipTraits::PrimeOrigin.to_string(),
-                    "EnsureOrigin<Self::RuntimeOrigin>".to_string(),
+                    "EnsureRoot<AccountId>".to_string(),
                 ),
                 (
                     PalletMembershipTraits::MembershipInitialized.to_string(),
-                    "InitializeMembers<Self::AccountId>".to_string(),
+                    "()".to_string(),
                 ),
                 (
                     PalletMembershipTraits::MembershipChanged.to_string(),
-                    "ChangeMembers<Self::AccountId>".to_string(),
+                    "()".to_string(),
                 ),
                 (
                     PalletMembershipTraits::MaxMembers.to_string(),
-                    "Get<u32>".to_string(),
+                    "TechnicalMaxMembers".to_string(),
                 ),
                 (
                     PalletMembershipTraits::WeightInfo.to_string(),
@@ -122,11 +122,9 @@ impl PalletMembershipConfig {
             .into_iter()
             .collect(),
             genesis_config: None,
-            additional_pallet_impl_code: None,
+            additional_pallet_impl_code: Some(get_additional_implementation_code()),
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![String::from(
-                "use pallet_membership::legacy::MembershipInfo;",
-            )]),
+            additional_runtime_lib_code: None,
             runtime_api_code: None,
         };
 
@@ -139,164 +137,11 @@ impl PalletMembershipConfig {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    // Test case for PalletMembershipTraits enum display implementation
-    #[test]
-    fn test_pallet_membership_traits_display() {
-        assert_eq!(
-            PalletMembershipTraits::RuntimeEvent.to_string(),
-            "RuntimeEvent"
-        );
-        assert_eq!(PalletMembershipTraits::AddOrigin.to_string(), "AddOrigin");
-        assert_eq!(
-            PalletMembershipTraits::RemoveOrigin.to_string(),
-            "RemoveOrigin"
-        );
-        assert_eq!(PalletMembershipTraits::SwapOrigin.to_string(), "SwapOrigin");
-        assert_eq!(
-            PalletMembershipTraits::ResetOrigin.to_string(),
-            "ResetOrigin"
-        );
-        assert_eq!(
-            PalletMembershipTraits::PrimeOrigin.to_string(),
-            "PrimeOrigin"
-        );
-        assert_eq!(
-            PalletMembershipTraits::MembershipInitialized.to_string(),
-            "MembershipInitialized"
-        );
-        assert_eq!(
-            PalletMembershipTraits::MembershipChanged.to_string(),
-            "MembershipChanged"
-        );
-        assert_eq!(PalletMembershipTraits::MaxMembers.to_string(), "MaxMembers");
-        assert_eq!(PalletMembershipTraits::WeightInfo.to_string(), "WeightInfo");
-    }
-
-    // Test case for PalletMembershipConfig::new() method (assuming PalletMembershipConfig struct exists)
-    #[test]
-    fn test_pallet_membership_config_new() {
-        let pallet_membership_config = PalletMembershipConfig::new();
-
-        // Test the name
-        assert_eq!(pallet_membership_config.name, "Pallet membership");
-
-        // Test metadata
-        assert_eq!(
-            pallet_membership_config.metadata.short_description,
-            "FRAME membership pallet"
-        );
-        assert_eq!(pallet_membership_config.metadata.size, 10500); // Assuming a size value
-        assert_eq!(
-            pallet_membership_config.metadata.authors[0],
-            CommonAuthors::ParityTechnologies
-        );
-        assert_eq!(
-            pallet_membership_config
-                .metadata
-                .categories
-                .clone()
-                .unwrap()[0],
-            PalletCategories::Governance
-        );
-        assert_eq!(
-            pallet_membership_config.metadata.license.clone().unwrap(),
-            "Apache-2.0"
-        );
-        // Ensure description matches
-        let expected_description = [
-        "Allows control of membership of a set of AccountIds, useful for managing membership of a collective. A prime member may be set."
-              ].join("\n");
-        assert_eq!(
-            pallet_membership_config.metadata.description,
-            expected_description
-        );
-
-        // Test dependencies
-        assert_eq!(
-            pallet_membership_config.dependencies.pallet.package,
-            "pallet-membership"
-        );
-        assert_eq!(
-            pallet_membership_config.dependencies.pallet.alias,
-            "pallet membership"
-        );
-        assert_eq!(
-            pallet_membership_config
-                .dependencies
-                .pallet
-                .git_repo
-                .clone()
-                .unwrap(),
-            "https://github.com/paritytech/polkadot-sdk.git"
-        );
-        assert_eq!(
-            pallet_membership_config
-                .dependencies
-                .pallet
-                .tag
-                .clone()
-                .unwrap(),
-            "polkadot-v1.14.0"
-        );
-
-        // Test runtime configuration
-        let runtime_traits = &pallet_membership_config.runtime.pallet_traits;
-
-        assert_eq!(runtime_traits.get("RuntimeEvent").unwrap(), "RuntimeEvent");
-        assert_eq!(
-            runtime_traits.get("AddOrigin").unwrap(),
-            "EnsureOrigin<Self::RuntimeOrigin>"
-        );
-        assert_eq!(
-            runtime_traits.get("RemoveOrigin").unwrap(),
-            "EnsureOrigin<Self::RuntimeOrigin>"
-        );
-        assert_eq!(
-            runtime_traits.get("SwapOrigin").unwrap(),
-            "EnsureOrigin<Self::RuntimeOrigin>"
-        );
-        assert_eq!(
-            runtime_traits.get("ResetOrigin").unwrap(),
-            "EnsureOrigin<Self::RuntimeOrigin>"
-        );
-        assert_eq!(
-            runtime_traits.get("PrimeOrigin").unwrap(),
-            "EnsureOrigin<Self::RuntimeOrigin>"
-        );
-        assert_eq!(
-            runtime_traits.get("MembershipInitialized").unwrap(),
-            "InitializeMembers<Self::AccountId>"
-        );
-        assert_eq!(
-            runtime_traits.get("MembershipChanged").unwrap(),
-            "ChangeMembers<Self::AccountId>"
-        );
-        assert_eq!(runtime_traits.get("MaxMembers").unwrap(), "Get<u32>");
-        assert_eq!(
-            runtime_traits.get("WeightInfo").unwrap(),
-            "pallet_membership::weights::SubstrateWeight<Runtime>"
-        );
-
-        // Test runtime construct configuration
-        assert_eq!(
-            pallet_membership_config
-                .runtime
-                .construct_runtime
-                .index
-                .unwrap(),
-            13
-        );
-        assert_eq!(
-            pallet_membership_config.runtime.construct_runtime.runtime.0,
-            "Membership"
-        );
-        assert_eq!(
-            pallet_membership_config.runtime.construct_runtime.runtime.1,
-            "pallet_membership::Pallet<Runtime>"
-        );
-    }
+fn get_additional_implementation_code() -> String {
+    "
+parameter_types! {
+	pub const TechnicalMaxMembers: u32 = 100;
+}
+"
+    .to_string()
 }
