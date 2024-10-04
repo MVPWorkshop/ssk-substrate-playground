@@ -94,7 +94,10 @@ impl PalletAssetsConfig {
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
                 index: Some(15),
-                runtime: ("Assets".to_string(), "pallet_assets".to_string()),
+                runtime: (
+                    "Assets".to_string(),
+                    "pallet_assets::Pallet<Runtime>".to_string(),
+                ),
             },
             pallet_traits: vec![
                 (
