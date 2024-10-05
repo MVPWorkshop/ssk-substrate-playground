@@ -1,5 +1,3 @@
-## **Pull Request (PR) Template**
-
 ### **PR Title**
 _Provide a concise and descriptive title._
 
