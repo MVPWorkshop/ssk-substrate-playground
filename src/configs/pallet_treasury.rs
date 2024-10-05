@@ -170,7 +170,6 @@ impl PalletTreasuryConfig {
             additional_chain_spec_code: None,
             additional_runtime_lib_code: Some(vec![
                 String::from("use sp_runtime::Percent;"),
-                String::from("use frame_support::PalletId;"),
                 String::from("use frame_system::EnsureWithSuccess;"),
                 String::from("use frame_support::traits::tokens::pay::PayAssetFromAccount;"),
                 String::from("use frame_support::traits::tokens::UnityAssetBalanceConversion;"),
