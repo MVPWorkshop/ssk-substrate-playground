@@ -15,6 +15,7 @@ pub mod configs {
     pub mod pallet_multisig;
     pub mod pallet_nfts;
     pub mod pallet_proxy;
+    pub mod pallet_society;
     pub mod pallet_sudo;
     pub mod pallet_timestamp;
     pub mod pallet_transaction_payment;
