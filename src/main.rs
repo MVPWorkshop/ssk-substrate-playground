@@ -85,6 +85,9 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletVesting => {
                         pallets.push(ESupportedPallets::PalletVesting);
                     }
+                    ESupportedPallets::PalletSociety => {
+                        pallets.push(ESupportedPallets::PalletSociety);
+                    }
                     _ => continue,
                 }
             }
@@ -133,6 +136,7 @@ async fn list_supported_pallets() -> impl Responder {
         "Bounties",
         "Treasury",
         "Vesting",
+        "Society",
         "Utility",
         "Identity",
         "Multisig",

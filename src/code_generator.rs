@@ -15,6 +15,7 @@ use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 use crate::configs::pallet_assets::PalletAssetsConfig;
 use crate::configs::pallet_multisig::PalletMultisigConfig;
+use crate::configs::pallet_society::PalletSocietyConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
 use crate::types::ESupportedPallets;
@@ -310,6 +311,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletVesting => {
                 // Get configuration for the vesting pallet.
                 let config = PalletVestingConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletSociety => {
+                // Get configuration for the society pallet.
+                let config = PalletSocietyConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,
