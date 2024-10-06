@@ -117,11 +117,11 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::CollectionId.to_string(),
-                    "ConstU32<100>".to_string(),
+                    "u32".to_string(),
                 ),
                 (
                     PalletNftsTraits::ItemId.to_string(),
-                    "ConstU32<1000>".to_string(),
+                    "u32".to_string(),
                 ),
                 (
                     PalletNftsTraits::Currency.to_string(),
@@ -137,7 +137,7 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::Locker.to_string(),
-                    "pallet_nfts::Locker".to_string(),
+                    "()".to_string(),
                 ),
                 (
                     PalletNftsTraits::CollectionDeposit.to_string(),
@@ -157,7 +157,7 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::DepositPerByte.to_string(),
-                    "ConstU128<{ 10 }>".to_string(),
+                    "ConstU128<10>".to_string(),
                 ),
                 (
                     PalletNftsTraits::StringLimit.to_string(),
@@ -193,7 +193,7 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::Features.to_string(),
-                    "Feature".to_string(),
+                    "NftsPalletFeatures".to_string(),
                 ),
                 (
                     PalletNftsTraits::OffchainSignature.to_string(),
@@ -203,7 +203,7 @@ impl PalletNftsConfig {
                     PalletNftsTraits::OffchainPublic.to_string(),
                     "<Signature as sp_runtime::traits::Verify>::Signer".to_string(),
                 ),
-                (PalletNftsTraits::Helper.to_string(), "()".to_string()),
+            
                 (
                     PalletNftsTraits::WeightInfo.to_string(),
                     "pallet_nfts::weights::SubstrateWeight<Runtime>".to_string(),
@@ -211,11 +211,11 @@ impl PalletNftsConfig {
             ]
             .into_iter()
             .collect(),
-            additional_pallet_impl_code: None,
+            additional_pallet_impl_code: Some(get_additional_implementation_code()),
             genesis_config: None,
             additional_chain_spec_code: None,
             additional_runtime_lib_code: Some(vec![String::from(
-                "use pallet_nfts::legacy::NftsInfo;",
+                "use pallet_nfts::PalletFeatures;",
             )]),
             runtime_api_code: None,
         };
@@ -228,6 +228,21 @@ impl PalletNftsConfig {
         }
     }
 }
+
+fn get_additional_implementation_code() -> String {
+    "
+parameter_types! {
+        pub NftsPalletFeatures: PalletFeatures = PalletFeatures::all_enabled();
+}
+"
+    .to_string()
+}
+
+
+
+
+
+
 
 #[cfg(test)]
 mod tests {
