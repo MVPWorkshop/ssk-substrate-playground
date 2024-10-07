@@ -119,10 +119,7 @@ impl PalletNftsConfig {
                     PalletNftsTraits::CollectionId.to_string(),
                     "u32".to_string(),
                 ),
-                (
-                    PalletNftsTraits::ItemId.to_string(),
-                    "u32".to_string(),
-                ),
+                (PalletNftsTraits::ItemId.to_string(), "u32".to_string()),
                 (
                     PalletNftsTraits::Currency.to_string(),
                     "Balances".to_string(),
@@ -135,10 +132,7 @@ impl PalletNftsConfig {
                     PalletNftsTraits::CreateOrigin.to_string(),
                     "EnsureSigned<Self::AccountId>".to_string(),
                 ),
-                (
-                    PalletNftsTraits::Locker.to_string(),
-                    "()".to_string(),
-                ),
+                (PalletNftsTraits::Locker.to_string(), "()".to_string()),
                 (
                     PalletNftsTraits::CollectionDeposit.to_string(),
                     "ConstU128<{ 10 * 1000 }>".to_string(),
@@ -203,7 +197,6 @@ impl PalletNftsConfig {
                     PalletNftsTraits::OffchainPublic.to_string(),
                     "<Signature as sp_runtime::traits::Verify>::Signer".to_string(),
                 ),
-            
                 (
                     PalletNftsTraits::WeightInfo.to_string(),
                     "pallet_nfts::weights::SubstrateWeight<Runtime>".to_string(),
@@ -237,12 +230,6 @@ parameter_types! {
 "
     .to_string()
 }
-
-
-
-
-
-
 
 #[cfg(test)]
 mod tests {

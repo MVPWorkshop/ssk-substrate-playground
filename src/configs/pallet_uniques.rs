@@ -32,7 +32,7 @@ impl fmt::Display for PalletUniquesTraits {
             PalletUniquesTraits::Currency => write!(f, "Currency"),
             PalletUniquesTraits::ForceOrigin => write!(f, "ForceOrigin"),
             PalletUniquesTraits::CreateOrigin => write!(f, "CreateOrigin"),
-           PalletUniquesTraits::Locker => write!(f, "Locker"),
+            PalletUniquesTraits::Locker => write!(f, "Locker"),
             PalletUniquesTraits::CollectionDeposit => write!(f, "CollectionDeposit"),
             PalletUniquesTraits::ItemDeposit => write!(f, "ItemDeposit"),
             PalletUniquesTraits::MetadataDepositBase => write!(f, "MetadataDepositBase"),
@@ -100,10 +100,7 @@ impl PalletUniquesConfig {
                     PalletUniquesTraits::CollectionId.to_string(),
                     "u32".to_string(),
                 ),
-                (
-                    PalletUniquesTraits::ItemId.to_string(),
-                    "u32".to_string(),
-                ),
+                (PalletUniquesTraits::ItemId.to_string(), "u32".to_string()),
                 (
                     PalletUniquesTraits::Currency.to_string(),
                     "Balances".to_string(),
@@ -116,10 +113,7 @@ impl PalletUniquesConfig {
                     PalletUniquesTraits::CreateOrigin.to_string(),
                     "EnsureSigned<Self::AccountId>".to_string(),
                 ),
-                (
-                    PalletUniquesTraits::Locker.to_string(),
-                    "()".to_string(),
-                ),
+                (PalletUniquesTraits::Locker.to_string(), "()".to_string()),
                 (
                     PalletUniquesTraits::CollectionDeposit.to_string(),
                     "ConstU128<{ 10 * 1000 }>".to_string(),
@@ -152,7 +146,6 @@ impl PalletUniquesConfig {
                     PalletUniquesTraits::ValueLimit.to_string(),
                     "ConstU32<256>".to_string(),
                 ),
-               
                 (
                     PalletUniquesTraits::WeightInfo.to_string(),
                     "pallet_uniques::weights::SubstrateWeight<Runtime>".to_string(),
@@ -163,7 +156,7 @@ impl PalletUniquesConfig {
             additional_pallet_impl_code: None,
             genesis_config: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code:None,
+            additional_runtime_lib_code: None,
             runtime_api_code: None,
         };
 
