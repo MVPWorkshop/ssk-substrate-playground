@@ -20,6 +20,7 @@ use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
+use pallet_nfts::PalletFeatures;
 
 pub use frame_support::{
     construct_runtime, derive_impl, parameter_types,
@@ -292,7 +293,36 @@ impl pallet_uniques::Config for Runtime {
     type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
 }
 
+parameter_types! {
+    pub NftsPalletFeatures: PalletFeatures = PalletFeatures::all_enabled();
+}
 
+impl pallet_nfts::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type CollectionId = u32;
+    type ItemId = u32;
+    type Currency = Balances;
+    type ForceOrigin = EnsureRoot<Self::AccountId>;
+    type CreateOrigin = EnsureSigned<Self::AccountId>;
+    type Locker = ();
+    type CollectionDeposit = ConstU128<{ 10 * 1000 }>;
+    type ItemDeposit = ConstU128<{ 1 * 1000 }>;
+    type MetadataDepositBase = ConstU128<{ 1 * 1000 }>;
+    type AttributeDepositBase = ConstU128<{ 1 * 1000 }>;
+    type DepositPerByte = ConstU128<10>;
+    type StringLimit = ConstU32<256>;
+    type KeyLimit = ConstU32<64>;
+    type ValueLimit = ConstU32<256>;
+    type ApprovalsLimit = ConstU32<100>;
+    type ItemAttributesApprovalsLimit = ConstU32<100>;
+    type MaxTips = ConstU32<10>;
+    type MaxDeadlineDuration = ConstU32<1000>;
+    type MaxAttributesPerCall = ConstU32<5>;
+    type Features = NftsPalletFeatures;
+    type OffchainSignature = Signature;
+    type OffchainPublic = <Signature as sp_runtime::traits::Verify>::Signer;
+    type WeightInfo = pallet_nfts::weights::SubstrateWeight<Runtime>;
+}
 
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -342,6 +372,9 @@ mod runtime {
 
     #[runtime::pallet_index(9)]
     pub type Uniques = pallet_uniques;
+
+    #[runtime::pallet_index(10)]
+    pub type Nfts = pallet_nfts;
 }
 
 /// The address format for describing accounts.
