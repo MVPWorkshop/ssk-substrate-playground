@@ -272,6 +272,29 @@ impl pallet_template::Config for Runtime {
 
 impl pallet_insecure_randomness_collective_flip::Config for Runtime {}
 
+
+impl pallet_uniques::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type CollectionId = u32;
+    type ItemId = u32;
+    type Currency = Balances;
+    type ForceOrigin = EnsureRoot<Self::AccountId>;
+    type CreateOrigin = EnsureSigned<Self::AccountId>;
+    type Locker = ();
+    type CollectionDeposit = ConstU128<{ 10 * 1000 }>;
+    type ItemDeposit = ConstU128<{ 1 * 1000 }>;
+    type MetadataDepositBase = ConstU128<{ 1 * 1000 }>;
+    type AttributeDepositBase = ConstU128<{ 1 * 1000 }>;
+    type DepositPerByte = ConstU128<10>;
+    type StringLimit = ConstU32<256>;
+    type KeyLimit = ConstU32<64>;
+    type ValueLimit = ConstU32<256>;
+    type WeightInfo = pallet_uniques::weights::SubstrateWeight<Runtime>;
+}
+
+
+
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -316,6 +339,9 @@ mod runtime {
 
     #[runtime::pallet_index(8)]
     pub type RandomnessCollectiveFlip = pallet_insecure_randomness_collective_flip::Pallet<Runtime>;
+
+    #[runtime::pallet_index(9)]
+    pub type Uniques = pallet_uniques;
 }
 
 /// The address format for describing accounts.
