@@ -325,6 +325,34 @@ impl pallet_nfts::Config for Runtime {
 }
 
 
+parameter_types! {
+	pub const BountyDepositBase: Balance = DOLLARS;
+    pub const BountyDepositPayoutDelay: BlockNumber = DAYS;
+    pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
+    pub const BountyValueMinimum: Balance = 5 * DOLLARS;
+    pub const CuratorDepositMultiplier: Permill = Permill::from_percent(50);
+    pub const CuratorDepositMin: Balance = DOLLARS;
+    pub const CuratorDepositMax: Balance = 100 * DOLLARS;
+    pub const BountyDataDepositPerByte: Balance = CENTS;
+    pub const BountyMaximumReasonLength: u32 = 16384;
+}
+
+impl pallet_bounties::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type BountyDepositBase = BountyDepositBase;
+    type BountyDepositPayoutDelay = BountyDepositPayoutDelay;
+    type BountyUpdatePeriod = BountyUpdatePeriod;
+    type CuratorDepositMultiplier = CuratorDepositMultiplier;
+    type CuratorDepositMax = CuratorDepositMax;
+    type CuratorDepositMin = CuratorDepositMin;
+    type BountyValueMinimum = BountyValueMinimum;
+    type DataDepositPerByte = BountyDataDepositPerByte;
+    type MaximumReasonLength = BountyMaximumReasonLength;
+    type WeightInfo = pallet_bounties::weights::SubstrateWeight<Runtime>;
+    type ChildBountyManager = ();
+    type OnSlash = ();
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -375,6 +403,9 @@ mod runtime {
 
     #[runtime::pallet_index(10)]
     pub type Nfts = pallet_nfts;
+
+    #[runtime::pallet_index(11)]
+    pub type Bounties = pallet_bounties;
 }
 
 /// The address format for describing accounts.
