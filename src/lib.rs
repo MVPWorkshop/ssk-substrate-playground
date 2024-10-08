@@ -13,14 +13,14 @@ pub mod configs {
     pub mod pallet_identity;
     pub mod pallet_membership;
     pub mod pallet_multisig;
-    pub mod pallet_nfts;
+   // pub mod pallet_nfts;
     pub mod pallet_proxy;
     pub mod pallet_society;
     pub mod pallet_sudo;
     pub mod pallet_timestamp;
     pub mod pallet_transaction_payment;
     pub mod pallet_treasury;
-    pub mod pallet_uniques;
+   // pub mod pallet_uniques;
     pub mod pallet_utility;
     pub mod pallet_vesting;
 }
