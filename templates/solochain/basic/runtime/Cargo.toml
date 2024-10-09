@@ -38,6 +38,7 @@ pallet-insecure-randomness-collective-flip = { git = "https://github.com/parityt
 pallet-uniques = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 pallet-nfts = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 pallet-bounties = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+pallet-child-bounties = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
 
 # primitives
@@ -107,6 +108,8 @@ std = [
 	"pallet-uniques/std",
 	"pallet-nfts/std",
 	"pallet-bounties/std",
+	"pallet-child-bounties/std",
+
 
 	"sp-api/std",
 	"sp-block-builder/std",

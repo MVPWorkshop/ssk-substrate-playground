@@ -353,6 +353,20 @@ impl pallet_bounties::Config for Runtime {
     type OnSlash = ();
 }
 
+parameter_types! {
+	pub const MaxActiveChildBountyCount:u32=100;
+    pub const ChildBountyValueMinimum: Balance=BountyValueMinimum::get()/10;
+}
+
+impl pallet_child_bounties::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type MaxActiveChildBountyCount=MaxActiveChildBountyCount;
+    type ChildBountyValueMinimum = ChildBountyValueMinimum;
+    type WeightInfo = pallet_child_bounties::weights::SubstrateWeight<Runtime>;
+
+
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -406,6 +420,9 @@ mod runtime {
 
     #[runtime::pallet_index(11)]
     pub type Bounties = pallet_bounties;
+
+    #[runtime::pallet_index(12)]
+    pub type ChildBounties = pallet_child_bounties;
 }
 
 /// The address format for describing accounts.
