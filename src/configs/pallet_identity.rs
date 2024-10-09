@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::IDENTITY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -93,7 +94,7 @@ impl PalletIdentityConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(9),
+                index: Some(IDENTITY),
                 runtime: (
                     "Identity".to_string(),
                     "pallet_identity::Pallet<Runtime>".to_string(),

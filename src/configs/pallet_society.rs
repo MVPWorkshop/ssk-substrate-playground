@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::SOCIETY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -81,7 +82,7 @@ impl PalletSocietyConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(21),
+                index: Some(SOCIETY),
                 runtime: (
                     "Society".to_string(),
                     "pallet_society::Pallet<Runtime>".to_string(),

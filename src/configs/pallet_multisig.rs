@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::MULTI_SIG;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -68,7 +69,7 @@ impl PalletMultisigConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(10),
+                index: Some(MULTI_SIG),
                 runtime: (
                     "Multisig".to_string(),
                     "pallet_multisig::Pallet<Runtime>".to_string(),

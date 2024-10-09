@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::BOUNTIES;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -78,7 +79,7 @@ impl PalletBountiesConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(15),
+                index: Some(BOUNTIES),
                 runtime: (
                     "Bounties".to_string(),
                     "pallet_bounties::Pallet<Runtime>".to_string(),
@@ -335,7 +336,7 @@ mod tests {
                 .construct_runtime
                 .index
                 .unwrap(),
-            15
+            19
         );
         assert_eq!(
             pallet_bounties_config.runtime.construct_runtime.runtime.0,

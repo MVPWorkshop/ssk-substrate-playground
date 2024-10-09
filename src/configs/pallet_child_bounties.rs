@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::CHILD_BOUNTIES;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -65,7 +66,7 @@ impl PalletChildBountiesConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(16),
+                index: Some(CHILD_BOUNTIES),
                 runtime: (
                     "ChildBounties".to_string(),
                     "pallet_child_bounties::Pallet<Runtime>".to_string(),
