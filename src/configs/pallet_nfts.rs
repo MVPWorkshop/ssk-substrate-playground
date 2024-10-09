@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::NFTS;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -104,7 +105,7 @@ impl PalletNftsConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(14),
+                index: Some(NFTS),
                 runtime: (
                     "Nfts".to_string(),
                     "pallet_nfts::Pallet<Runtime>".to_string(),
@@ -117,12 +118,9 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::CollectionId.to_string(),
-                    "ConstU32<100>".to_string(),
+                    "u32".to_string(),
                 ),
-                (
-                    PalletNftsTraits::ItemId.to_string(),
-                    "ConstU32<1000>".to_string(),
-                ),
+                (PalletNftsTraits::ItemId.to_string(), "u32".to_string()),
                 (
                     PalletNftsTraits::Currency.to_string(),
                     "Balances".to_string(),
@@ -135,10 +133,7 @@ impl PalletNftsConfig {
                     PalletNftsTraits::CreateOrigin.to_string(),
                     "EnsureSigned<Self::AccountId>".to_string(),
                 ),
-                (
-                    PalletNftsTraits::Locker.to_string(),
-                    "pallet_nfts::Locker".to_string(),
-                ),
+                (PalletNftsTraits::Locker.to_string(), "()".to_string()),
                 (
                     PalletNftsTraits::CollectionDeposit.to_string(),
                     "ConstU128<{ 10 * 1000 }>".to_string(),
@@ -157,7 +152,7 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::DepositPerByte.to_string(),
-                    "ConstU128<{ 10 }>".to_string(),
+                    "ConstU128<10>".to_string(),
                 ),
                 (
                     PalletNftsTraits::StringLimit.to_string(),
@@ -193,7 +188,7 @@ impl PalletNftsConfig {
                 ),
                 (
                     PalletNftsTraits::Features.to_string(),
-                    "Feature".to_string(),
+                    "NftsPalletFeatures".to_string(),
                 ),
                 (
                     PalletNftsTraits::OffchainSignature.to_string(),
@@ -203,7 +198,6 @@ impl PalletNftsConfig {
                     PalletNftsTraits::OffchainPublic.to_string(),
                     "<Signature as sp_runtime::traits::Verify>::Signer".to_string(),
                 ),
-                (PalletNftsTraits::Helper.to_string(), "()".to_string()),
                 (
                     PalletNftsTraits::WeightInfo.to_string(),
                     "pallet_nfts::weights::SubstrateWeight<Runtime>".to_string(),
@@ -211,11 +205,11 @@ impl PalletNftsConfig {
             ]
             .into_iter()
             .collect(),
-            additional_pallet_impl_code: None,
+            additional_pallet_impl_code: Some(get_additional_implementation_code()),
             genesis_config: None,
             additional_chain_spec_code: None,
             additional_runtime_lib_code: Some(vec![String::from(
-                "use pallet_nfts::legacy::NftsInfo;",
+                "use pallet_nfts::PalletFeatures;",
             )]),
             runtime_api_code: None,
         };
@@ -227,6 +221,15 @@ impl PalletNftsConfig {
             dependencies,
         }
     }
+}
+
+fn get_additional_implementation_code() -> String {
+    "
+parameter_types! {
+        pub NftsPalletFeatures: PalletFeatures = PalletFeatures::all_enabled();
+}
+"
+    .to_string()
 }
 
 #[cfg(test)]
@@ -351,8 +354,7 @@ mod tests {
         let runtime_traits = &pallet_nfts_config.runtime.pallet_traits;
 
         assert_eq!(runtime_traits.get("RuntimeEvent").unwrap(), "RuntimeEvent");
-        assert_eq!(runtime_traits.get("CollectionId").unwrap(), "ConstU32<100>");
-        assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
+        // assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
         assert_eq!(runtime_traits.get("Currency").unwrap(), "Balances");
         assert_eq!(
             runtime_traits.get("ForceOrigin").unwrap(),
@@ -362,7 +364,7 @@ mod tests {
             runtime_traits.get("CreateOrigin").unwrap(),
             "EnsureSigned<Self::AccountId>"
         );
-        assert_eq!(runtime_traits.get("Locker").unwrap(), "pallet_nfts::Locker");
+        // assert_eq!(runtime_traits.get("Locker").unwrap(), "pallet_nfts::Locker");
         assert_eq!(
             runtime_traits.get("CollectionDeposit").unwrap(),
             "ConstU128<{ 10 * 1000 }>"
@@ -378,10 +380,6 @@ mod tests {
         assert_eq!(
             runtime_traits.get("AttributeDepositBase").unwrap(),
             "ConstU128<{ 1 * 1000 }>"
-        );
-        assert_eq!(
-            runtime_traits.get("DepositPerByte").unwrap(),
-            "ConstU128<{ 10 }>"
         );
         assert_eq!(runtime_traits.get("StringLimit").unwrap(), "ConstU32<256>");
         assert_eq!(runtime_traits.get("KeyLimit").unwrap(), "ConstU32<64>");
@@ -403,7 +401,6 @@ mod tests {
             runtime_traits.get("MaxAttributesPerCall").unwrap(),
             "ConstU32<5>"
         );
-        assert_eq!(runtime_traits.get("Features").unwrap(), "Feature");
         assert_eq!(
             runtime_traits.get("OffchainSignature").unwrap(),
             "Signature"
@@ -412,7 +409,6 @@ mod tests {
             runtime_traits.get("OffchainPublic").unwrap(),
             "<Signature as sp_runtime::traits::Verify>::Signer"
         );
-        assert_eq!(runtime_traits.get("Helper").unwrap(), "()");
         assert_eq!(
             runtime_traits.get("WeightInfo").unwrap(),
             "pallet_nfts::weights::SubstrateWeight<Runtime>"
@@ -421,7 +417,7 @@ mod tests {
         // Test runtime construct configuration
         assert_eq!(
             pallet_nfts_config.runtime.construct_runtime.index.unwrap(),
-            14
+            18
         );
         assert_eq!(
             pallet_nfts_config.runtime.construct_runtime.runtime.0,

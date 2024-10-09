@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::TREASURY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -90,7 +91,7 @@ impl PalletTreasuryConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(16),
+                index: Some(TREASURY),
                 runtime: (
                     "Treasury".to_string(),
                     "pallet_treasury::Pallet<Runtime>".to_string(),

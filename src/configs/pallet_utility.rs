@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::UTILITY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -65,7 +66,7 @@ impl PalletUtilityConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(19),
+                index: Some(UTILITY),
                 runtime: (
                     "Utility".to_string(),
                     "pallet_utility::Pallet<Runtime>".to_string(),
@@ -210,7 +211,7 @@ mod tests {
                 .construct_runtime
                 .index
                 .unwrap(),
-            19
+            14
         );
         assert_eq!(
             pallet_utility_config.runtime.construct_runtime.runtime.0,

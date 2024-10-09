@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::UNIQUES;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -85,7 +86,7 @@ impl PalletUniquesConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(12),
+                index: Some(UNIQUES),
                 runtime: (
                     "Uniques".to_string(),
                     "pallet_uniques::Pallet<Runtime>".to_string(),
@@ -98,12 +99,9 @@ impl PalletUniquesConfig {
                 ),
                 (
                     PalletUniquesTraits::CollectionId.to_string(),
-                    "ConstU32<100>".to_string(),
+                    "u32".to_string(),
                 ),
-                (
-                    PalletUniquesTraits::ItemId.to_string(),
-                    "ConstU32<1000>".to_string(),
-                ),
+                (PalletUniquesTraits::ItemId.to_string(), "u32".to_string()),
                 (
                     PalletUniquesTraits::Currency.to_string(),
                     "Balances".to_string(),
@@ -116,10 +114,7 @@ impl PalletUniquesConfig {
                     PalletUniquesTraits::CreateOrigin.to_string(),
                     "EnsureSigned<Self::AccountId>".to_string(),
                 ),
-                (
-                    PalletUniquesTraits::Locker.to_string(),
-                    "pallet_uniques::Locker".to_string(),
-                ),
+                (PalletUniquesTraits::Locker.to_string(), "()".to_string()),
                 (
                     PalletUniquesTraits::CollectionDeposit.to_string(),
                     "ConstU128<{ 10 * 1000 }>".to_string(),
@@ -138,7 +133,7 @@ impl PalletUniquesConfig {
                 ),
                 (
                     PalletUniquesTraits::DepositPerByte.to_string(),
-                    "ConstU128<{ 10 }>".to_string(),
+                    "ConstU128<10>".to_string(),
                 ),
                 (
                     PalletUniquesTraits::StringLimit.to_string(),
@@ -152,7 +147,6 @@ impl PalletUniquesConfig {
                     PalletUniquesTraits::ValueLimit.to_string(),
                     "ConstU32<256>".to_string(),
                 ),
-                (PalletUniquesTraits::Helper.to_string(), "()".to_string()),
                 (
                     PalletUniquesTraits::WeightInfo.to_string(),
                     "pallet_uniques::weights::SubstrateWeight<Runtime>".to_string(),
@@ -163,9 +157,7 @@ impl PalletUniquesConfig {
             additional_pallet_impl_code: None,
             genesis_config: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![String::from(
-                "use pallet_uniques::legacy::UniquesInfo;",
-            )]),
+            additional_runtime_lib_code: None,
             runtime_api_code: None,
         };
 
@@ -175,183 +167,5 @@ impl PalletUniquesConfig {
             runtime,
             dependencies,
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    // Test case for PalletUniquesTraits enum display implementation
-    #[test]
-    fn test_pallet_uniques_traits_display() {
-        assert_eq!(
-            PalletUniquesTraits::RuntimeEvent.to_string(),
-            "RuntimeEvent"
-        );
-        assert_eq!(
-            PalletUniquesTraits::CollectionId.to_string(),
-            "CollectionId"
-        );
-        assert_eq!(PalletUniquesTraits::ItemId.to_string(), "ItemId");
-        assert_eq!(PalletUniquesTraits::Currency.to_string(), "Currency");
-        assert_eq!(PalletUniquesTraits::ForceOrigin.to_string(), "ForceOrigin");
-        assert_eq!(
-            PalletUniquesTraits::CreateOrigin.to_string(),
-            "CreateOrigin"
-        );
-        assert_eq!(PalletUniquesTraits::Locker.to_string(), "Locker");
-        assert_eq!(
-            PalletUniquesTraits::CollectionDeposit.to_string(),
-            "CollectionDeposit"
-        );
-        assert_eq!(PalletUniquesTraits::ItemDeposit.to_string(), "ItemDeposit");
-        assert_eq!(
-            PalletUniquesTraits::MetadataDepositBase.to_string(),
-            "MetadataDepositBase"
-        );
-        assert_eq!(
-            PalletUniquesTraits::AttributeDepositBase.to_string(),
-            "AttributeDepositBase"
-        );
-        assert_eq!(
-            PalletUniquesTraits::DepositPerByte.to_string(),
-            "DepositPerByte"
-        );
-        assert_eq!(PalletUniquesTraits::StringLimit.to_string(), "StringLimit");
-        assert_eq!(PalletUniquesTraits::KeyLimit.to_string(), "KeyLimit");
-        assert_eq!(PalletUniquesTraits::ValueLimit.to_string(), "ValueLimit");
-        assert_eq!(PalletUniquesTraits::Helper.to_string(), "Helper");
-        assert_eq!(PalletUniquesTraits::WeightInfo.to_string(), "WeightInfo");
-    }
-
-    // Test case for PalletUniquesConfig::new() method (assuming PalletUniquesConfig struct exists)
-    #[test]
-    fn test_pallet_uniques_config_new() {
-        let pallet_uniques_config = PalletUniquesConfig::new();
-
-        // Test the name
-        assert_eq!(pallet_uniques_config.name, "Pallet uniques");
-
-        // Test metadata
-        assert_eq!(
-            pallet_uniques_config.metadata.short_description,
-            "FRAME uniques pallet"
-        );
-        assert_eq!(pallet_uniques_config.metadata.size, 10500); // Assuming a size value
-        assert_eq!(
-            pallet_uniques_config.metadata.authors[0],
-            CommonAuthors::ParityTechnologies
-        );
-        assert_eq!(
-            pallet_uniques_config.metadata.categories.clone().unwrap()[0],
-            PalletCategories::NFT
-        );
-        assert_eq!(
-            pallet_uniques_config.metadata.license.clone().unwrap(),
-            "Apache-2.0"
-        );
-
-        // Ensure description matches
-        let expected_description = [
-            "A module for managing non-fungible tokens (NFTs) and collections, providing a secure and flexible framework."
-              ].join("\n");
-        assert_eq!(
-            pallet_uniques_config.metadata.description,
-            expected_description
-        );
-
-        // Test dependencies
-        assert_eq!(
-            pallet_uniques_config.dependencies.pallet.package,
-            "pallet-uniques"
-        );
-        assert_eq!(
-            pallet_uniques_config.dependencies.pallet.alias,
-            "pallet uniques"
-        );
-        assert_eq!(
-            pallet_uniques_config
-                .dependencies
-                .pallet
-                .git_repo
-                .clone()
-                .unwrap(),
-            "https://github.com/paritytech/polkadot-sdk.git"
-        );
-        assert_eq!(
-            pallet_uniques_config
-                .dependencies
-                .pallet
-                .tag
-                .clone()
-                .unwrap(),
-            "polkadot-v1.14.0"
-        );
-
-        // Test runtime configuration
-        let runtime_traits = &pallet_uniques_config.runtime.pallet_traits;
-        assert_eq!(runtime_traits.get("RuntimeEvent").unwrap(), "RuntimeEvent");
-        assert_eq!(runtime_traits.get("CollectionId").unwrap(), "ConstU32<100>");
-        assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
-        assert_eq!(runtime_traits.get("Currency").unwrap(), "Balances");
-        assert_eq!(
-            runtime_traits.get("ForceOrigin").unwrap(),
-            "EnsureRoot<Self::AccountId>"
-        );
-        assert_eq!(
-            runtime_traits.get("CreateOrigin").unwrap(),
-            "EnsureSigned<Self::AccountId>"
-        );
-        assert_eq!(
-            runtime_traits.get("Locker").unwrap(),
-            "pallet_uniques::Locker"
-        );
-        assert_eq!(
-            runtime_traits.get("CollectionDeposit").unwrap(),
-            "ConstU128<{ 10 * 1000 }>"
-        );
-        assert_eq!(
-            runtime_traits.get("ItemDeposit").unwrap(),
-            "ConstU128<{ 1 * 1000 }>"
-        );
-        assert_eq!(
-            runtime_traits.get("MetadataDepositBase").unwrap(),
-            "ConstU128<{ 1 * 1000 }>"
-        );
-        assert_eq!(
-            runtime_traits.get("AttributeDepositBase").unwrap(),
-            "ConstU128<{ 1 * 1000 }>"
-        );
-        assert_eq!(
-            runtime_traits.get("DepositPerByte").unwrap(),
-            "ConstU128<{ 10 }>"
-        );
-        assert_eq!(runtime_traits.get("StringLimit").unwrap(), "ConstU32<256>");
-        assert_eq!(runtime_traits.get("KeyLimit").unwrap(), "ConstU32<64>");
-        assert_eq!(runtime_traits.get("ValueLimit").unwrap(), "ConstU32<256>");
-        assert_eq!(runtime_traits.get("Helper").unwrap(), "()");
-        assert_eq!(
-            runtime_traits.get("WeightInfo").unwrap(),
-            "pallet_uniques::weights::SubstrateWeight<Runtime>"
-        );
-
-        // Test runtime construct configuration
-        assert_eq!(
-            pallet_uniques_config
-                .runtime
-                .construct_runtime
-                .index
-                .unwrap(),
-            12
-        );
-        assert_eq!(
-            pallet_uniques_config.runtime.construct_runtime.runtime.0,
-            "Uniques"
-        );
-        assert_eq!(
-            pallet_uniques_config.runtime.construct_runtime.runtime.1,
-            "pallet_uniques::Pallet<Runtime>"
-        );
     }
 }

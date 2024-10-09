@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::VESTING;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -70,7 +71,7 @@ impl PalletVestingConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(18),
+                index: Some(VESTING),
                 runtime: (
                     "Vesting".to_string(),
                     "pallet_vesting::Pallet<Runtime>".to_string(),
