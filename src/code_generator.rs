@@ -1,5 +1,5 @@
-use super::configs::pallet_bounties::PalletBountiesConfig;
-use super::configs::pallet_child_bounties::PalletChildBountiesConfig;
+//use super::configs::pallet_bounties::PalletBountiesConfig;
+//se super::configs::pallet_child_bounties::PalletChildBountiesConfig;
 use super::configs::pallet_identity::PalletIdentityConfig;
 use super::configs::pallet_membership::PalletMembershipConfig;
 //use super::configs::pallet_nfts::PalletNftsConfig;
@@ -271,18 +271,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 pallets_config.push(pallet_config);
             }
 
-            ESupportedPallets::PalletBounties => {
-                // Get configuration for the bounties pallet.
-                let config = PalletBountiesConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
+            // ESupportedPallets::PalletBounties => {
+            //     // Get configuration for the bounties pallet.
+            //     let config = PalletBountiesConfig::new();
+            //     // Create a pallet configuration and add it to the list.
+            //     let pallet_config = PalletConfig {
+            //         name: config.name,
+            //         metadata: config.metadata,
+            //         runtime: config.runtime,
+            //         dependencies: config.dependencies.clone(),
+            //     };
+            //     pallets_config.push(pallet_config);
+            // }
 
             ESupportedPallets::PalletTreasury => {
                 // Get configuration for the treasury pallet.
@@ -296,18 +296,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 };
                 pallets_config.push(pallet_config);
             }
-            ESupportedPallets::PalletChildBounties => {
-                // Get configuration for the child bounties pallet.
-                let config = PalletChildBountiesConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
+            // ESupportedPallets::PalletChildBounties => {
+            //     // Get configuration for the child bounties pallet.
+            //     let config = PalletChildBountiesConfig::new();
+            //     // Create a pallet configuration and add it to the list.
+            //     let pallet_config = PalletConfig {
+            //         name: config.name,
+            //         metadata: config.metadata,
+            //         runtime: config.runtime,
+            //         dependencies: config.dependencies.clone(),
+            //     };
+            //     pallets_config.push(pallet_config);
+            // }
             ESupportedPallets::PalletVesting => {
                 // Get configuration for the vesting pallet.
                 let config = PalletVestingConfig::new();
