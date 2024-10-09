@@ -131,6 +131,7 @@ pub enum ESupportedPallets {
     PalletChildBounties,
     PalletVesting,
     PalletSociety,
+    PalletScheduler,
     Unknown,
 }
 
@@ -152,6 +153,7 @@ impl TryFrom<&str> for ESupportedPallets {
             "Membership" => Ok(ESupportedPallets::PalletMembership),
             "ChildBounties" => Ok(ESupportedPallets::PalletChildBounties),
             "Bounties" => Ok(ESupportedPallets::PalletBounties),
+            "Scheduler" => Ok(ESupportedPallets::PalletScheduler),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }
