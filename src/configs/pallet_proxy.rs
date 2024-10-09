@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::PROXY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -78,7 +79,7 @@ impl PalletProxyConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(11),
+                index: Some(PROXY),
                 runtime: (
                     "Proxy".to_string(),
                     "pallet_proxy::Pallet<Runtime>".to_string(),

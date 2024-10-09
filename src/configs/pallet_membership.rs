@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::MEMBERSHIP;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -71,7 +72,7 @@ impl PalletMembershipConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(13),
+                index: Some(MEMBERSHIP),
                 runtime: (
                     "Membership".to_string(),
                     "pallet_membership::Pallet<Runtime>".to_string(),

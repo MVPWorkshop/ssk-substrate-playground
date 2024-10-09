@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::UNIQUES;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -85,7 +86,7 @@ impl PalletUniquesConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(12),
+                index: Some(UNIQUES),
                 runtime: (
                     "Uniques".to_string(),
                     "pallet_uniques::Pallet<Runtime>".to_string(),

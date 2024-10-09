@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::ASSETS;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -93,7 +94,7 @@ impl PalletAssetsConfig {
 
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(15),
+                index: Some(ASSETS),
                 runtime: (
                     "Assets".to_string(),
                     "pallet_assets::Pallet<Runtime>".to_string(),

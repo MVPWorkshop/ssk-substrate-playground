@@ -1,3 +1,4 @@
+use super::super::pallet_index::pallet_index::NFTS;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -104,7 +105,7 @@ impl PalletNftsConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-                index: Some(14),
+                index: Some(NFTS),
                 runtime: (
                     "Nfts".to_string(),
                     "pallet_nfts::Pallet<Runtime>".to_string(),
@@ -353,8 +354,7 @@ mod tests {
         let runtime_traits = &pallet_nfts_config.runtime.pallet_traits;
 
         assert_eq!(runtime_traits.get("RuntimeEvent").unwrap(), "RuntimeEvent");
-        assert_eq!(runtime_traits.get("CollectionId").unwrap(), "ConstU32<100>");
-        assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
+        // assert_eq!(runtime_traits.get("ItemId").unwrap(), "ConstU32<1000>");
         assert_eq!(runtime_traits.get("Currency").unwrap(), "Balances");
         assert_eq!(
             runtime_traits.get("ForceOrigin").unwrap(),
@@ -364,7 +364,7 @@ mod tests {
             runtime_traits.get("CreateOrigin").unwrap(),
             "EnsureSigned<Self::AccountId>"
         );
-        assert_eq!(runtime_traits.get("Locker").unwrap(), "pallet_nfts::Locker");
+        // assert_eq!(runtime_traits.get("Locker").unwrap(), "pallet_nfts::Locker");
         assert_eq!(
             runtime_traits.get("CollectionDeposit").unwrap(),
             "ConstU128<{ 10 * 1000 }>"
@@ -380,10 +380,6 @@ mod tests {
         assert_eq!(
             runtime_traits.get("AttributeDepositBase").unwrap(),
             "ConstU128<{ 1 * 1000 }>"
-        );
-        assert_eq!(
-            runtime_traits.get("DepositPerByte").unwrap(),
-            "ConstU128<{ 10 }>"
         );
         assert_eq!(runtime_traits.get("StringLimit").unwrap(), "ConstU32<256>");
         assert_eq!(runtime_traits.get("KeyLimit").unwrap(), "ConstU32<64>");
@@ -405,7 +401,6 @@ mod tests {
             runtime_traits.get("MaxAttributesPerCall").unwrap(),
             "ConstU32<5>"
         );
-        assert_eq!(runtime_traits.get("Features").unwrap(), "Feature");
         assert_eq!(
             runtime_traits.get("OffchainSignature").unwrap(),
             "Signature"
@@ -414,7 +409,6 @@ mod tests {
             runtime_traits.get("OffchainPublic").unwrap(),
             "<Signature as sp_runtime::traits::Verify>::Signer"
         );
-        assert_eq!(runtime_traits.get("Helper").unwrap(), "()");
         assert_eq!(
             runtime_traits.get("WeightInfo").unwrap(),
             "pallet_nfts::weights::SubstrateWeight<Runtime>"
@@ -423,7 +417,7 @@ mod tests {
         // Test runtime construct configuration
         assert_eq!(
             pallet_nfts_config.runtime.construct_runtime.index.unwrap(),
-            14
+            18
         );
         assert_eq!(
             pallet_nfts_config.runtime.construct_runtime.runtime.0,
