@@ -86,6 +86,7 @@ sp-staking = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "po
 pallet-bags-list = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 frame-election-provider-support = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 pallet-election-provider-multi-phase = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+sp-io = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
 
 [build-dependencies]
@@ -129,6 +130,7 @@ std = [
 	"pallet-transaction-payment/std",
 
 	"sp-api/std",
+	"sp-io/std",
 	"sp-block-builder/std",
 	"sp-consensus-aura/std",
 	"sp-consensus-grandpa/std",

@@ -22,6 +22,7 @@ use sp_runtime::{
     traits::{BlakeTwo256, Block as BlockT, IdentifyAccount, NumberFor, One, Verify},
     transaction_validity::{TransactionSource, TransactionValidity},
     ApplyExtrinsicResult, MultiSignature,
+    transaction_validity::{TransactionPriority},
 };
 use sp_std::prelude::*;
 #[cfg(feature = "std")]
@@ -31,6 +32,7 @@ use sp_version::RuntimeVersion;
 use codec::{Decode, Encode, MaxEncodedLen};
 use frame_support::traits::InstanceFilter;
 pub use frame_support::{
+    dispatch::DispatchClass,
     construct_runtime, derive_impl, parameter_types,
     traits::{
         ConstBool, ConstU128, ConstU32, ConstU64, ConstU8, KeyOwnerProofSystem, Randomness,
@@ -557,7 +559,7 @@ impl pallet_staking::Config for Runtime {
     type SlashDeferDuration = SlashDeferDuration;
     /// A super-majority of the council can cancel the slash.
     type AdminOrigin = EnsureRoot<AccountId>;
-    type SessionInterface = Self;
+    type SessionInterface = ();
     type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
     type NextNewSession = ();
     type MaxExposurePageSize = ConstU32<256>;
@@ -790,7 +792,7 @@ pub const THRESHOLDS: [u64; 200] = [
 ];
 
 parameter_types! {
-    pub const BagThresholds: &'static [u64] = THRESHOLDS;
+    pub const BagThresholds: &'static [u64] = &THRESHOLDS;
 }
 
 type VoterBagsListInstance = pallet_bags_list::Instance1;
@@ -807,6 +809,162 @@ impl pallet_bags_list::Config<VoterBagsListInstance> for Runtime {
 use pallet_election_provider_multi_phase::SolutionAccuracyOf;
 
 pub use pallet_election_provider_multi_phase::{Call as EPMCall, GeometricDepositBase};
+use frame_support::pallet_prelude::Get;
+
+
+
+parameter_types! {
+	// Note: the EPM in this runtime runs the election on-chain. The election bounds must be
+	// carefully set so that an election round fits in one block.
+	pub ElectionBoundsMultiPhase: ElectionBounds = ElectionBoundsBuilder::default()
+		.voters_count(10_000.into()).targets_count(1_500.into()).build();
+	pub ElectionBoundsOnChain: ElectionBounds = ElectionBoundsBuilder::default()
+		.voters_count(5_000.into()).targets_count(1_250.into()).build();
+
+	// pub MaxNominations: u32 = <NposSolution16 as frame_election_provider_support::NposSolution>::LIMIT as u32;
+	pub MaxElectingVotersSolution: u32 = 40_000;
+	// The maximum winners that can be elected by the Election pallet which is equivalent to the
+	// maximum active validators the staking pallet can have.
+	pub MaxActiveValidators: u32 = 1000;
+
+    // pub const EPOCH_DURATION_IN_BLOCKS: u32 = 200;
+    // phase durations. 1/4 of the last session for each.
+	pub const SignedPhase: u32 = 200 / 4; // EPOCH_DURATION_IN_BLOCKS / 4;
+	pub const UnsignedPhase: u32 = 200 / 4; // EPOCH_DURATION_IN_BLOCKS / 4;
+
+
+    pub const MultiPhaseUnsignedPriority: TransactionPriority = StakingUnsignedPriority::get() - 1u64;
+	// Solution can occupy 90% of normal block size
+	pub MinerMaxLength: u32 = Perbill::from_rational(9u32, 10) *
+		*BlockLength::get().max.get(DispatchClass::Normal);
+
+    pub const SignedRewardBase: Balance = 1 * DOLLARS;
+	pub const SignedFixedDeposit: Balance = 1 * DOLLARS;
+	pub const SignedDepositIncreaseFactor: Percent = Percent::from_percent(10);
+	pub const SignedDepositByte: Balance = 1 * CENTS;
+    pub const StakingUnsignedPriority: TransactionPriority = TransactionPriority::max_value() / 2;
+}
+
+pub struct ElectionProviderBenchmarkConfig;
+impl pallet_election_provider_multi_phase::BenchmarkingConfig for ElectionProviderBenchmarkConfig {
+    const VOTERS: [u32; 2] = [1000, 2000];
+    const TARGETS: [u32; 2] = [500, 1000];
+    const ACTIVE_VOTERS: [u32; 2] = [500, 800];
+    const DESIRED_TARGETS: [u32; 2] = [200, 400];
+    const SNAPSHOT_MAXIMUM_VOTERS: u32 = 1000;
+    const MINER_MAXIMUM_VOTERS: u32 = 1000;
+    const MAXIMUM_TARGETS: u32 = 300;
+}
+
+/// Maximum number of iterations for balancing that will be executed in the embedded OCW
+/// miner of election provider multi phase.
+pub const MINER_MAX_ITERATIONS: u32 = 10;
+
+/// A source of random balance for NposSolver, which is meant to be run by the OCW election miner.
+pub struct OffchainRandomBalancing;
+impl Get<Option<BalancingConfig>> for OffchainRandomBalancing {
+    fn get() -> Option<BalancingConfig> {
+        use sp_runtime::traits::TrailingZeroInput;
+        let iterations = match MINER_MAX_ITERATIONS {
+            0 => 0,
+            max => {
+                let seed = sp_io::offchain::random_seed();
+                let random = <u32>::decode(&mut TrailingZeroInput::new(&seed))
+                    .expect("input is padded with zeroes; qed") %
+                    max.saturating_add(1);
+                random as usize
+            },
+        };
+
+        let config = BalancingConfig { iterations, tolerance: 0 };
+        Some(config)
+    }
+}
+
+pub struct OnChainSeqPhragmen;
+impl onchain::Config for OnChainSeqPhragmen {
+    type System = Runtime;
+    type Solver = SequentialPhragmen<
+        AccountId,
+        pallet_election_provider_multi_phase::SolutionAccuracyOf<Runtime>,
+    >;
+    type DataProvider = <Runtime as pallet_election_provider_multi_phase::Config>::DataProvider;
+    type WeightInfo = frame_election_provider_support::weights::SubstrateWeight<Runtime>;
+    type MaxWinners = <Runtime as pallet_election_provider_multi_phase::Config>::MaxWinners;
+    type Bounds = ElectionBoundsOnChain;
+}
+
+impl pallet_election_provider_multi_phase::MinerConfig for Runtime {
+    type AccountId = AccountId;
+    type MaxLength = MinerMaxLength;
+    type MaxWeight = ();
+    type Solution = NposSolution16;
+    type MaxVotesPerVoter =
+    <<Self as pallet_election_provider_multi_phase::Config>::DataProvider as ElectionDataProvider>::MaxVotesPerVoter;
+    type MaxWinners = MaxActiveValidators;
+
+    // The unsigned submissions have to respect the weight of the submit_unsigned call, thus their
+    // weight estimate function is wired to this call's weight.
+    fn solution_weight(v: u32, t: u32, a: u32, d: u32) -> Weight {
+        <
+        <Self as pallet_election_provider_multi_phase::Config>::WeightInfo
+        as
+        pallet_election_provider_multi_phase::WeightInfo
+        >::submit_unsigned(v, t, a, d)
+    }
+
+}
+
+impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
+where
+    RuntimeCall: From<C>,
+{
+    type Extrinsic = UncheckedExtrinsic;
+    type OverarchingCall = RuntimeCall;
+}
+
+frame_election_provider_support::generate_solution_type!(
+	#[compact]
+	pub struct NposSolution16::<
+		VoterIndex = u32,
+		TargetIndex = u16,
+		Accuracy = sp_runtime::PerU16,
+		MaxVoters = MaxElectingVotersSolution,
+	>(16)
+);
+
+impl pallet_election_provider_multi_phase::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type Currency = Balances;
+    type EstimateCallFee = TransactionPayment;
+    type SignedPhase = SignedPhase;
+    type UnsignedPhase = UnsignedPhase;
+    type BetterSignedThreshold = ();
+    type OffchainRepeat = OffchainRepeat;
+    type MinerTxPriority = MultiPhaseUnsignedPriority;
+    type MinerConfig = Self;
+    type SignedMaxSubmissions = ConstU32<10>;
+    type SignedRewardBase = SignedRewardBase;
+    type SignedDepositBase =
+    GeometricDepositBase<Balance, SignedFixedDeposit, SignedDepositIncreaseFactor>;
+    type SignedDepositByte = SignedDepositByte;
+    type SignedMaxRefunds = ConstU32<3>;
+    type SignedDepositWeight = ();
+    type SignedMaxWeight = ();
+    type SlashHandler = (); // burn slashes
+    type RewardHandler = (); // nothing to do upon rewards
+    type DataProvider = Staking;
+    type Fallback = onchain::OnChainExecution<OnChainSeqPhragmen>;
+    type GovernanceFallback = onchain::OnChainExecution<OnChainSeqPhragmen>;
+    type Solver = SequentialPhragmen<AccountId, SolutionAccuracyOf<Self>, OffchainRandomBalancing>;
+    type ForceOrigin = EnsureRoot<AccountId>;
+    type MaxWinners = MaxActiveValidators;
+    type ElectionBounds = ElectionBoundsMultiPhase;
+    type BenchmarkingConfig = ElectionProviderBenchmarkConfig;
+    type WeightInfo = pallet_election_provider_multi_phase::weights::SubstrateWeight<Self>;
+}
+
+
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
@@ -880,8 +1038,8 @@ mod runtime {
     #[runtime::pallet_index(29)]
     pub type VoterList = pallet_bags_list<Instance1>;
 
-    // #[runtime::pallet_index(32)]
-    // pub type ElectionProviderMultiPhase = pallet_election_provider_multi_phase::Pallet<Runtime>;
+    #[runtime::pallet_index(32)]
+    pub type ElectionProviderMultiPhase = pallet_election_provider_multi_phase::Pallet<Runtime>;
 }
 
 /// The address format for describing accounts.
