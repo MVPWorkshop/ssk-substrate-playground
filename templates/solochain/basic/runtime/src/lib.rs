@@ -21,6 +21,7 @@ use sp_std::prelude::*;
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 use pallet_nfts::PalletFeatures;
+use frame_support::traits::EqualPrivilegeOnly;
 
 pub use frame_support::{
     construct_runtime, derive_impl, parameter_types,
@@ -367,6 +368,23 @@ impl pallet_child_bounties::Config for Runtime {
 
 }
 
+parameter_types! {
+	pub MaximumSchedulerWeight: Weight = Perbill::from_percent(80) * BlockWeights::get().max_block;
+}
+
+impl pallet_scheduler::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type RuntimeOrigin = RuntimeOrigin;
+	type PalletsOrigin = OriginCaller;
+	type RuntimeCall = RuntimeCall;
+	type MaximumWeight = MaximumSchedulerWeight;
+    type ScheduleOrigin = EnsureRoot<AccountId>;
+	type OriginPrivilegeCmp = EqualPrivilegeOnly;
+	type MaxScheduledPerBlock = ();
+	type WeightInfo = ();
+	type Preimages = (); // type Preimages = Preimage; when impl pallet Preimage
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -423,6 +441,8 @@ mod runtime {
 
     #[runtime::pallet_index(12)]
     pub type ChildBounties = pallet_child_bounties;
+    #[runtime::pallet_index(13)]
+    pub type Scheduler = pallet_scheduler;
 }
 
 /// The address format for describing accounts.
