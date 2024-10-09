@@ -133,10 +133,7 @@ impl PalletBountiesConfig {
                     PalletBountiesTraits::ChildBountyManager.to_string(),
                     "()".to_string(),
                 ),
-                (
-                    PalletBountiesTraits::OnSlash.to_string(),
-                    "()".to_string(),
-                ),
+                (PalletBountiesTraits::OnSlash.to_string(), "()".to_string()),
             ]
             .into_iter()
             .collect(),
@@ -172,4 +169,3 @@ parameter_types! {
 "
     .to_string()
 }
-
