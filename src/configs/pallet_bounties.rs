@@ -3,6 +3,8 @@ use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
 
+// The Bounties pallet is dependent on the Treasury and Assets pallets, and they must be invoked together.
+
 #[derive(Debug, Clone, Copy)]
 pub enum PalletBountiesTraits {
     RuntimeEvent,

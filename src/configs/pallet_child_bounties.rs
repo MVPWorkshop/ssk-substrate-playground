@@ -3,6 +3,8 @@ use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
 
+// The Child Bounties pallet is dependent on the Bounties,Treasury and Assets pallets, and they must be invoked together.
+
 #[derive(Debug, Clone, Copy)]
 pub enum PalletChildBountiesTraits {
     RuntimeEvent,
