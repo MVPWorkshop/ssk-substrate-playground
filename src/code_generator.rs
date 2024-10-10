@@ -336,7 +336,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             }
             ESupportedPallets::PalletScheduler => {
                 // Get configuration for the scheduler pallet.
-                let config = PalletSocietyConfig::new();
+                let config = PalletSchedulerConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,
