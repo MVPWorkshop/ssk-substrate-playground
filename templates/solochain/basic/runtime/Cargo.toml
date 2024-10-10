@@ -41,6 +41,8 @@ pallet-bounties = { git = "https://github.com/paritytech/polkadot-sdk.git", tag 
 pallet-child-bounties = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 pallet-scheduler = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
+pallet-collective = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+
 
 # primitives
 sp-api = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
@@ -111,6 +113,7 @@ std = [
 	"pallet-bounties/std",
 	"pallet-child-bounties/std",
 	"pallet-scheduler/std",
+	"pallet-collective/std",
 
 
 	"sp-api/std",
