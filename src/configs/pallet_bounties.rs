@@ -156,7 +156,6 @@ impl PalletBountiesConfig {
     }
 }
 
-
 fn get_additional_implementation_code() -> String {
     "
 parameter_types! {

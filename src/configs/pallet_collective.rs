@@ -15,7 +15,6 @@ pub enum PalletCollectiveTraits {
     WeightInfo,
     SetMembersOrigin,
     MaxProposalWeight,
-
 }
 impl fmt::Display for PalletCollectiveTraits {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -79,7 +78,7 @@ impl PalletCollectiveConfig {
                     "pallet_collective::Pallet<Runtime>".to_string(),
                 ),
             },
-             pallet_traits : vec![
+            pallet_traits: vec![
                 (
                     PalletCollectiveTraits::RuntimeOrigin.to_string(),
                     "RuntimeOrigin".to_string(),
@@ -121,7 +120,6 @@ impl PalletCollectiveConfig {
                     "MaxCollectivesProposalWeight".to_string(),
                 ),
             ]
-            
             .into_iter()
             .collect(),
             additional_pallet_impl_code: Some(get_additional_implementation_code()),
@@ -152,4 +150,3 @@ parameter_types! {
 "
     .to_string()
 }
-
