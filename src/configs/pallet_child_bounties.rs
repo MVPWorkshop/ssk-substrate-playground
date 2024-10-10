@@ -3,6 +3,8 @@ use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
 
+// The Child Bounties pallet is dependent on the Bounties,Treasury and Assets pallets, and they must be invoked together.
+
 #[derive(Debug, Clone, Copy)]
 pub enum PalletChildBountiesTraits {
     RuntimeEvent,
@@ -66,7 +68,9 @@ impl PalletChildBountiesConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
+
                 index: Some(CHILD_BOUNTIES),
+
                 runtime: (
                     "ChildBounties".to_string(),
                     "pallet_child_bounties::Pallet<Runtime>".to_string(),
@@ -79,11 +83,11 @@ impl PalletChildBountiesConfig {
                 ),
                 (
                     PalletChildBountiesTraits::MaxActiveChildBountyCount.to_string(),
-                    "ConstU32<5>".to_string(),
+                    "MaxActiveChildBountyCount".to_string(),
                 ),
                 (
                     PalletChildBountiesTraits::ChildBountyValueMinimum.to_string(),
-                    "ConstU128<{ 500 * 1000 }>".to_string(),
+                    "ChildBountyValueMinimum".to_string(),
                 ),
                 (
                     PalletChildBountiesTraits::WeightInfo.to_string(),
@@ -92,12 +96,10 @@ impl PalletChildBountiesConfig {
             ]
             .into_iter()
             .collect(),
-            additional_pallet_impl_code: None,
+            additional_pallet_impl_code: Some(get_additional_implementation_code()),
             genesis_config: None,
             additional_chain_spec_code: None,
-            additional_runtime_lib_code: Some(vec![String::from(
-                "use pallet_child_bounties::legacy::ChildBountiesInfo;",
-            )]),
+            additional_runtime_lib_code: None,
             runtime_api_code: None,
         };
 
@@ -108,4 +110,13 @@ impl PalletChildBountiesConfig {
             dependencies,
         }
     }
+}
+fn get_additional_implementation_code() -> String {
+    "
+parameter_types! {
+	pub const MaxActiveChildBountyCount:u32=100;
+    pub const ChildBountyValueMinimum: Balance=BountyValueMinimum::get()/10;
+}
+"
+    .to_string()
 }
