@@ -15,5 +15,7 @@ pub mod pallet_index {
     pub const CHILD_BOUNTIES: u32 = 20;
     pub const SOCIETY: u32 = 21;
     pub const STAKING: u32 = 22;
+    pub const SCHEDULER: u32 = 23;
     pub const COLLECTIVE: u32 = 24;
+
 }
