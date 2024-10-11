@@ -7,6 +7,7 @@ use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
+use substrate_runtime_builder::utils::util::*;
 
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
@@ -75,12 +76,24 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     }
                     ESupportedPallets::PalletBounties => {
                         pallets.push(ESupportedPallets::PalletBounties);
+
+                        if !pallets.contains(&ESupportedPallets::PalletAssets) {
+                            pallets.push(ESupportedPallets::PalletAssets);
+                        }
+
+                        if !pallets.contains(&ESupportedPallets::PalletTreasury) {
+                            pallets.push(ESupportedPallets::PalletTreasury);
+                        }
                     }
                     ESupportedPallets::PalletTreasury => {
                         pallets.push(ESupportedPallets::PalletTreasury);
                     }
                     ESupportedPallets::PalletChildBounties => {
                         pallets.push(ESupportedPallets::PalletChildBounties);
+
+                        if !pallets.contains(&ESupportedPallets::PalletBounties) {
+                            pallets.push(ESupportedPallets::PalletBounties);
+                        }
                     }
                     ESupportedPallets::PalletVesting => {
                         pallets.push(ESupportedPallets::PalletVesting);
@@ -94,6 +107,12 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     _ => continue,
                 }
             }
+
+            println!("before remove duplicate: {:?}", pallets);
+            remove_duplicate_pallets(&mut pallets);
+
+            println!("after remove duplicate: {:?}", pallets);
+
             // Calls the function to generate the project with the given name and pallets
             generate_project(project_name.clone(), pallets);
             format!("{} project generated successfully", project_name)

@@ -116,7 +116,7 @@ pub struct PalletConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
-#[derive(Debug, Clone, EnumIter)]
+#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter)]
 pub enum ESupportedPallets {
     PalletUtility,
     PalletIdentity,

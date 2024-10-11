@@ -68,7 +68,6 @@ impl PalletChildBountiesConfig {
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {
-
                 index: Some(CHILD_BOUNTIES),
 
                 runtime: (
