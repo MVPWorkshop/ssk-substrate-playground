@@ -5,11 +5,10 @@ use std::fmt;
 
 // The Scheduler pallet is dependent on the Treasury and Assets pallets, and they must be invoked together.
 
-//TODO 
+//TODO
 //add pallet Preimage
 //change  PalletSchedulerTraits::Preimages.to_string(), "()".to_string()
 //with    PalletSchedulerTraits::Preimages.to_string(), "Preimage".to_string()
-
 
 #[derive(Debug, Clone, Copy)]
 pub enum PalletSchedulerTraits {

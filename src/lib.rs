@@ -31,4 +31,5 @@ pub mod utils {
     pub mod file_manager;
     pub mod manifest;
     pub mod runtime;
+    pub mod util;
 }
