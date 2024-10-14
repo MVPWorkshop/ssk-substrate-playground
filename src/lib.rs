@@ -2,6 +2,7 @@ pub mod code_generator;
 pub mod database;
 pub mod db_models;
 pub mod pallet_index;
+pub mod route;
 pub mod types;
 
 pub mod configs {

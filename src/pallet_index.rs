@@ -17,5 +17,4 @@ pub mod pallet_index {
     pub const STAKING: u32 = 22;
     pub const SCHEDULER: u32 = 23;
     pub const COLLECTIVE: u32 = 24;
-
 }
