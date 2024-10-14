@@ -1,5 +1,6 @@
+use serde::Serialize;
 use std::collections::HashMap;
-use strum_macros::EnumIter; // Derive macro for enum iteration
+use strum_macros::EnumIter;
 
 #[derive(Debug, Clone)]
 pub enum PalletModuleParts {
@@ -116,7 +117,7 @@ pub struct PalletConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
-#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter)]
+#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize)]
 pub enum ESupportedPallets {
     PalletUtility,
     PalletIdentity,

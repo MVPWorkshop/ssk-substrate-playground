@@ -3,6 +3,7 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use substrate_runtime_builder::code_generator::generate_project;
 use substrate_runtime_builder::db_models::insert_pallet_data_to_db;
+use substrate_runtime_builder::route::get_templates;
 use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
@@ -104,7 +105,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletCollective => {
                         pallets.push(ESupportedPallets::PalletCollective);
                     }
-                  ESupportedPallets::PalletScheduler => {
+                    ESupportedPallets::PalletScheduler => {
                         pallets.push(ESupportedPallets::PalletScheduler);
                     }
                     _ => continue,
@@ -190,6 +191,7 @@ async fn main() -> std::io::Result<()> {
                 web::get().to(download_project),
             )
             .route("/supported-pallets", web::get().to(list_supported_pallets))
+            .route("/templates", web::get().to(get_templates))
     })
     .workers(4)
     .bind("0.0.0.0:8080")?

@@ -339,7 +339,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletCollective => {
                 // Get configuration for the collective pallet.
                 let config = PalletCollectiveConfig::new();
-                 // Create a pallet configuration and add it to the list.
+                // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,
                     metadata: config.metadata,
@@ -348,8 +348,7 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 };
                 pallets_config.push(pallet_config);
             }
-              
-              
+
             ESupportedPallets::PalletScheduler => {
                 // Get configuration for the scheduler pallet.
                 let config = PalletSchedulerConfig::new();
