@@ -22,6 +22,7 @@ use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 use pallet_nfts::PalletFeatures;
 use frame_support::traits::EqualPrivilegeOnly;
+use frame_support::traits::EitherOfDiverse;
 
 pub use frame_support::{
     construct_runtime, derive_impl, parameter_types,
@@ -408,6 +409,47 @@ impl pallet_collective::Config for Runtime {
 	type MaxProposalWeight = MaxCollectivesProposalWeight;
 }
 
+parameter_types! { 
+    pub const MinimumDeposit: u128 = 100 * 1_000_000_000_000;
+    pub const Period: u32 = 5 * MINUTES;
+    pub const FastTrackVotingPeriod: u32 = MINUTES / 2;
+    pub const CooloffPeriod: u32 = 2 * MINUTES;
+    pub const MaxAll: u32 = 128;
+}
+
+
+impl pallet_democracy::Config for Runtime {
+    type WeightInfo= pallet_democracy::weights::SubstrateWeight<Runtime>;
+    type RuntimeEvent= RuntimeEvent;
+    type Scheduler= Scheduler;
+    type Preimages = (); //dont have preimage pallet
+    type Currency=Balances;
+    type EnactmentPeriod=Period;
+    type LaunchPeriod=Period;
+    type VotingPeriod=Period;
+    type VoteLockingPeriod=ConstU32<{ 2 * MINUTES }>;
+    type MinimumDeposit = MinimumDeposit;
+    type InstantAllowed = ConstBool<true>;
+    type FastTrackVotingPeriod=FastTrackVotingPeriod;
+    type CooloffPeriod=CooloffPeriod;
+    type MaxVotes=MaxAll;
+    type MaxProposals=MaxAll;
+    type MaxDeposits=MaxAll;
+    type MaxBlacklisted=MaxAll;
+    type ExternalOrigin= pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 2>;
+    type ExternalMajorityOrigin=pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 2>;
+    type ExternalDefaultOrigin=pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>;
+    type SubmitOrigin=EnsureSigned<AccountId>;
+    type FastTrackOrigin=pallet_collective::EnsureProportionAtLeast<AccountId, (), 2, 3>;
+    type InstantOrigin=pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>;
+    type CancellationOrigin = EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionAtLeast<AccountId, (), 2, 3>,>;
+    type BlacklistOrigin=EnsureRoot<AccountId>;
+    type CancelProposalOrigin=EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>,>;
+    type VetoOrigin = pallet_collective::EnsureMember<AccountId, ()>;
+    type PalletsOrigin=OriginCaller;
+    type Slash=();
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -469,6 +511,10 @@ mod runtime {
 
     #[runtime::pallet_index(14)]
     pub type Collective = pallet_collective;
+
+
+    #[runtime::pallet_index(30)]
+    pub type Democracy = pallet_democracy;
 }
 
 /// The address format for describing accounts.
