@@ -101,7 +101,10 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletSociety => {
                         pallets.push(ESupportedPallets::PalletSociety);
                     }
-                    ESupportedPallets::PalletScheduler => {
+                    ESupportedPallets::PalletCollective => {
+                        pallets.push(ESupportedPallets::PalletCollective);
+                    }
+                  ESupportedPallets::PalletScheduler => {
                         pallets.push(ESupportedPallets::PalletScheduler);
                     }
                     _ => continue,
@@ -164,6 +167,7 @@ async fn list_supported_pallets() -> impl Responder {
         "Uniques",
         "Membership",
         "ChildBounties",
+        "Collective",
         "Scheduler",
     ];
 

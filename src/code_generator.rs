@@ -16,10 +16,12 @@ use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 use crate::configs::pallet_assets::PalletAssetsConfig;
+use crate::configs::pallet_collective::PalletCollectiveConfig;
 use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::configs::pallet_society::PalletSocietyConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
+
 use crate::types::ESupportedPallets;
 use log::{error, info};
 use std::path::Path;
@@ -334,6 +336,20 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 };
                 pallets_config.push(pallet_config);
             }
+            ESupportedPallets::PalletCollective => {
+                // Get configuration for the collective pallet.
+                let config = PalletCollectiveConfig::new();
+                 // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+              
+              
             ESupportedPallets::PalletScheduler => {
                 // Get configuration for the scheduler pallet.
                 let config = PalletSchedulerConfig::new();
