@@ -132,3 +132,33 @@ This will download my_project.zip to your current directory.
 #### Response:
 
 If the project is found, you will receive the zip file for the project. If the project does not exist, you'll get a 404 Not Found response.
+
+
+### 3. Fetch the template data including all the pallet information.
+Endpoint: /templates
+
+Method: GET
+
+Fetch the all template data.
+
+#### Example Request:
+
+```bash
+curl -X GET "http://127.0.0.1:8080/templates"
+```
+
+Fetch the solochain template data.
+
+#### Example Request:
+
+```bash
+curl -X GET "http://127.0.0.1:8080/templates?template_type=solochain"
+```
+
+Fetch the solochain template data.
+
+#### Example Request:
+
+```bash
+curl -X GET "http://127.0.0.1:8080/templates?template_type=parachain"
+```
