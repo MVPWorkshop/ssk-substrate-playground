@@ -144,7 +144,7 @@ pub async fn get_templates(query: web::Query<TemplateQuery>) -> impl Responder {
                 },
                 Pallet {
                     name: String::from("Child Bounties"),
-                    description: get_config(pallet_configs, "Pallet child bounties"),
+                    description: get_config(pallet_configs.clone(), "Pallet child bounties"),
                     category: String::from("Core"),
                 },
                 Pallet {
