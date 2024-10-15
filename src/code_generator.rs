@@ -21,6 +21,8 @@ use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::configs::pallet_society::PalletSocietyConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
+use crate::configs::pallet_democracy::PalletDemocracyConfig;
+
 
 use crate::types::ESupportedPallets;
 use log::{error, info};
@@ -352,6 +354,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletScheduler => {
                 // Get configuration for the scheduler pallet.
                 let config = PalletSchedulerConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletDemocracy => {
+                // Get configuration for the democracy pallet.
+                let config = PalletDemocracyConfig::new();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,

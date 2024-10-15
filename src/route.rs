@@ -149,7 +149,12 @@ pub async fn get_templates(query: web::Query<TemplateQuery>) -> impl Responder {
                 },
                 Pallet {
                     name: String::from("Collective"),
-                    description: get_config(pallet_configs, "Pallet collective"),
+                    description: get_config(pallet_configs.clone(), "Pallet collective"),
+                    category: String::from("Core"),
+                },
+                Pallet {
+                    name: String::from("Democracy"),
+                    description: get_config(pallet_configs, "Pallet democracy"),
                     category: String::from("Core"),
                 },
             ],
