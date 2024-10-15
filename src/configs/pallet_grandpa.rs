@@ -20,6 +20,12 @@ pub struct PalletGrandpaConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletGrandpaConfig {
+    fn default() -> Self {
+        PalletGrandpaConfig::new()
+    }
+}
+
 impl PalletGrandpaConfig {
     pub fn new() -> Self {
         let pallet_description = [
@@ -33,9 +39,9 @@ impl PalletGrandpaConfig {
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
-                categories: Some(vec![PalletCategories::Consensus].into()),
+                categories: Some(vec![PalletCategories::Consensus]),
                 short_description: String::from("FRAME Grandpa consensus pallet"),
-                description: String::from(pallet_description),
+                description: pallet_description,
             },
             runtime: PalletRuntimeConfig {
                 pallet_traits: vec![

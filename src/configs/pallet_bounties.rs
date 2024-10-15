@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::BOUNTIES;
+use super::super::pallet_index::BOUNTIES;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -48,6 +48,12 @@ pub struct PalletBountiesConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletBountiesConfig {
+    fn default() -> Self {
+        PalletBountiesConfig::new()
+    }
 }
 
 impl PalletBountiesConfig {

@@ -17,6 +17,12 @@ pub struct PalletTimestampConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletTimestampConfig {
+    fn default() -> Self {
+        PalletTimestampConfig::new()
+    }
+}
+
 impl PalletTimestampConfig {
     pub fn new() -> Self {
         let pallet_description = [
@@ -32,9 +38,9 @@ impl PalletTimestampConfig {
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
-                categories: Some(vec![PalletCategories::Consensus].into()),
+                categories: Some(vec![PalletCategories::Consensus]),
                 short_description: String::from("FRAME Timestamp consensus pallet"),
-                description: String::from(pallet_description),
+                description: pallet_description,
             },
             runtime: PalletRuntimeConfig {
                 pallet_traits: vec![

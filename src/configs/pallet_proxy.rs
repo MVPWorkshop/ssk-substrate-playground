@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::PROXY;
+use super::super::pallet_index::PROXY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -44,6 +44,12 @@ pub struct PalletProxyConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletProxyConfig {
+    fn default() -> Self {
+        PalletProxyConfig::new()
+    }
 }
 
 impl PalletProxyConfig {

@@ -391,12 +391,12 @@ pub fn generate_project(project_name: String, pallets: Vec<ESupportedPallets>) {
     // Create a new project directory and copy the template.
     create_new_project(project_name.clone());
 
-    print!("Created project: {}\n", project_name.clone());
+    println!("Created project: {}", project_name.clone());
 
     // Generate configurations for the specified pallets.
     let pallet_configs = get_pallet_configs(pallets);
 
     // Add the pallets to the new project.
     add_pallets(project_name.clone(), pallet_configs);
-    print!("Added pallets to the project: {}\n", project_name);
+    println!("Added pallets to the project: {}", project_name);
 }

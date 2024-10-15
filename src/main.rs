@@ -30,7 +30,9 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
 }
 
 // A function to create a new project with a list of pallets
-async fn generate_a_project(project: web::Json<NewProject>) -> actix_web::Result<HttpResponse, Error> {
+async fn generate_a_project(
+    project: web::Json<NewProject>,
+) -> actix_web::Result<HttpResponse, Error> {
     let mut project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
     let push_to_git = project.push_to_git.unwrap_or(false);
@@ -132,8 +134,7 @@ async fn generate_a_project(project: web::Json<NewProject>) -> actix_web::Result
     })
     .await
     .map(|res| Ok(HttpResponse::Ok().body(res)))
-    .map_err(|err| actix_web::error::ErrorInternalServerError(err))?;
-
+    .map_err(actix_web::error::ErrorInternalServerError)?;
 
     // If push_to_git is true, create a GitHub repository and push the code
     if push_to_git {

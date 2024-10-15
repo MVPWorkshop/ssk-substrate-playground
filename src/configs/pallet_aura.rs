@@ -18,6 +18,12 @@ pub struct PalletAuraConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletAuraConfig {
+    fn default() -> Self {
+        PalletAuraConfig::new()
+    }
+}
+
 impl PalletAuraConfig {
     pub fn new() -> Self {
         let pallet_description =
@@ -31,7 +37,7 @@ impl PalletAuraConfig {
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
-                categories: Some(vec![PalletCategories::Consensus].into()),
+                categories: Some(vec![PalletCategories::Consensus]),
                 short_description: String::from("FRAME AURA consensus pallet"),
                 description: String::from(pallet_description),
             },

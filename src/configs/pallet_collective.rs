@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::COLLECTIVE;
+use super::super::pallet_index::COLLECTIVE;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -38,6 +38,12 @@ pub struct PalletCollectiveConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletCollectiveConfig {
+    fn default() -> Self {
+        PalletCollectiveConfig::new()
+    }
 }
 
 impl PalletCollectiveConfig {

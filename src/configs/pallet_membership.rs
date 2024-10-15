@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::MEMBERSHIP;
+use super::super::pallet_index::MEMBERSHIP;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -39,6 +39,12 @@ pub struct PalletMembershipConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletMembershipConfig {
+    fn default() -> Self {
+        PalletMembershipConfig::new()
+    }
 }
 
 impl PalletMembershipConfig {
