@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::DEMOCRACY;
+use super::super::pallet_index::DEMOCRACY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -77,6 +77,12 @@ pub struct PalletDemocracyConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletDemocracyConfig {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 /// TODO Configurations needs to updated rationally by keeping every pallet use-case in mind.

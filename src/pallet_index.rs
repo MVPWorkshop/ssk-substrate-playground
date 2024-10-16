@@ -16,3 +16,4 @@ pub const SOCIETY: u32 = 21;
 pub const STAKING: u32 = 22;
 pub const SCHEDULER: u32 = 23;
 pub const COLLECTIVE: u32 = 24;
+pub const DEMOCRACY: u32 = 25;
