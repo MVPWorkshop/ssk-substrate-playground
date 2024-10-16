@@ -72,7 +72,6 @@ impl fmt::Display for PalletDemocracyTraits {
     }
 }
 
-
 pub struct PalletDemocracyConfig {
     pub name: String,
     pub metadata: PalletMetadata,
@@ -80,10 +79,12 @@ pub struct PalletDemocracyConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+/// TODO Configurations needs to updated rationally by keeping every pallet use-case in mind.
 impl PalletDemocracyConfig {
     pub fn new() -> Self {
         let pallet_description = [
-            "The Democracy pallet enables stakeholder voting on referenda, managing proposals from public and external queues, and utilizing time-lock voting with conviction-based vote power scaling."    ].join("\n");
+            "The Democracy pallet enables stakeholder voting on referenda, managing proposals from public and external queues, and utilizing time-lock voting with conviction-based vote power scaling."
+        ].join("\n");
 
         let metadata = PalletMetadata {
             description: pallet_description,
@@ -244,16 +245,16 @@ impl PalletDemocracyConfig {
                 )]),
                 runtime_api_code: None,
             };
-            PalletDemocracyConfig {
-                name: "Pallet Democracy".to_string(),
-                metadata,
-                runtime,
-                dependencies,
-            }
+        PalletDemocracyConfig {
+            name: "Pallet Democracy".to_string(),
+            metadata,
+            runtime,
+            dependencies,
         }
     }
-    fn get_additional_implementation_code() -> String {
-        "
+}
+fn get_additional_implementation_code() -> String {
+    "
     parameter_types! { 
             pub const MinimumDeposit: u128 = 100 * 1_000_000_000_000;
             pub const Period: u32 = 5 * MINUTES;
@@ -262,5 +263,5 @@ impl PalletDemocracyConfig {
             pub const MaxAll: u32 = 128;
         }
     "
-        .to_string()
-    }
+    .to_string()
+}

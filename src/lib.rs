@@ -12,6 +12,7 @@ pub mod configs {
     pub mod pallet_bounties;
     pub mod pallet_child_bounties;
     pub mod pallet_collective;
+    pub mod pallet_democracy;
     pub mod pallet_grandpa;
     pub mod pallet_identity;
     pub mod pallet_membership;
@@ -27,7 +28,6 @@ pub mod configs {
     pub mod pallet_uniques;
     pub mod pallet_utility;
     pub mod pallet_vesting;
-    pub mod pallet_democracy;
 }
 
 pub mod utils {

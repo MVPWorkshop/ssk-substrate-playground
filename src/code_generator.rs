@@ -17,12 +17,11 @@ use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 use crate::configs::pallet_assets::PalletAssetsConfig;
 use crate::configs::pallet_collective::PalletCollectiveConfig;
+use crate::configs::pallet_democracy::PalletDemocracyConfig;
 use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::configs::pallet_society::PalletSocietyConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
-use crate::configs::pallet_democracy::PalletDemocracyConfig;
-
 
 use crate::types::ESupportedPallets;
 use log::{error, info};
