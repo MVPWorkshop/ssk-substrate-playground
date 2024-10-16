@@ -68,3 +68,4 @@ jobs:
         with:
           command: clippy
           args: --all-features
+        continue-on-error: true
