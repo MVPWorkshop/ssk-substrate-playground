@@ -8,10 +8,12 @@ pub mod types;
 pub mod configs {
     pub mod pallet_assets;
     pub mod pallet_aura;
+    pub mod pallet_bags_list;
     pub mod pallet_balances;
     pub mod pallet_bounties;
     pub mod pallet_child_bounties;
     pub mod pallet_collective;
+    pub mod pallet_election_provider_multi_phase;
     pub mod pallet_grandpa;
     pub mod pallet_identity;
     pub mod pallet_membership;
@@ -20,6 +22,7 @@ pub mod configs {
     pub mod pallet_proxy;
     pub mod pallet_scheduler;
     pub mod pallet_society;
+    pub mod pallet_staking;
     pub mod pallet_sudo;
     pub mod pallet_timestamp;
     pub mod pallet_transaction_payment;

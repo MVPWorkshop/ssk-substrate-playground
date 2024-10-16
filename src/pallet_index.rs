@@ -17,4 +17,6 @@ pub mod pallet_index {
     pub const STAKING: u32 = 22;
     pub const SCHEDULER: u32 = 23;
     pub const COLLECTIVE: u32 = 24;
+    pub const BAGS_LIST: u32 = 26;
+    pub const ELECTION_PROVIDER_MULTI_PHASE: u32 = 27;
 }
