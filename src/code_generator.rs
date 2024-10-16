@@ -362,18 +362,18 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 };
                 pallets_config.push(pallet_config);
             }
-            ESupportedPallets::PalletDemocracy => {
-                // Get configuration for the democracy pallet.
-                let config = PalletDemocracyConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
+            // ESupportedPallets::PalletDemocracy => {
+            //     // Get configuration for the democracy pallet.
+            //     let config = PalletDemocracyConfig::new();
+            //     // Create a pallet configuration and add it to the list.
+            //     let pallet_config = PalletConfig {
+            //         name: config.name,
+            //         metadata: config.metadata,
+            //         runtime: config.runtime,
+            //         dependencies: config.dependencies.clone(),
+            //     };
+            //     pallets_config.push(pallet_config);
+            // }
             _ => {}
         }
     }

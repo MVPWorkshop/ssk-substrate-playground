@@ -31,3 +31,4 @@ mongodb = "2.7.0"
 
 strum = "0.26"
 strum_macros = "0.26"
+toml = "0.8.19"

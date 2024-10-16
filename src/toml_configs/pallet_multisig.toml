@@ -1,0 +1,34 @@
+name = "Pallet multisig"
+
+[metadata]
+description = "This pallet contains functionality for multi-signature dispatch, a (potentially) stateful operation, allowing multiple signed origins (accounts) to coordinate and dispatch a call from a well-known origin, derivable deterministically from the set of account IDs and the threshold number of accounts from the set that must approve it. In the case that the threshold is just one then this is a stateless operation. This is useful for multisig wallets where cryptographic threshold signatures are not available or desired."
+short_description = "FRAME multisig pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729072286"
+
+[runtime.construct_runtime]
+index = 10
+runtime = [
+    "Multisig",
+    "pallet_multisig::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+WeightInfo = "pallet_multisig::weights::SubstrateWeight<Runtime>"
+MaxSignatories = "ConstU32<20>"
+Currency = "Balances"
+RuntimeCall = "RuntimeCall"
+DepositBase = "ConstU128<{ 1 * 1000 }>"
+RuntimeEvent = "RuntimeEvent"
+DepositFactor = "ConstU128<{ 1 * 1000 }>"
+
+[dependencies.pallet]
+package = "pallet-multisig"
+alias = "pallet multisig"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

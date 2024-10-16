@@ -1,0 +1,45 @@
+name = "Pallet membership"
+
+[metadata]
+description = "Allows control of membership of a set of AccountIds, useful for managing membership of a collective. A prime member may be set."
+short_description = "FRAME membership pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729072286"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+\tpub const TechnicalMaxMembers: u32 = 100;
+}
+"""
+
+[runtime.construct_runtime]
+index = 16
+runtime = [
+    "Membership",
+    "pallet_membership::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+MembershipInitialized = "()"
+WeightInfo = "pallet_membership::weights::SubstrateWeight<Runtime>"
+PrimeOrigin = "EnsureRoot<AccountId>"
+SwapOrigin = "EnsureRoot<AccountId>"
+ResetOrigin = "EnsureRoot<AccountId>"
+RemoveOrigin = "EnsureRoot<AccountId>"
+AddOrigin = "EnsureRoot<AccountId>"
+MembershipChanged = "()"
+MaxMembers = "TechnicalMaxMembers"
+
+[dependencies.pallet]
+package = "pallet-membership"
+alias = "pallet membership"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

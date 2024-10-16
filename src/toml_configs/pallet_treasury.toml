@@ -1,0 +1,71 @@
+name = "Pallet treasury"
+
+[metadata]
+description = """
+The Treasury pallet provides a pot of funds that can be managed by stakeholders in the system and a structure for making spending proposals from this pot.
+The Treasury Pallet itself provides the pot to store funds, and a means for stakeholders to propose and claim expenditures (aka spends). The chain will need to provide a method to approve spends (e.g. public referendum) and a method for collecting funds (e.g. inflation, fees)."""
+short_description = "FRAME Treasury pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 10500
+updated = "1729072286"
+
+[runtime]
+additional_pallet_impl_code = '''
+
+parameter_types! {
+	pub const SpendPeriod: BlockNumber = 1 * DAYS;
+	pub const Burn: Permill = Permill::from_percent(50);
+	pub const TipCountdown: BlockNumber = 1 * DAYS;
+	pub const TipFindersFee: Percent = Percent::from_percent(20);
+	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
+	pub const DataDepositPerByte: Balance = 1 * CENTS;
+	pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
+	pub const MaximumReasonLength: u32 = 300;
+	pub const MaxApprovals: u32 = 100;
+	pub const MaxBalance: Balance = Balance::max_value();
+	pub const SpendPayoutPeriod: BlockNumber = 30 * DAYS;
+	pub TreasuryAccount: AccountId = Treasury::account_id();
+}
+'''
+additional_runtime_lib_code = [
+    "use sp_runtime::Percent;",
+    "use frame_system::EnsureWithSuccess;",
+    "use frame_support::traits::tokens::pay::PayAssetFromAccount;",
+    "use frame_support::traits::tokens::UnityAssetBalanceConversion;",
+]
+
+[runtime.construct_runtime]
+index = 13
+runtime = [
+    "Treasury",
+    "pallet_treasury::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+MaxApprovals = "MaxApprovals"
+SpendFunds = "()"
+AssetKind = "u32"
+BeneficiaryLookup = "Self::Lookup"
+Paymaster = "PayAssetFromAccount<Assets, TreasuryAccount>"
+Beneficiary = "AccountId"
+RuntimeEvent = "RuntimeEvent"
+SpendPeriod = "SpendPeriod"
+Currency = "Balances"
+RejectOrigin = "EnsureRoot<AccountId>"
+BurnDestination = "()"
+Burn = "Burn"
+PayoutPeriod = "SpendPayoutPeriod"
+BalanceConverter = "UnityAssetBalanceConversion"
+PalletId = "TreasuryPalletId"
+SpendOrigin = "EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>"
+WeightInfo = "pallet_treasury::weights::SubstrateWeight<Runtime>"
+
+[dependencies.pallet]
+package = "pallet-treasury"
+alias = "pallet treasury"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

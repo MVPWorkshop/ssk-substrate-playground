@@ -1,0 +1,58 @@
+name = "Pallet assets"
+
+[metadata]
+description = "A simple, secure module for dealing with sets of assets implementing fungible traits."
+short_description = "FRAME Assets pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 10500
+updated = "1729072286"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+\tpub const AssetDeposit: Balance = 100 * DOLLARS;
+\tpub const ApprovalDeposit: Balance = 1 * DOLLARS;
+\tpub const StringLimit: u32 = 50;
+\tpub const MetadataDepositBase: Balance = 10 * DOLLARS;
+\tpub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+}
+"""
+additional_runtime_lib_code = ["use frame_support::traits::AsEnsureOriginWithArg;"]
+
+[runtime.construct_runtime]
+index = 12
+runtime = [
+    "Assets",
+    "pallet_assets::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+AssetIdParameter = "codec::Compact<u32>"
+MetadataDepositPerByte = "MetadataDepositPerByte"
+AssetDeposit = "AssetDeposit"
+MetadataDepositBase = "MetadataDepositBase"
+Extra = "()"
+CallbackHandle = "()"
+ForceOrigin = "EnsureRoot<AccountId>"
+StringLimit = "StringLimit"
+AssetAccountDeposit = "ConstU128<DOLLARS>"
+WeightInfo = "pallet_assets::weights::SubstrateWeight<Runtime>"
+RemoveItemsLimit = "ConstU32<1000>"
+Balance = "u128"
+RuntimeEvent = "RuntimeEvent"
+AssetId = "u32"
+Currency = "Balances"
+ApprovalDeposit = "ApprovalDeposit"
+CreateOrigin = "AsEnsureOriginWithArg<EnsureSigned<AccountId>>"
+Freezer = "()"
+
+[dependencies.pallet]
+package = "pallet-assets"
+alias = "pallet assets"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

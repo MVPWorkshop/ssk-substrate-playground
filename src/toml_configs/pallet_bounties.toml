@@ -1,0 +1,56 @@
+name = "Pallet bounties"
+
+[metadata]
+description = "The Bounties pallet facilitates the management and payout of rewards for completing specific tasks or objectives, with a curator overseeing the process, and the ability to create child bounties for splitting larger tasks. It works closely with the Treasury pallet."
+short_description = "FRAME bounties pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729072286"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+\tpub const BountyDepositBase: Balance = DOLLARS;
+    pub const BountyDepositPayoutDelay: BlockNumber = DAYS;
+    pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
+    pub const BountyValueMinimum: Balance = 5 * DOLLARS;
+    pub const CuratorDepositMultiplier: Permill = Permill::from_percent(50);
+    pub const CuratorDepositMin: Balance = DOLLARS;
+    pub const CuratorDepositMax: Balance = 100 * DOLLARS;
+    pub const BountyDataDepositPerByte: Balance = CENTS;
+    pub const BountyMaximumReasonLength: u32 = 16384;
+}
+"""
+
+[runtime.construct_runtime]
+index = 19
+runtime = [
+    "Bounties",
+    "pallet_bounties::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+BountyValueMinimum = "BountyValueMinimum"
+MaximumReasonLength = "BountyMaximumReasonLength"
+WeightInfo = "pallet_bounties::weights::SubstrateWeight<Runtime>"
+ChildBountyManager = "()"
+DataDepositPerByte = "BountyDataDepositPerByte"
+OnSlash = "()"
+CuratorDepositMax = "CuratorDepositMax"
+CuratorDepositMultiplier = "CuratorDepositMultiplier"
+BountyDepositBase = "BountyDepositBase"
+BountyUpdatePeriod = "BountyUpdatePeriod"
+BountyDepositPayoutDelay = "BountyDepositPayoutDelay"
+CuratorDepositMin = "CuratorDepositMax"
+RuntimeEvent = "RuntimeEvent"
+
+[dependencies.pallet]
+package = "pallet-bounties"
+alias = "pallet bounties"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

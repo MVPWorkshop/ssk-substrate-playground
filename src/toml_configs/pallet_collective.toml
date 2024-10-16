@@ -1,0 +1,50 @@
+name = "Pallet collective"
+
+[metadata]
+description = "The Collective pallet allows a group of account IDs to make collective decisions through voting on proposals. Voting happens over a defined period, and a  member can influence the default vote. Proposals are executed once the required number of approvals is reached. "
+short_description = "FRAME collective pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729072286"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+\tpub const CouncilMotionDuration: BlockNumber = 3 * MINUTES;
+\tpub const CouncilMaxProposals: u32 = 100;
+\tpub const CouncilMaxMembers: u32 = 100;
+\t
+\t// From system config trait impl.
+\tpub MaxCollectivesProposalWeight: Weight = Perbill::from_percent(50) * BlockWeights::get().max_block;
+}
+"""
+
+[runtime.construct_runtime]
+index = 24
+runtime = [
+    "Collective",
+    "pallet_collective::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+MotionDuration = "CouncilMotionDuration"
+WeightInfo = "pallet_collective::weights::SubstrateWeight<Runtime>"
+RuntimeEvent = "RuntimeEvent"
+MaxProposalWeight = "MaxCollectivesProposalWeight"
+MaxProposals = "CouncilMaxProposals"
+MaxMembers = "CouncilMaxMembers"
+Proposal = "RuntimeCall"
+DefaultVote = "pallet_collective::PrimeDefaultVote"
+SetMembersOrigin = "EnsureRoot<Self::AccountId>"
+RuntimeOrigin = "RuntimeOrigin"
+
+[dependencies.pallet]
+package = "pallet-collective"
+alias = "pallet collective"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

@@ -1,0 +1,57 @@
+name = "Pallet society"
+
+[metadata]
+description = "The Society module is an economic game which incentivizes users to participate and maintain a membership society."
+short_description = "FRAME society pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729072286"
+
+[runtime]
+additional_pallet_impl_code = '''
+
+parameter_types! {
+    pub const GraceStrikes: u32 = 10;
+    pub const SocietyVotingPeriod: BlockNumber = 80 * HOURS;
+    pub const ClaimPeriod: BlockNumber = 80 * HOURS;
+    pub const PeriodSpend: Balance = 500 * DOLLARS;
+    pub const MaxLockDuration: BlockNumber = 36 * 30 * DAYS;
+    pub const ChallengePeriod: BlockNumber = 7 * DAYS;
+    pub const MaxPayouts: u32 = 10;
+    pub const MaxBids: u32 = 10;
+    pub const SocietyPalletId: PalletId = PalletId(*b"py/socie");
+}
+'''
+
+[runtime.construct_runtime]
+index = 21
+runtime = [
+    "Society",
+    "pallet_society::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+ChallengePeriod = "ChallengePeriod"
+Randomness = "RandomnessCollectiveFlip"
+Currency = "Balances"
+MaxPayouts = "MaxPayouts"
+MaxBids = "MaxBids"
+PeriodSpend = "PeriodSpend"
+WeightInfo = "pallet_society::weights::SubstrateWeight<Runtime>"
+GraceStrikes = "GraceStrikes"
+RuntimeEvent = "RuntimeEvent"
+VotingPeriod = "SocietyVotingPeriod"
+MaxLockDuration = "MaxLockDuration"
+FounderSetOrigin = "EnsureRoot<Self::AccountId>"
+PalletId = "SocietyPalletId"
+ClaimPeriod = "ClaimPeriod"
+
+[dependencies.pallet]
+package = "pallet-society"
+alias = "pallet society"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
