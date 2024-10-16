@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::SCHEDULER;
+use super::super::pallet_index::SCHEDULER;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -45,6 +45,12 @@ pub struct PalletSchedulerConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletSchedulerConfig {
+    fn default() -> Self {
+        PalletSchedulerConfig::new()
+    }
 }
 
 impl PalletSchedulerConfig {

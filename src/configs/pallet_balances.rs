@@ -26,6 +26,12 @@ pub struct PalletBalancesConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletBalancesConfig {
+    fn default() -> Self {
+        PalletBalancesConfig::new()
+    }
+}
+
 impl PalletBalancesConfig {
     pub fn new() -> Self {
         let pallet_description = [
@@ -40,9 +46,9 @@ impl PalletBalancesConfig {
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
-                categories: Some(vec![PalletCategories::Assets].into()),
+                categories: Some(vec![PalletCategories::Assets]),
                 short_description: String::from("FRAME Balances pallet"),
-                description: String::from(pallet_description),
+                description: pallet_description,
             },
             runtime: PalletRuntimeConfig {
                 pallet_traits: vec![

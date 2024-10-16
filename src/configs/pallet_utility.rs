@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::UTILITY;
+use super::super::pallet_index::UTILITY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -27,6 +27,12 @@ pub struct PalletUtilityConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletUtilityConfig {
+    fn default() -> Self {
+        PalletUtilityConfig::new()
+    }
 }
 
 impl PalletUtilityConfig {

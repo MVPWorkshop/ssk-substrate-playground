@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::MULTI_SIG;
+use super::super::pallet_index::MULTI_SIG;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -34,6 +34,12 @@ pub struct PalletMultisigConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletMultisigConfig {
+    fn default() -> Self {
+        PalletMultisigConfig::new()
+    }
 }
 
 impl PalletMultisigConfig {

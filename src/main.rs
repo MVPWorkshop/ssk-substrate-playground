@@ -1,8 +1,8 @@
+use actix_web::Error;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use substrate_runtime_builder::code_generator::generate_project;
-use substrate_runtime_builder::db_models::insert_pallet_data_to_db;
 use substrate_runtime_builder::route::get_templates;
 use substrate_runtime_builder::types::ESupportedPallets;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
@@ -30,7 +30,9 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
 }
 
 // A function to create a new project with a list of pallets
-async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
+async fn generate_a_project(
+    project: web::Json<NewProject>,
+) -> actix_web::Result<HttpResponse, Error> {
     let mut project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
     let push_to_git = project.push_to_git.unwrap_or(false);
@@ -130,16 +132,20 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
             format!("{} project generated successfully", project_name)
         }
     })
-    .await;
+    .await
+    .map(|res| Ok(HttpResponse::Ok().body(res)))
+    .map_err(actix_web::error::ErrorInternalServerError)?;
 
     // If push_to_git is true, create a GitHub repository and push the code
     if push_to_git {
         // Create a GitHub repository using the username, token, and project name
         match create_github_repo(&github_username, &github_token, &project_name).await {
             Ok(_) => println!("GitHub repo created"),
-            Err(e) => {
-                return HttpResponse::InternalServerError()
-                    .body(format!("Error creating GitHub repo: {}", e))
+            Err(err) => {
+                return Err(actix_web::error::ErrorInternalServerError(format!(
+                    "Error creating GitHub repo: {}",
+                    err
+                )));
             }
         }
         // Attempt to push the code to GitHub
@@ -150,17 +156,15 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
             &github_token,
         ) {
             Ok(_) => println!("Successfully pushed to GitHub"), // Log success when the push is successful
-            Err(e) => {
-                return HttpResponse::InternalServerError()
-                    .body(format!("Error pushing to GitHub: {}", e))
+            Err(err) => {
+                return Err(actix_web::error::ErrorInternalServerError(format!(
+                    "Error pushing to GitHub: {}",
+                    err,
+                )));
             }
         }
     }
-
-    match result {
-        Ok(message) => HttpResponse::Ok().body(message),
-        Err(_) => HttpResponse::InternalServerError().body("Error generating the project"),
-    }
+    result
 }
 
 // A function to return the list of supported pallets

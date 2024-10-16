@@ -19,6 +19,12 @@ pub struct PalletTransactionPaymentConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletTransactionPaymentConfig {
+    fn default() -> Self {
+        PalletTransactionPaymentConfig::new()
+    }
+}
+
 impl PalletTransactionPaymentConfig {
     pub fn new() -> Self {
         let pallet_description = [
@@ -37,9 +43,9 @@ impl PalletTransactionPaymentConfig {
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
-                categories: Some(vec![PalletCategories::Consensus].into()),
+                categories: Some(vec![PalletCategories::Consensus]),
                 short_description: String::from("FRAME Transaction payment pallet"),
-                description: String::from(pallet_description),
+                description: pallet_description,
             },
             runtime: PalletRuntimeConfig {
                 pallet_traits: vec![

@@ -16,9 +16,15 @@ pub struct PalletSudoConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletSudoConfig {
+    fn default() -> Self {
+        PalletSudoConfig::new()
+    }
+}
+
 impl PalletSudoConfig {
     pub fn new() -> Self {
-        let pallet_description = "A pallet to provide a way to execute privileged runtime calls using a specified sudo (“superuser do”) account.";
+        let pallet_description: &str = "A pallet to provide a way to execute privileged runtime calls using a specified sudo (“superuser do”) account.";
 
         PalletSudoConfig {
             name: String::from("pallet_sudo"),
@@ -28,7 +34,7 @@ impl PalletSudoConfig {
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],
-                categories: Some(vec![PalletCategories::Consensus].into()),
+                categories: Some(vec![PalletCategories::Consensus]),
                 short_description: String::from("FRAME Sudo consensus pallet"),
                 description: String::from(pallet_description),
             },

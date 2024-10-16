@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::IDENTITY;
+use super::super::pallet_index::IDENTITY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -58,6 +58,12 @@ pub struct PalletIdentityConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletIdentityConfig {
+    fn default() -> Self {
+        PalletIdentityConfig::new()
+    }
 }
 
 impl PalletIdentityConfig {

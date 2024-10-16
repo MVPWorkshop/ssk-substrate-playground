@@ -1,5 +1,6 @@
 use crate::types::*;
 use regex::Regex;
+use std::fmt::Write;
 
 pub struct GeneratedRuntime {
     pub updated_runtime_code: String,
@@ -69,10 +70,10 @@ impl SubstrateRuntimeUtil {
         let mut trait_implementation = String::new();
         let mut custom_parameter_counter = 0;
 
-        if self.pallet_config.runtime.pallet_traits.len() > 0 {
+        if !self.pallet_config.runtime.pallet_traits.is_empty() {
             trait_implementation = format!(
                 "\nimpl {}::Config for Runtime {{\n",
-                to_snake_case(&self.pallet_alias())
+                to_snake_case(self.pallet_alias())
             );
 
             for (trait_name, trait_value) in &self.pallet_config.runtime.pallet_traits {
@@ -122,8 +123,6 @@ impl SubstrateRuntimeUtil {
                 + &trait_implementation;
         }
 
-        construct_runtime = construct_runtime;
-
         self.update_construct_runtime(current_construct_runtime, construct_runtime);
     }
 
@@ -172,12 +171,12 @@ impl SubstrateRuntimeUtil {
 
         if let Some(additional_code_regex) = test_regex.find(&existing_code) {
             let position_of_additional_code = additional_code_regex.end();
-            return format!(
+            format!(
                 "{}{}{}",
                 &existing_code[..position_of_additional_code],
                 additional_runtime_code,
                 &existing_code[position_of_additional_code..],
-            );
+            )
         } else {
             existing_code
         }
@@ -198,12 +197,12 @@ impl SubstrateRuntimeUtil {
 
         if let Some(additional_code_regex) = test_regex.find(&existing_code) {
             let position_of_additional_code = additional_code_regex.end() - 2;
-            return format!(
+            format!(
                 "{}\n{}{}",
                 &existing_code[..position_of_additional_code],
                 add_runtime_api,
                 &existing_code[position_of_additional_code..],
-            );
+            )
         } else {
             existing_code
         }
@@ -255,8 +254,11 @@ impl SubstrateRuntimeUtil {
                     genesis_config
                         .struct_fields
                         .iter()
-                        .map(|(k, v)| format!("{}{}: {}", tabs(7), k, v))
-                        .collect::<String>(),
+                        //.map(|(k, v)| format!("{}{}: {}", tabs(7), k, v))
+                        .fold(String::new(), |mut output, (k, v)| {
+                            let _ = writeln!(output, "{}{}: {},", tabs(7), k, v);
+                            output
+                        }),
                     tabs(5)
                 ));
                 genesis_config_str.push_str("},\n");

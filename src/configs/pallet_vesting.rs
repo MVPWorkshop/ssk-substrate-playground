@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::VESTING;
+use super::super::pallet_index::VESTING;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -35,6 +35,12 @@ pub struct PalletVestingConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletVestingConfig {
+    fn default() -> Self {
+        PalletVestingConfig::new()
+    }
 }
 
 impl PalletVestingConfig {

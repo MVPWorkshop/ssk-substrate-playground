@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::UNIQUES;
+use super::super::pallet_index::UNIQUES;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -53,6 +53,12 @@ pub struct PalletUniquesConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletUniquesConfig {
+    fn default() -> Self {
+        PalletUniquesConfig::new()
+    }
 }
 
 impl PalletUniquesConfig {

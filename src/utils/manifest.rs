@@ -125,7 +125,7 @@ impl SubstrateManifestUtil {
 
     fn get_manifest_runtime(&self) -> String {
         if let Some((before, _)) = &self.runtime_manifest.split_once("[build-dependencies]") {
-            return before.to_string();
+            before.to_string()
         } else {
             "".to_string()
         }

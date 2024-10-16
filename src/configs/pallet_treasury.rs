@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::TREASURY;
+use super::super::pallet_index::TREASURY;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -54,6 +54,12 @@ pub struct PalletTreasuryConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletTreasuryConfig {
+    fn default() -> Self {
+        PalletTreasuryConfig::new()
+    }
 }
 
 impl PalletTreasuryConfig {

@@ -1,4 +1,4 @@
-use super::super::pallet_index::pallet_index::NFTS;
+use super::super::pallet_index::NFTS;
 use super::super::types::*;
 use chrono::Utc;
 use std::fmt;
@@ -71,6 +71,12 @@ pub struct PalletNftsConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
+}
+
+impl Default for PalletNftsConfig {
+    fn default() -> Self {
+        PalletNftsConfig::new()
+    }
 }
 
 impl PalletNftsConfig {
