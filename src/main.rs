@@ -108,6 +108,17 @@ async fn generate_a_project(project: web::Json<NewProject>) -> impl Responder {
                     ESupportedPallets::PalletScheduler => {
                         pallets.push(ESupportedPallets::PalletScheduler);
                     }
+                    ESupportedPallets::PalletDemocracy => {
+                        pallets.push(ESupportedPallets::PalletDemocracy);
+
+                        if !pallets.contains(&ESupportedPallets::PalletScheduler) {
+                            pallets.push(ESupportedPallets::PalletScheduler);
+                        }
+
+                        if !pallets.contains(&ESupportedPallets::PalletCollective) {
+                            pallets.push(ESupportedPallets::PalletCollective);
+                        }
+                    }
                     _ => continue,
                 }
             }
@@ -170,6 +181,7 @@ async fn list_supported_pallets() -> impl Responder {
         "ChildBounties",
         "Collective",
         "Scheduler",
+        "Democracy",
     ];
 
     HttpResponse::Ok().json(supported_pallets)
