@@ -68,7 +68,7 @@ pub struct CargoComplexDependency {
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
     pub additional_pallets: Option<Vec<CargoComplexDependency>>,
-    pub additional_deps: Option<Vec<CargoSimpleDependency>>,
+    pub additional_deps: Option<Vec<CargoComplexDependency>>,
 }
 
 #[derive(Debug, Clone)]

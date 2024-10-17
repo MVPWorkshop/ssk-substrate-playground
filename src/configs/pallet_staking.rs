@@ -108,8 +108,44 @@ impl PalletStakingConfig {
                 tag: Some("polkadot-v1.14.0".to_string()),
                 branch: None,
             },
-            additional_pallets: None,
-            additional_deps: None,
+            additional_pallets: Some(vec![CargoComplexDependency {
+                package: "pallet-staking-runtime-api".to_string(),
+                version: None,
+                alias: "pallet staking runtime api".to_string(),
+                default_features: false,
+                git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
+                tag: Some("polkadot-v1.14.0".to_string()),
+                branch: None,
+            }]),
+            additional_deps: Some(vec![
+                CargoComplexDependency {
+                    package: "pallet-staking-reward-curve".to_string(),
+                    version: None,
+                    alias: "pallet staking reward curve".to_string(),
+                    default_features: false,
+                    git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
+                    tag: Some("polkadot-v1.14.0".to_string()),
+                    branch: None,
+                },
+                CargoComplexDependency {
+                    package: "sp-staking".to_string(),
+                    version: None,
+                    alias: "sp staking".to_string(),
+                    default_features: false,
+                    git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
+                    tag: Some("polkadot-v1.14.0".to_string()),
+                    branch: None,
+                },
+                CargoComplexDependency {
+                    package: "frame-election-provider-support".to_string(),
+                    version: None,
+                    alias: "frame election provider support".to_string(),
+                    default_features: false,
+                    git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
+                    tag: Some("polkadot-v1.14.0".to_string()),
+                    branch: None,
+                },
+            ]),
         };
 
         let runtime = PalletRuntimeConfig {
