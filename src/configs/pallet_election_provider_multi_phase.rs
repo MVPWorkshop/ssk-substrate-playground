@@ -93,6 +93,12 @@ pub struct PalletElectionProviderMultiPhaseConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletElectionProviderMultiPhaseConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PalletElectionProviderMultiPhaseConfig {
     pub fn new() -> Self {
         let pallet_description = [
@@ -125,7 +131,7 @@ impl PalletElectionProviderMultiPhaseConfig {
             additional_pallets: Some(vec![CargoComplexDependency {
                 package: "sp-io".to_string(),
                 version: None,
-                alias: "pallet sp io".to_string(),
+                alias: "sp io".to_string(),
                 default_features: false,
                 git_repo: Some("https://github.com/paritytech/polkadot-sdk.git".to_string()),
                 tag: Some("polkadot-v1.14.0".to_string()),

@@ -135,6 +135,9 @@ pub enum ESupportedPallets {
     PalletCollective,
     PalletScheduler,
     PalletDemocracy,
+    PalletBagsList,
+    PalletElectionProviderMultiPhase,
+    PalletStaking,
     Unknown,
 }
 
@@ -159,6 +162,9 @@ impl TryFrom<&str> for ESupportedPallets {
             "Collective" => Ok(ESupportedPallets::PalletCollective),
             "Scheduler" => Ok(ESupportedPallets::PalletScheduler),
             "Democracy" => Ok(ESupportedPallets::PalletDemocracy),
+            "BagsList" => Ok(ESupportedPallets::PalletBagsList),
+            "ElectionProviderMultiPhase" => Ok(ESupportedPallets::PalletElectionProviderMultiPhase),
+            "Staking" => Ok(ESupportedPallets::PalletStaking),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }

@@ -80,6 +80,12 @@ pub struct PalletStakingConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
+impl Default for PalletStakingConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PalletStakingConfig {
     pub fn new() -> Self {
         let pallet_description = [
@@ -166,6 +172,10 @@ impl PalletStakingConfig {
                     "Balances".to_string(),
                 ),
                 (
+                    PalletStakingTraits::CurrencyBalance.to_string(),
+                    "Balance".to_string(),
+                ),
+                (
                     PalletStakingTraits::UnixTime.to_string(),
                     "Timestamp".to_string(),
                 ),
@@ -200,7 +210,7 @@ impl PalletStakingConfig {
                 ),
                 (
                     PalletStakingTraits::SessionInterface.to_string(),
-                    "Self".to_string(),
+                    "()".to_string(),
                 ),
                 (
                     PalletStakingTraits::EraPayout.to_string(),
@@ -315,38 +325,6 @@ pub struct StakingBenchmarkingConfig;
 impl pallet_staking::BenchmarkingConfig for StakingBenchmarkingConfig {
     type MaxNominators = ConstU32<1000>;
     type MaxValidators = ConstU32<1000>;
-}
-impl pallet_staking::Config for Runtime {
-    type Currency = Balances;
-    type CurrencyBalance = Balance;
-    type UnixTime = Timestamp;
-    type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
-    type RewardRemainder = Treasury;
-    type RuntimeEvent = RuntimeEvent;
-    type Slash = Treasury; // send the slashed funds to the treasury.
-    type Reward = ();
-    type SessionsPerEra = SessionsPerEra;
-    type BondingDuration = BondingDuration;
-    type SlashDeferDuration = SlashDeferDuration;
-    /// A super-majority of the council can cancel the slash.
-    type AdminOrigin = EnsureRoot<AccountId>;
-    type SessionInterface = Self;
-    type EraPayout = pallet_staking::ConvertCurve<RewardCurve>;
-    type NextNewSession = ();
-    type MaxExposurePageSize = ConstU32<256>;
-    type ElectionProvider = ElectionProviderMultiPhase;
-    type GenesisElectionProvider = onchain::OnChainExecution<OnChainSeqPhragmen>;
-    type VoterList = VoterList;
-    type NominationsQuota = pallet_staking::FixedNominationsQuota<MAX_QUOTA_NOMINATIONS>;
-    // This a placeholder, to be introduced in the next PR as an instance of bags-list
-    type TargetList = pallet_staking::UseValidatorsMap<Self>;
-    type MaxUnlockingChunks = ConstU32<32>;
-    type MaxControllersInDeprecationBatch = MaxControllersInDeprecationBatch;
-    type HistoryDepth = HistoryDepth;
-    type EventListeners = ();
-    type WeightInfo = pallet_staking::weights::SubstrateWeight<Runtime>;
-    type BenchmarkingConfig = StakingBenchmarkingConfig;
-    type DisablingStrategy = pallet_staking::UpToLimitDisablingStrategy;
 }
 "
     .to_string()

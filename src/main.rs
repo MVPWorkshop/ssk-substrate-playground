@@ -121,6 +121,11 @@ async fn generate_a_project(
                             pallets.push(ESupportedPallets::PalletCollective);
                         }
                     }
+                    ESupportedPallets::PalletStaking => {
+                        pallets.push(ESupportedPallets::PalletStaking);
+                        pallets.push(ESupportedPallets::PalletBagsList);
+                        pallets.push(ESupportedPallets::PalletElectionProviderMultiPhase);
+                    }
                     _ => continue,
                 }
             }
