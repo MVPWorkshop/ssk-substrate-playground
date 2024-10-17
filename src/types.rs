@@ -68,7 +68,7 @@ pub struct CargoComplexDependency {
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
     pub additional_pallets: Option<Vec<CargoComplexDependency>>,
-    pub additional_deps: Option<Vec<CargoSimpleDependency>>,
+    pub additional_deps: Option<Vec<CargoComplexDependency>>,
 }
 
 #[derive(Debug, Clone)]
@@ -135,6 +135,9 @@ pub enum ESupportedPallets {
     PalletCollective,
     PalletScheduler,
     PalletDemocracy,
+    PalletBagsList,
+    PalletElectionProviderMultiPhase,
+    PalletStaking,
     Unknown,
 }
 
@@ -159,6 +162,9 @@ impl TryFrom<&str> for ESupportedPallets {
             "Collective" => Ok(ESupportedPallets::PalletCollective),
             "Scheduler" => Ok(ESupportedPallets::PalletScheduler),
             "Democracy" => Ok(ESupportedPallets::PalletDemocracy),
+            "BagsList" => Ok(ESupportedPallets::PalletBagsList),
+            "ElectionProviderMultiPhase" => Ok(ESupportedPallets::PalletElectionProviderMultiPhase),
+            "Staking" => Ok(ESupportedPallets::PalletStaking),
             _ => Ok(ESupportedPallets::Unknown),
         }
     }

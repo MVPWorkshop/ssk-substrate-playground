@@ -23,6 +23,9 @@ use crate::configs::pallet_society::PalletSocietyConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
 
+use crate::configs::pallet_bags_list::PalletBagsListConfig;
+use crate::configs::pallet_election_provider_multi_phase::PalletElectionProviderMultiPhaseConfig;
+use crate::configs::pallet_staking::PalletStakingConfig;
 use crate::types::ESupportedPallets;
 use log::{error, info};
 use std::path::Path;
@@ -365,6 +368,42 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
             ESupportedPallets::PalletDemocracy => {
                 // Get configuration for the democracy pallet.
                 let config = PalletDemocracyConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletBagsList => {
+                // Get configuration for the bags list pallet.
+                let config = PalletBagsListConfig::default();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletElectionProviderMultiPhase => {
+                // Get configuration for the election provider multiphase pallet.
+                let config = PalletElectionProviderMultiPhaseConfig::default();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletStaking => {
+                // Get configuration for the staking pallet.
+                let config = PalletStakingConfig::default();
                 // Create a pallet configuration and add it to the list.
                 let pallet_config = PalletConfig {
                     name: config.name,
