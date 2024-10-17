@@ -10,7 +10,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["NFT"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """
@@ -29,30 +29,30 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-ForceOrigin = "EnsureRoot<Self::AccountId>"
-WeightInfo = "pallet_nfts::weights::SubstrateWeight<Runtime>"
-ItemId = "u32"
-CollectionId = "u32"
-CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
-Features = "NftsPalletFeatures"
-MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
-MaxTips = "ConstU32<10>"
-CreateOrigin = "EnsureSigned<Self::AccountId>"
 ItemDeposit = "ConstU128<{ 1 * 1000 }>"
-RuntimeEvent = "RuntimeEvent"
-StringLimit = "ConstU32<256>"
-ValueLimit = "ConstU32<256>"
-KeyLimit = "ConstU32<64>"
 MaxDeadlineDuration = "ConstU32<1000>"
-DepositPerByte = "ConstU128<10>"
 MaxAttributesPerCall = "ConstU32<5>"
+Features = "NftsPalletFeatures"
+WeightInfo = "pallet_nfts::weights::SubstrateWeight<Runtime>"
 Locker = "()"
+OffchainPublic = "<Signature as sp_runtime::traits::Verify>::Signer"
+KeyLimit = "ConstU32<64>"
+StringLimit = "ConstU32<256>"
 OffchainSignature = "Signature"
+CollectionId = "u32"
+MaxTips = "ConstU32<10>"
+MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
+ValueLimit = "ConstU32<256>"
+CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
 Currency = "Balances"
+CreateOrigin = "EnsureSigned<Self::AccountId>"
+DepositPerByte = "ConstU128<10>"
+RuntimeEvent = "RuntimeEvent"
 AttributeDepositBase = "ConstU128<{ 1 * 1000 }>"
+ItemId = "u32"
+ForceOrigin = "EnsureRoot<Self::AccountId>"
 ApprovalsLimit = "ConstU32<100>"
 ItemAttributesApprovalsLimit = "ConstU32<100>"
-OffchainPublic = "<Signature as sp_runtime::traits::Verify>::Signer"
 
 [dependencies.pallet]
 package = "pallet-nfts"

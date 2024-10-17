@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Governance"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """
@@ -31,16 +31,16 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-MotionDuration = "CouncilMotionDuration"
-WeightInfo = "pallet_collective::weights::SubstrateWeight<Runtime>"
-RuntimeEvent = "RuntimeEvent"
-MaxProposalWeight = "MaxCollectivesProposalWeight"
 MaxProposals = "CouncilMaxProposals"
+SetMembersOrigin = "EnsureRoot<Self::AccountId>"
+MaxProposalWeight = "MaxCollectivesProposalWeight"
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_collective::weights::SubstrateWeight<Runtime>"
+RuntimeOrigin = "RuntimeOrigin"
+MotionDuration = "CouncilMotionDuration"
+DefaultVote = "pallet_collective::PrimeDefaultVote"
 MaxMembers = "CouncilMaxMembers"
 Proposal = "RuntimeCall"
-DefaultVote = "pallet_collective::PrimeDefaultVote"
-SetMembersOrigin = "EnsureRoot<Self::AccountId>"
-RuntimeOrigin = "RuntimeOrigin"
 
 [dependencies.pallet]
 package = "pallet-collective"

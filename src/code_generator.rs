@@ -16,10 +16,16 @@ use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 use crate::configs::pallet_assets::PalletAssetsConfig;
+use crate::configs::pallet_aura::PalletAuraConfig;
+use crate::configs::pallet_balances::PalletBalancesConfig;
 use crate::configs::pallet_collective::PalletCollectiveConfig;
 use crate::configs::pallet_democracy::PalletDemocracyConfig;
+use crate::configs::pallet_grandpa::PalletGrandpaConfig;
 use crate::configs::pallet_multisig::PalletMultisigConfig;
 use crate::configs::pallet_society::PalletSocietyConfig;
+use crate::configs::pallet_sudo::PalletSudoConfig;
+use crate::configs::pallet_timestamp::PalletTimestampConfig;
+use crate::configs::pallet_transaction_payment::PalletTransactionPaymentConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
 
@@ -362,19 +368,91 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
                 };
                 pallets_config.push(pallet_config);
             }
-            // ESupportedPallets::PalletDemocracy => {
-            //     // Get configuration for the democracy pallet.
-            //     let config = PalletDemocracyConfig::new();
-            //     // Create a pallet configuration and add it to the list.
-            //     let pallet_config = PalletConfig {
-            //         name: config.name,
-            //         metadata: config.metadata,
-            //         runtime: config.runtime,
-            //         dependencies: config.dependencies.clone(),
-            //     };
-            //     pallets_config.push(pallet_config);
-            // }
-            _ => {}
+            ESupportedPallets::PalletDemocracy => {
+                // Get configuration for the democracy pallet.
+                let config = PalletDemocracyConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletAura => {
+                // Get Configuration for the Aura pallet.
+                let config = PalletAuraConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletBalances => {
+                // Get Configuration for the Balances pallet.
+                let config = PalletBalancesConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletGrandpa => {
+                // Get Configuration for the Grandpa pallet.
+                let config = PalletGrandpaConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletSudo => {
+                // Get Configuration for the Sudo pallet.
+                let config = PalletSudoConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletTimestamp => {
+                // Get Configuration for the Timestamp pallet.
+                let config = PalletTimestampConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::PalletTransactionPayment => {
+                // Get Configuration for the TransactionPayment pallet.
+                let config = PalletTransactionPaymentConfig::new();
+                // Create a pallet configuration and add it to the list.
+                let pallet_config = PalletConfig {
+                    name: config.name,
+                    metadata: config.metadata,
+                    runtime: config.runtime,
+                    dependencies: config.dependencies.clone(),
+                };
+                pallets_config.push(pallet_config);
+            }
+            ESupportedPallets::Unknown => {}
         }
     }
 

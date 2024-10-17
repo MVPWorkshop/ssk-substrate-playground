@@ -10,7 +10,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Assets"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = '''
@@ -45,22 +45,22 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-MaxApprovals = "MaxApprovals"
-SpendFunds = "()"
-AssetKind = "u32"
-BeneficiaryLookup = "Self::Lookup"
-Paymaster = "PayAssetFromAccount<Assets, TreasuryAccount>"
-Beneficiary = "AccountId"
-RuntimeEvent = "RuntimeEvent"
-SpendPeriod = "SpendPeriod"
-Currency = "Balances"
 RejectOrigin = "EnsureRoot<AccountId>"
-BurnDestination = "()"
-Burn = "Burn"
-PayoutPeriod = "SpendPayoutPeriod"
+BeneficiaryLookup = "Self::Lookup"
 BalanceConverter = "UnityAssetBalanceConversion"
-PalletId = "TreasuryPalletId"
+MaxApprovals = "MaxApprovals"
+SpendPeriod = "SpendPeriod"
+Beneficiary = "AccountId"
+PayoutPeriod = "SpendPayoutPeriod"
 SpendOrigin = "EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>"
+PalletId = "TreasuryPalletId"
+RuntimeEvent = "RuntimeEvent"
+Burn = "Burn"
+BurnDestination = "()"
+AssetKind = "u32"
+Currency = "Balances"
+Paymaster = "PayAssetFromAccount<Assets, TreasuryAccount>"
+SpendFunds = "()"
 WeightInfo = "pallet_treasury::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]

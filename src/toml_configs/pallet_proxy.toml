@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Runtime"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """
@@ -72,18 +72,18 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-Currency = "Balances"
-ProxyDepositFactor = "ProxyDepositFactor"
-ProxyType = "ProxyType"
 CallHasher = "BlakeTwo256"
-RuntimeEvent = "RuntimeEvent"
-ProxyDepositBase = "ProxyDepositBase"
-AnnouncementDepositFactor = "AnnouncementDepositFactor"
-MaxProxies = "ConstU32<32>"
-WeightInfo = "pallet_proxy::weights::SubstrateWeight<Runtime>"
-RuntimeCall = "RuntimeCall"
 AnnouncementDepositBase = "AnnouncementDepositBase"
 MaxPending = "ConstU32<32>"
+ProxyType = "ProxyType"
+RuntimeCall = "RuntimeCall"
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+ProxyDepositBase = "ProxyDepositBase"
+ProxyDepositFactor = "ProxyDepositFactor"
+MaxProxies = "ConstU32<32>"
+AnnouncementDepositFactor = "AnnouncementDepositFactor"
+WeightInfo = "pallet_proxy::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
 package = "pallet-proxy"

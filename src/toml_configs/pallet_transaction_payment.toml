@@ -1,0 +1,41 @@
+name = "Pallet Transaction Payment"
+
+[metadata]
+description = """
+This pallet provides the basic logic needed to pay the absolute minimum amount needed for a transaction to be included. This includes:
+- _base fee_: This is the minimum amount a user pays for a transaction. It is declared as a base _weight_ in the runtime and converted to a fee using `WeightToFee`.
+- _weight fee_: A fee proportional to amount of weight a transaction consumes.
+- _length fee_: A fee proportional to the encoded length of the transaction.
+- _tip_: An optional tip. Tip increases the priority of the transaction, giving it a higher chance to be included by the transaction queue.
+The base fee and adjusted weight and length fees constitute the _inclusion fee_, which is the minimum fee for a transaction to be included in a block."""
+short_description = "FRAME Transaction payment pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Consensus"]
+size = 5078
+updated = "1729175503"
+
+[runtime]
+additional_runtime_lib_code = ["use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};"]
+
+[runtime.construct_runtime]
+runtime = [
+    "TransactionPayment",
+    "pallet_transaction_payment",
+]
+
+[runtime.pallet_traits]
+OnChargeTransaction = "FungibleAdapter<Balances, ()>"
+WeightToFee = "IdentityFee<Balance>"
+RuntimeEvent = "RuntimeEvent"
+OperationalFeeMultiplier = "ConstU8<5>"
+LengthToFee = "IdentityFee<Balance>"
+FeeMultiplierUpdate = "ConstFeeMultiplier<Multiplier::one()>"
+
+[dependencies.pallet]
+package = "pallet-transaction-payment"
+alias = "pallet-transaction-payment"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

@@ -1,0 +1,69 @@
+name = "Pallet Democracy"
+
+[metadata]
+description = "The Democracy pallet enables stakeholder voting on referenda, managing proposals from public and external queues, and utilizing time-lock voting with conviction-based vote power scaling."
+short_description = "FRAME democracy pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+    parameter_types! { 
+            pub const MinimumDeposit: u128 = 100 * 1_000_000_000_000;
+            pub const Period: u32 = 5 * MINUTES;
+            pub const FastTrackVotingPeriod: u32 = MINUTES / 2;
+            pub const CooloffPeriod: u32 = 2 * MINUTES;
+            pub const MaxAll: u32 = 128;
+        }
+    """
+additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
+
+[runtime.construct_runtime]
+index = 25
+runtime = [
+    "Democracy",
+    "pallet_democracy::Pallet<Runtime>",
+]
+
+[runtime.pallet_traits]
+MaxBlacklisted = "MaxAll"
+WeightInfo = "pallet_democracy::weights::SubstrateWeight<Runtime>"
+Preimages = "()"
+SubmitOrigin = "EnsureSigned<AccountId>"
+PalletsOrigin = "OriginCaller"
+MaxVotes = "MaxAll"
+FastTrackOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 2, 3>"
+ExternalDefaultOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>"
+EnactmentPeriod = "Period"
+Slash = "()"
+LaunchPeriod = "Period"
+VotingPeriod = "Period"
+ExternalOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 2>"
+MaxProposals = "MaxAll"
+InstantOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>"
+MaxDeposits = "MaxAll"
+VetoOrigin = "pallet_collective::EnsureMember<AccountId, ()>"
+CancellationOrigin = "EitherOfDiverse<EnsureRoot<AccountId>, pallet_collective::EnsureProportionAtLeast<AccountId, (), 2, 3>>"
+Currency = "Balances"
+InstantAllowed = "ConstBool<true>"
+Scheduler = "Scheduler"
+CooloffPeriod = "CooloffPeriod"
+FastTrackVotingPeriod = "FastTrackVotingPeriod"
+CancelProposalOrigin = "EitherOfDiverse<EnsureRoot<AccountId>, pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>>"
+ExternalMajorityOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 2>"
+VoteLockingPeriod = "ConstU32<{ 2 * MINUTES }>"
+BlacklistOrigin = "EnsureRoot<AccountId>"
+MinimumDeposit = "MinimumDeposit"
+RuntimeEvent = "RuntimeEvent"
+
+[dependencies.pallet]
+package = "pallet-democracy"
+alias = "pallet democracy"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

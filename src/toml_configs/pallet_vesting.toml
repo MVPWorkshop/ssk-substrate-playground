@@ -10,7 +10,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Runtime"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """

@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Governance"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """
@@ -34,19 +34,19 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
+BountyDepositPayoutDelay = "BountyDepositPayoutDelay"
+CuratorDepositMultiplier = "CuratorDepositMultiplier"
+DataDepositPerByte = "BountyDataDepositPerByte"
+ChildBountyManager = "()"
+OnSlash = "()"
 BountyValueMinimum = "BountyValueMinimum"
+RuntimeEvent = "RuntimeEvent"
+BountyUpdatePeriod = "BountyUpdatePeriod"
 MaximumReasonLength = "BountyMaximumReasonLength"
 WeightInfo = "pallet_bounties::weights::SubstrateWeight<Runtime>"
-ChildBountyManager = "()"
-DataDepositPerByte = "BountyDataDepositPerByte"
-OnSlash = "()"
 CuratorDepositMax = "CuratorDepositMax"
-CuratorDepositMultiplier = "CuratorDepositMultiplier"
 BountyDepositBase = "BountyDepositBase"
-BountyUpdatePeriod = "BountyUpdatePeriod"
-BountyDepositPayoutDelay = "BountyDepositPayoutDelay"
 CuratorDepositMin = "CuratorDepositMax"
-RuntimeEvent = "RuntimeEvent"
 
 [dependencies.pallet]
 package = "pallet-bounties"

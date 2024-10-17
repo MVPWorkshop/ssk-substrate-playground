@@ -13,7 +13,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Runtime"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime.construct_runtime]
 index = 14
@@ -23,10 +23,10 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-WeightInfo = "pallet_utility::weights::SubstrateWeight<Runtime>"
 RuntimeEvent = "RuntimeEvent"
-PalletsOrigin = "OriginCaller"
 RuntimeCall = "RuntimeCall"
+PalletsOrigin = "OriginCaller"
+WeightInfo = "pallet_utility::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
 package = "pallet-utility"

@@ -1,0 +1,47 @@
+name = "Pallet Balances"
+
+[metadata]
+description = """
+The Balances pallet provides functionality for handling accounts and balances for a single token.
+It makes heavy use of concepts such as Holds and Freezes from the [`frame_support::traits::fungible`] traits, therefore you should read and understand those docs as a prerequisite to understanding this pallet."""
+short_description = "FRAME Balances pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 5078
+updated = "1729175503"
+
+[runtime.construct_runtime]
+runtime = [
+    "Balances",
+    "pallet_balances",
+]
+
+[runtime.pallet_traits]
+MaxFreezes = "VariantCountOf<RuntimeFreezeReason>"
+WeightInfo = "pallet_balances::weights::SubstrateWeight<Runtime>"
+Balance = "Balance"
+MaxReserves = "()"
+MaxLocks = "ConstU32<50>"
+ReserveIdentifier = "[u8; 8]"
+RuntimeEvent = "RuntimeEvent"
+DustRemoval = "()"
+RuntimeHoldReason = "RuntimeHoldReason"
+RuntimeFreezeReason = "RuntimeHoldReason"
+AccountStore = "System"
+ExistentialDeposit = "ConstU128<500>"
+FreezeIdentifier = "RuntimeFreezeReason"
+
+[runtime.genesis_config]
+config_struct_name = "balances"
+
+[runtime.genesis_config.struct_fields]
+balances = "endowed_accounts.iter().cloned().map(|k| (k, 1u64 << 60)).collect::<Vec<_>>(),"
+
+[dependencies.pallet]
+package = "pallet-balances"
+alias = "pallet-balances"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

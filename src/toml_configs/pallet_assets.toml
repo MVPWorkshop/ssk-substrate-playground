@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Assets"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """
@@ -31,24 +31,24 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-AssetIdParameter = "codec::Compact<u32>"
+ApprovalDeposit = "ApprovalDeposit"
 MetadataDepositPerByte = "MetadataDepositPerByte"
+RemoveItemsLimit = "ConstU32<1000>"
+CreateOrigin = "AsEnsureOriginWithArg<EnsureSigned<AccountId>>"
+AssetIdParameter = "codec::Compact<u32>"
+WeightInfo = "pallet_assets::weights::SubstrateWeight<Runtime>"
+Extra = "()"
 AssetDeposit = "AssetDeposit"
 MetadataDepositBase = "MetadataDepositBase"
-Extra = "()"
-CallbackHandle = "()"
 ForceOrigin = "EnsureRoot<AccountId>"
-StringLimit = "StringLimit"
-AssetAccountDeposit = "ConstU128<DOLLARS>"
-WeightInfo = "pallet_assets::weights::SubstrateWeight<Runtime>"
-RemoveItemsLimit = "ConstU32<1000>"
-Balance = "u128"
 RuntimeEvent = "RuntimeEvent"
 AssetId = "u32"
-Currency = "Balances"
-ApprovalDeposit = "ApprovalDeposit"
-CreateOrigin = "AsEnsureOriginWithArg<EnsureSigned<AccountId>>"
+AssetAccountDeposit = "ConstU128<DOLLARS>"
 Freezer = "()"
+CallbackHandle = "()"
+StringLimit = "StringLimit"
+Balance = "u128"
+Currency = "Balances"
 
 [dependencies.pallet]
 package = "pallet-assets"

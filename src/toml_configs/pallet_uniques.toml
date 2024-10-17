@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["NFT"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime.construct_runtime]
 index = 17
@@ -18,22 +18,22 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-CollectionId = "u32"
-MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
-CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
-RuntimeEvent = "RuntimeEvent"
-WeightInfo = "pallet_uniques::weights::SubstrateWeight<Runtime>"
 Locker = "()"
-CreateOrigin = "EnsureSigned<Self::AccountId>"
-ItemId = "u32"
-Currency = "Balances"
-ItemDeposit = "ConstU128<{ 1 * 1000 }>"
-ForceOrigin = "EnsureRoot<Self::AccountId>"
 StringLimit = "ConstU32<256>"
-ValueLimit = "ConstU32<256>"
+ForceOrigin = "EnsureRoot<Self::AccountId>"
+CreateOrigin = "EnsureSigned<Self::AccountId>"
+Currency = "Balances"
 DepositPerByte = "ConstU128<10>"
+CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
+ItemId = "u32"
+ValueLimit = "ConstU32<256>"
 AttributeDepositBase = "ConstU128<{ 1 * 1000 }>"
+ItemDeposit = "ConstU128<{ 1 * 1000 }>"
+CollectionId = "u32"
 KeyLimit = "ConstU32<64>"
+RuntimeEvent = "RuntimeEvent"
+MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
+WeightInfo = "pallet_uniques::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
 package = "pallet-uniques"

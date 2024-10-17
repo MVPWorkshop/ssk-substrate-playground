@@ -71,7 +71,7 @@ pub struct PalletDependencyConfig {
     pub additional_deps: Option<Vec<CargoSimpleDependency>>,
 }
 
-#[derive(Debug, Clone,Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum SubstrateVersion {
     One,
     Two,
@@ -147,7 +147,7 @@ impl From<(String, &PalletConfigNoUpdated)> for PalletConfig {
                 license: config.metadata.license.clone(),
                 authors: config.metadata.authors.clone(),
                 categories: config.metadata.categories.clone(),
-                size: config.metadata.size.clone(),
+                size: config.metadata.size,
                 updated: updated.clone(),
             },
             runtime: config.runtime.clone(),
@@ -158,21 +158,28 @@ impl From<(String, &PalletConfigNoUpdated)> for PalletConfig {
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize, Deserialize)]
 pub enum ESupportedPallets {
-    PalletUtility,
-    PalletIdentity,
-    PalletMultisig,
-    PalletProxy,
-    PalletUniques,
-    PalletNfts,
-    PalletMembership,
     PalletAssets,
+    PalletAura,     // non-optional
+    PalletBalances, // non-optional
     PalletBounties,
-    PalletTreasury,
     PalletChildBounties,
-    PalletVesting,
-    PalletSociety,
     PalletCollective,
+    PalletDemocracy,
+    PalletGrandpa, // non-optional
+    PalletIdentity,
+    PalletMembership,
+    PalletMultisig,
+    PalletNfts,
+    PalletProxy,
     PalletScheduler,
+    PalletSociety,
+    PalletSudo,               // non-optional
+    PalletTimestamp,          // non-optional
+    PalletTransactionPayment, // non-optional
+    PalletTreasury,
+    PalletUniques,
+    PalletUtility,
+    PalletVesting,
     Unknown,
 }
 
@@ -206,11 +213,10 @@ mod tests {
     use std::ffi::OsStr;
 
     use strum::IntoEnumIterator;
-    use warp::filters::fs::dir;
 
     use super::*;
-    use crate::configs::pallet_assets::PalletAssetsConfig;
     use crate::code_generator::get_pallet_configs;
+    use crate::configs::pallet_assets::PalletAssetsConfig;
 
     #[test]
     fn test_toml_config() {
@@ -228,50 +234,56 @@ mod tests {
                 panic!();
             }
         };
-        // Use a `match` block to return the 
-    // file `contents` as a `Data struct: Ok(d)`
-    // or handle any `errors: Err(_)`.
-    let mut toml_config: PalletConfig = match toml::from_str(&contents) {
-        // If successful, return data as `Data` struct.
-        // `d` is a local variable.
-        Ok(d) => d,
-        // Handle the `error` case.
-        Err(err) => {
-            // Write `msg` to `stderr`.
-            eprintln!("Unable to load data from `{}`", err);
-            // Exit the program with exit code `1`.
-            panic!();
-        }
-    };
-    let from_index = PalletAssetsConfig::new();
-    let index_config = PalletConfig {
-        name: from_index.name,
-        metadata: from_index.metadata,
-        runtime: from_index.runtime,
-        dependencies: from_index.dependencies.clone(),
-    };
-    toml_config.metadata.updated = index_config.metadata.updated.clone();
-    
-    assert_eq!(toml_config, index_config);
-    let toml_string = toml::to_string_pretty(&toml_config).unwrap();
-    std::fs::write(filename2, toml_string).unwrap();
+        // Use a `match` block to return the
+        // file `contents` as a `Data struct: Ok(d)`
+        // or handle any `errors: Err(_)`.
+        let mut toml_config: PalletConfig = match toml::from_str(&contents) {
+            // If successful, return data as `Data` struct.
+            // `d` is a local variable.
+            Ok(d) => d,
+            // Handle the `error` case.
+            Err(err) => {
+                // Write `msg` to `stderr`.
+                eprintln!("Unable to load data from `{}`", err);
+                // Exit the program with exit code `1`.
+                panic!();
+            }
+        };
+        let from_index = PalletAssetsConfig::new();
+        let index_config = PalletConfig {
+            name: from_index.name,
+            metadata: from_index.metadata,
+            runtime: from_index.runtime,
+            dependencies: from_index.dependencies.clone(),
+        };
+        toml_config.metadata.updated = index_config.metadata.updated.clone();
+
+        assert_eq!(toml_config, index_config);
+        let toml_string = toml::to_string_pretty(&toml_config).unwrap();
+        std::fs::write(filename2, toml_string).unwrap();
     }
-    
+
     #[test]
+    #[ignore]
+    // This test is ignored because it writes to the file system.
+    // Special test used to generate toml files for pallets.
     fn print_pallet_config() {
         let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
         let pallet_configs = get_pallet_configs(supported_configs);
         let directory = "src/toml_configs";
         for pallet_config in pallet_configs {
-            let filename = format!("{}/{}.toml", directory, pallet_config.name.to_lowercase().replace(" ", "_"));
+            let filename = format!(
+                "{}/{}.toml",
+                directory,
+                pallet_config.name.to_lowercase().replace(" ", "_")
+            );
             let toml_string = toml::to_string_pretty(&pallet_config).unwrap();
             std::fs::write(filename, toml_string).unwrap();
         }
-
     }
 
     #[test]
-    fn print_pallet_configs() {
+    fn confirm_two_pallet_configs() {
         let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
         let pallet_configs = get_pallet_configs(supported_configs);
         let directory = "src/toml_configs";
@@ -298,11 +310,21 @@ mod tests {
                 toml_pallet_configs.push(toml_config);
             }
         }
-        let index_pallet_configs = pallet_configs.iter().map(|x| (x.name.clone(), x)).collect::<HashMap<_, _>>();
-        let toml_pallet_configs = toml_pallet_configs.iter().map(|x| (x.name.clone(), x)).collect::<HashMap<_, _>>();
+        let index_pallet_configs = pallet_configs
+            .iter()
+            .map(|x| (x.name.clone(), x))
+            .collect::<HashMap<_, _>>();
+        let toml_pallet_configs = toml_pallet_configs
+            .iter()
+            .map(|x| (x.name.clone(), x))
+            .collect::<HashMap<_, _>>();
         for (name, index_pallet_config) in index_pallet_configs {
             let toml_pallet_config_no_updated = toml_pallet_configs.get(&name).unwrap();
-            let toml_pallet_config: PalletConfig = (index_pallet_config.metadata.updated.clone(), *toml_pallet_config_no_updated).into();
+            let toml_pallet_config: PalletConfig = (
+                index_pallet_config.metadata.updated.clone(),
+                *toml_pallet_config_no_updated,
+            )
+                .into();
             assert_eq!(&toml_pallet_config, index_pallet_config);
         }
     }

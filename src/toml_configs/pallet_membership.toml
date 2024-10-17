@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Governance"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = """
@@ -26,16 +26,16 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-RuntimeEvent = "RuntimeEvent"
-MembershipInitialized = "()"
+ResetOrigin = "EnsureRoot<AccountId>"
+MaxMembers = "TechnicalMaxMembers"
+MembershipChanged = "()"
 WeightInfo = "pallet_membership::weights::SubstrateWeight<Runtime>"
 PrimeOrigin = "EnsureRoot<AccountId>"
-SwapOrigin = "EnsureRoot<AccountId>"
-ResetOrigin = "EnsureRoot<AccountId>"
-RemoveOrigin = "EnsureRoot<AccountId>"
+RuntimeEvent = "RuntimeEvent"
 AddOrigin = "EnsureRoot<AccountId>"
-MembershipChanged = "()"
-MaxMembers = "TechnicalMaxMembers"
+MembershipInitialized = "()"
+SwapOrigin = "EnsureRoot<AccountId>"
+RemoveOrigin = "EnsureRoot<AccountId>"
 
 [dependencies.pallet]
 package = "pallet-membership"

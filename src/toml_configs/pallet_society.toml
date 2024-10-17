@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Runtime"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime]
 additional_pallet_impl_code = '''
@@ -34,20 +34,20 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-ChallengePeriod = "ChallengePeriod"
-Randomness = "RandomnessCollectiveFlip"
+GraceStrikes = "GraceStrikes"
+MaxLockDuration = "MaxLockDuration"
 Currency = "Balances"
+PeriodSpend = "PeriodSpend"
+Randomness = "RandomnessCollectiveFlip"
+ChallengePeriod = "ChallengePeriod"
+VotingPeriod = "SocietyVotingPeriod"
 MaxPayouts = "MaxPayouts"
 MaxBids = "MaxBids"
-PeriodSpend = "PeriodSpend"
 WeightInfo = "pallet_society::weights::SubstrateWeight<Runtime>"
-GraceStrikes = "GraceStrikes"
-RuntimeEvent = "RuntimeEvent"
-VotingPeriod = "SocietyVotingPeriod"
-MaxLockDuration = "MaxLockDuration"
+ClaimPeriod = "ClaimPeriod"
 FounderSetOrigin = "EnsureRoot<Self::AccountId>"
 PalletId = "SocietyPalletId"
-ClaimPeriod = "ClaimPeriod"
+RuntimeEvent = "RuntimeEvent"
 
 [dependencies.pallet]
 package = "pallet-society"

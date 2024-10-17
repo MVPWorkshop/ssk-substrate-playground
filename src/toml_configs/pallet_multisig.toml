@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Governance"]
 size = 10500
-updated = "1729072286"
+updated = "1729175503"
 
 [runtime.construct_runtime]
 index = 10
@@ -18,13 +18,13 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-WeightInfo = "pallet_multisig::weights::SubstrateWeight<Runtime>"
-MaxSignatories = "ConstU32<20>"
 Currency = "Balances"
 RuntimeCall = "RuntimeCall"
 DepositBase = "ConstU128<{ 1 * 1000 }>"
-RuntimeEvent = "RuntimeEvent"
 DepositFactor = "ConstU128<{ 1 * 1000 }>"
+RuntimeEvent = "RuntimeEvent"
+MaxSignatories = "ConstU32<20>"
+WeightInfo = "pallet_multisig::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
 package = "pallet-multisig"
