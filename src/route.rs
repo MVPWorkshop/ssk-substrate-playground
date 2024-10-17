@@ -39,7 +39,8 @@ pub struct TemplateQuery {
 // Function that returns JSON based on the query parameter for templates.
 pub async fn get_templates(query: web::Query<TemplateQuery>) -> impl Responder {
     let pallets: Vec<_> = ESupportedPallets::iter().collect();
-    let pallet_configs = get_pallet_configs(pallets);
+    // TODO: handle error case
+    let pallet_configs = get_pallet_configs(pallets).unwrap();
 
     let templates = vec![
         BlockchainTemplate {

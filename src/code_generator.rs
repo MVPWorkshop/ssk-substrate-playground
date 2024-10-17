@@ -29,8 +29,10 @@ use crate::configs::pallet_transaction_payment::PalletTransactionPaymentConfig;
 use crate::configs::pallet_treasury::PalletTreasuryConfig;
 use crate::configs::pallet_vesting::PalletVestingConfig;
 
-use crate::types::ESupportedPallets;
+use crate::types::{ESupportedPallets, PalletConfigNoUpdated};
+use chrono::Utc;
 use log::{error, info};
+use std::fmt;
 use std::path::Path;
 
 /// Creates a new project directory and copies a basic template into it.
@@ -176,7 +178,7 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
 /// # Returns
 ///
 /// A vector containing configurations for the specified pallets.
-pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> {
+pub fn get_pallet_configs_depricated(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> {
     let mut pallets_config: Vec<PalletConfig> = Vec::new();
 
     for pallet in pallets {
@@ -459,22 +461,59 @@ pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> 
     pallets_config
 }
 
+#[derive(Debug, Clone)]
+pub struct PalletConfigLoadError {
+    pub message: String,
+}
+
+impl fmt::Display for PalletConfigLoadError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+pub fn get_pallet_configs(
+    pallets: Vec<ESupportedPallets>,
+) -> Result<Vec<PalletConfig>, PalletConfigLoadError> {
+    pallets
+        .iter()
+        .filter(|x| x != &&ESupportedPallets::Unknown)
+        .map(|x| {
+            let path = x.toml_path();
+            let contents = std::fs::read_to_string(&path).map_err(|_| PalletConfigLoadError {
+                message: "read file error.".to_string(),
+            })?;
+            let toml_config: PalletConfigNoUpdated =
+                toml::from_str(&contents).map_err(|_| PalletConfigLoadError {
+                    message: "cenvert to toml error.".to_string(),
+                })?;
+            let updated = Utc::now().timestamp().to_string();
+            let config: PalletConfig = (updated, &toml_config).into();
+            Ok(config)
+        })
+        .collect()
+}
+
 /// Generates a new project and integrates specified pallets into it.
 ///
 /// # Arguments
 ///
 /// * `project_name` - The name of the project to generate.
 /// * `pallets` - A list of supported pallets to be integrated into the project.
-pub fn generate_project(project_name: String, pallets: Vec<ESupportedPallets>) {
+pub fn generate_project(
+    project_name: String,
+    pallets: Vec<ESupportedPallets>,
+) -> Result<(), PalletConfigLoadError> {
     // Create a new project directory and copy the template.
     create_new_project(project_name.clone());
 
     println!("Created project: {}", project_name.clone());
 
     // Generate configurations for the specified pallets.
-    let pallet_configs = get_pallet_configs(pallets);
+    let pallet_configs = get_pallet_configs(pallets)?;
 
     // Add the pallets to the new project.
     add_pallets(project_name.clone(), pallet_configs);
     println!("Added pallets to the project: {}", project_name);
+    Ok(())
 }

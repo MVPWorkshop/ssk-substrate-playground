@@ -128,11 +128,14 @@ async fn generate_a_project(
             remove_duplicate_pallets(&mut pallets);
 
             // Calls the function to generate the project with the given name and pallets
-            generate_project(project_name.clone(), pallets);
-            format!("{} project generated successfully", project_name)
+            if generate_project(project_name.clone(), pallets).is_ok() {
+                Ok(format!("{} project generated successfully", project_name))
+            } else {
+                Err("Error generating project".to_string())
+            }
         }
     })
-    .await
+    .await?
     .map(|res| Ok(HttpResponse::Ok().body(res)))
     .map_err(actix_web::error::ErrorInternalServerError)?;
 

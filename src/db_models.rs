@@ -17,7 +17,8 @@ pub async fn insert_pallet_data_to_db() {
     let pallets: Vec<_> = ESupportedPallets::iter().collect();
 
     // Get the configuration for each pallet.
-    let pallet_configs = get_pallet_configs(pallets);
+    // TODO: handle error case
+    let pallet_configs = get_pallet_configs(pallets).unwrap();
 
     // MongoDB connection parameters
     let uri: &str = "";

@@ -1,6 +1,7 @@
+use convert_case::{Case, Casing};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use strum_macros::EnumIter;
+use strum_macros::{Display, EnumIter};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum PalletModuleParts {
@@ -156,7 +157,7 @@ impl From<(String, &PalletConfigNoUpdated)> for PalletConfig {
     }
 }
 
-#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize, Deserialize, Display)]
 pub enum ESupportedPallets {
     PalletAssets,
     PalletAura,     // non-optional
@@ -181,6 +182,15 @@ pub enum ESupportedPallets {
     PalletUtility,
     PalletVesting,
     Unknown,
+}
+
+impl ESupportedPallets {
+    pub fn toml_path(&self) -> String {
+        format!(
+            "src/toml_configs/{}.toml",
+            self.to_string().to_case(Case::Snake)
+        )
+    }
 }
 
 impl TryFrom<&str> for ESupportedPallets {
@@ -210,58 +220,10 @@ impl TryFrom<&str> for ESupportedPallets {
 
 #[cfg(test)]
 mod tests {
-    use std::ffi::OsStr;
-
     use strum::IntoEnumIterator;
 
     use super::*;
-    use crate::code_generator::get_pallet_configs;
-    use crate::configs::pallet_assets::PalletAssetsConfig;
-
-    #[test]
-    fn test_toml_config() {
-        let filename = "src/configs/pallet_assets.toml";
-        let filename2 = "src/configs/pallet_assets2.toml";
-        let contents = match std::fs::read_to_string(filename) {
-            // If successful return the files text as `contents`.
-            // `c` is a local variable.
-            Ok(c) => c,
-            // Handle the `error` case.
-            Err(_) => {
-                // Write `msg` to `stderr`.
-                eprintln!("Could not read file `{}`", filename);
-                // Exit the program with exit code `1`.
-                panic!();
-            }
-        };
-        // Use a `match` block to return the
-        // file `contents` as a `Data struct: Ok(d)`
-        // or handle any `errors: Err(_)`.
-        let mut toml_config: PalletConfig = match toml::from_str(&contents) {
-            // If successful, return data as `Data` struct.
-            // `d` is a local variable.
-            Ok(d) => d,
-            // Handle the `error` case.
-            Err(err) => {
-                // Write `msg` to `stderr`.
-                eprintln!("Unable to load data from `{}`", err);
-                // Exit the program with exit code `1`.
-                panic!();
-            }
-        };
-        let from_index = PalletAssetsConfig::new();
-        let index_config = PalletConfig {
-            name: from_index.name,
-            metadata: from_index.metadata,
-            runtime: from_index.runtime,
-            dependencies: from_index.dependencies.clone(),
-        };
-        toml_config.metadata.updated = index_config.metadata.updated.clone();
-
-        assert_eq!(toml_config, index_config);
-        let toml_string = toml::to_string_pretty(&toml_config).unwrap();
-        std::fs::write(filename2, toml_string).unwrap();
-    }
+    use crate::code_generator::{get_pallet_configs, get_pallet_configs_depricated};
 
     #[test]
     #[ignore]
@@ -269,7 +231,7 @@ mod tests {
     // Special test used to generate toml files for pallets.
     fn print_pallet_config() {
         let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
-        let pallet_configs = get_pallet_configs(supported_configs);
+        let pallet_configs = get_pallet_configs_depricated(supported_configs);
         let directory = "src/toml_configs";
         for pallet_config in pallet_configs {
             let filename = format!(
@@ -285,47 +247,20 @@ mod tests {
     #[test]
     fn confirm_two_pallet_configs() {
         let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
-        let pallet_configs = get_pallet_configs(supported_configs);
-        let directory = "src/toml_configs";
-        let files = std::fs::read_dir(directory).unwrap();
-        let mut toml_pallet_configs = Vec::new();
-        for file in files {
-            let file = file.unwrap();
-            let path = file.path();
-            if Some(OsStr::new("toml")) == path.extension() {
-                let contents = match std::fs::read_to_string(&path) {
-                    Ok(c) => c,
-                    Err(_) => {
-                        eprintln!("Could not read file `{}`", path.display());
-                        panic!();
-                    }
-                };
-                let toml_config: PalletConfigNoUpdated = match toml::from_str(&contents) {
-                    Ok(d) => d,
-                    Err(err) => {
-                        eprintln!("Unable to load data from `{}`", err);
-                        panic!();
-                    }
-                };
-                toml_pallet_configs.push(toml_config);
-            }
-        }
+        let pallet_configs = get_pallet_configs_depricated(supported_configs.clone());
+        let toml_pallet_configs = get_pallet_configs(supported_configs).unwrap();
         let index_pallet_configs = pallet_configs
             .iter()
-            .map(|x| (x.name.clone(), x))
+            .map(|x| (x.name.clone(), x.clone()))
             .collect::<HashMap<_, _>>();
-        let toml_pallet_configs = toml_pallet_configs
+        let mut toml_pallet_configs = toml_pallet_configs
             .iter()
-            .map(|x| (x.name.clone(), x))
+            .map(|x| (x.name.clone(), x.clone()))
             .collect::<HashMap<_, _>>();
         for (name, index_pallet_config) in index_pallet_configs {
-            let toml_pallet_config_no_updated = toml_pallet_configs.get(&name).unwrap();
-            let toml_pallet_config: PalletConfig = (
-                index_pallet_config.metadata.updated.clone(),
-                *toml_pallet_config_no_updated,
-            )
-                .into();
-            assert_eq!(&toml_pallet_config, index_pallet_config);
+            let toml_pallet_config = toml_pallet_configs.get_mut(&name).unwrap();
+            toml_pallet_config.metadata.updated = index_pallet_config.metadata.updated.clone();
+            assert_eq!(toml_pallet_config.clone(), index_pallet_config);
         }
     }
 }
