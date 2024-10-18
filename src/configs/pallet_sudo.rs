@@ -1,5 +1,4 @@
 use super::super::types::*;
-use chrono::Utc;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PalletSudoTraits {
@@ -30,7 +29,7 @@ impl PalletSudoConfig {
             name: String::from("pallet_sudo"),
             metadata: PalletMetadata {
                 size: 5078,
-                updated: Utc::now().timestamp().to_string(),
+                //updated: Utc::now().timestamp().to_string(),
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],

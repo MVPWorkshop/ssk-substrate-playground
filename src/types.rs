@@ -99,17 +99,6 @@ pub enum CommonAuthors {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
-pub struct PalletMetadataNoUpdated {
-    pub description: String,
-    pub short_description: String,
-    pub compatibility: SubstrateVersion,
-    pub license: Option<String>,
-    pub authors: Vec<CommonAuthors>,
-    pub categories: Option<Vec<PalletCategories>>,
-    pub size: usize,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletMetadata {
     pub description: String,
     pub short_description: String,
@@ -118,7 +107,6 @@ pub struct PalletMetadata {
     pub authors: Vec<CommonAuthors>,
     pub categories: Option<Vec<PalletCategories>>,
     pub size: usize,
-    pub updated: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
@@ -127,34 +115,6 @@ pub struct PalletConfig {
     pub metadata: PalletMetadata,
     pub runtime: PalletRuntimeConfig,
     pub dependencies: PalletDependencyConfig,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
-pub struct PalletConfigNoUpdated {
-    pub name: String,
-    pub metadata: PalletMetadataNoUpdated,
-    pub runtime: PalletRuntimeConfig,
-    pub dependencies: PalletDependencyConfig,
-}
-
-impl From<(String, &PalletConfigNoUpdated)> for PalletConfig {
-    fn from((updated, config): (String, &PalletConfigNoUpdated)) -> Self {
-        PalletConfig {
-            name: config.name.clone(),
-            metadata: PalletMetadata {
-                description: config.metadata.description.clone(),
-                short_description: config.metadata.short_description.clone(),
-                compatibility: config.metadata.compatibility.clone(),
-                license: config.metadata.license.clone(),
-                authors: config.metadata.authors.clone(),
-                categories: config.metadata.categories.clone(),
-                size: config.metadata.size,
-                updated: updated.clone(),
-            },
-            runtime: config.runtime.clone(),
-            dependencies: config.dependencies.clone(),
-        }
-    }
 }
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize, Deserialize, Display)]
@@ -249,18 +209,6 @@ mod tests {
         let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
         let pallet_configs = get_pallet_configs_depricated(supported_configs.clone());
         let toml_pallet_configs = get_pallet_configs(supported_configs).unwrap();
-        let index_pallet_configs = pallet_configs
-            .iter()
-            .map(|x| (x.name.clone(), x.clone()))
-            .collect::<HashMap<_, _>>();
-        let mut toml_pallet_configs = toml_pallet_configs
-            .iter()
-            .map(|x| (x.name.clone(), x.clone()))
-            .collect::<HashMap<_, _>>();
-        for (name, index_pallet_config) in index_pallet_configs {
-            let toml_pallet_config = toml_pallet_configs.get_mut(&name).unwrap();
-            toml_pallet_config.metadata.updated = index_pallet_config.metadata.updated.clone();
-            assert_eq!(toml_pallet_config.clone(), index_pallet_config);
-        }
+        assert_eq!(pallet_configs, toml_pallet_configs);
     }
 }

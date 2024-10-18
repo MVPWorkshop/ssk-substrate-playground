@@ -1,10 +1,16 @@
+use std::io::ErrorKind;
+use std::sync::Arc;
+
+use actix_web::web::Data;
 use actix_web::Error;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use substrate_runtime_builder::code_generator::generate_project;
+use substrate_runtime_builder::code_generator::{
+    generate_project, get_all_pallet_configs_from_dir,
+};
 use substrate_runtime_builder::route::get_templates;
-use substrate_runtime_builder::types::ESupportedPallets;
+use substrate_runtime_builder::types::{ESupportedPallets, PalletConfig};
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
@@ -31,6 +37,7 @@ async fn greet_user(path: web::Path<String>) -> impl Responder {
 
 // A function to create a new project with a list of pallets
 async fn generate_a_project(
+    config_pallets: Data<Vec<PalletConfig>>,
     project: web::Json<NewProject>,
 ) -> actix_web::Result<HttpResponse, Error> {
     let mut project_name = project.name.clone();
@@ -40,6 +47,12 @@ async fn generate_a_project(
     let github_email = project.github_email.clone();
     let github_token = project.github_token.clone();
     let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
+
+    // Filter the pallets to only include the ones that are supported
+    let filtered = config_pallets
+        .iter()
+        .filter(|pallet| pallet_names.contains(&pallet.name))
+        .collect::<Vec<_>>();
 
     // Append the username and timestamp to the project name to ensure uniqueness
     project_name = format!("{}_{}_{}", project_name, github_username, timestamp);
@@ -128,7 +141,7 @@ async fn generate_a_project(
             remove_duplicate_pallets(&mut pallets);
 
             // Calls the function to generate the project with the given name and pallets
-            if generate_project(project_name.clone(), pallets).is_ok() {
+            if generate_project(&project_name, pallets).is_ok() {
                 Ok(format!("{} project generated successfully", project_name))
             } else {
                 Err("Error generating project".to_string())
@@ -171,26 +184,11 @@ async fn generate_a_project(
 }
 
 // A function to return the list of supported pallets
-async fn list_supported_pallets() -> impl Responder {
-    let supported_pallets = vec![
-        "Assets",
-        "Bounties",
-        "Treasury",
-        "Vesting",
-        "Society",
-        "Utility",
-        "Identity",
-        "Multisig",
-        "Proxy",
-        "Nfts",
-        "Uniques",
-        "Membership",
-        "ChildBounties",
-        "Collective",
-        "Scheduler",
-        "Democracy",
-    ];
-
+async fn list_supported_pallets(config_pallets: Data<Vec<PalletConfig>>) -> impl Responder {
+    let supported_pallets: Vec<String> = config_pallets
+        .iter()
+        .map(|pallet| pallet.name.clone())
+        .collect();
     HttpResponse::Ok().json(supported_pallets)
 }
 
@@ -200,9 +198,14 @@ async fn main() -> std::io::Result<()> {
     println!("Starting server at http://0.0.0.0:8080");
 
     //insert_pallet_data_to_db().await;
+    let data = Data::from(Arc::new(
+        get_all_pallet_configs_from_dir("src/toml_configs")
+            .map_err(|err| std::io::Error::new(ErrorKind::Other, err.to_string()))?,
+    ));
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
+            .app_data(Data::clone(&data))
             .route("/", web::get().to(greet_user))
             .route("/generate-project", web::post().to(generate_a_project))
             .route(

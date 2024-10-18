@@ -1,5 +1,4 @@
 use super::super::types::*;
-use chrono::Utc;
 
 #[derive(Debug, Clone, Copy)]
 pub enum PalletUtilityTraits {
@@ -33,7 +32,7 @@ impl PalletAuraConfig {
             name: String::from("Pallet Aura"),
             metadata: PalletMetadata {
                 size: 5078,
-                updated: Utc::now().timestamp().to_string(),
+                //updated: Utc::now().timestamp().to_string(),
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],

@@ -1,6 +1,5 @@
 use super::super::pallet_index::MEMBERSHIP;
 use super::super::types::*;
-use chrono::Utc;
 use std::fmt;
 
 #[derive(Debug, Clone, Copy)]
@@ -57,7 +56,7 @@ impl PalletMembershipConfig {
             short_description: "FRAME membership pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            updated: Utc::now().timestamp().to_string(),
+            //updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Governance]),

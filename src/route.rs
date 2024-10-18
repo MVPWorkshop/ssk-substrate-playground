@@ -1,8 +1,7 @@
-use crate::code_generator::get_pallet_configs;
 use crate::types::{ESupportedPallets, PalletConfig};
+use actix_web::web::Data;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use strum::IntoEnumIterator;
 
 // Pallet structure that will be returned as JSON
 #[derive(Serialize)]
@@ -37,11 +36,10 @@ pub struct TemplateQuery {
 }
 
 // Function that returns JSON based on the query parameter for templates.
-pub async fn get_templates(query: web::Query<TemplateQuery>) -> impl Responder {
-    let pallets: Vec<_> = ESupportedPallets::iter().collect();
-    // TODO: handle error case
-    let pallet_configs = get_pallet_configs(pallets).unwrap();
-
+pub async fn get_templates(
+    pallet_configs: Data<Vec<PalletConfig>>,
+    query: web::Query<TemplateQuery>,
+) -> impl Responder {
     let templates = vec![
         BlockchainTemplate {
             template_type: String::from("solochain"),
@@ -80,82 +78,82 @@ pub async fn get_templates(query: web::Query<TemplateQuery>) -> impl Responder {
             supported_pallets: vec![
                 Pallet {
                     name: String::from("Assets"),
-                    description: get_config(pallet_configs.clone(), "Pallet assets"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet assets"),
                     category: String::from("Asset"),
                 },
                 Pallet {
                     name: String::from("Treasury"),
-                    description: get_config(pallet_configs.clone(), "Pallet treasury"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet treasury"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Utility"),
-                    description: get_config(pallet_configs.clone(), "Pallet utility"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet utility"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Vesting"),
-                    description: get_config(pallet_configs.clone(), "Pallet vesting"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet vesting"),
                     category: String::from("Asset"),
                 },
                 Pallet {
                     name: String::from("Uniques"),
-                    description: get_config(pallet_configs.clone(), "Pallet uniques"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet uniques"),
                     category: String::from("Nfts"),
                 },
                 Pallet {
                     name: String::from("Nfts"),
-                    description: get_config(pallet_configs.clone(), "Pallet nfts"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet nfts"),
                     category: String::from("Nfts"),
                 },
                 Pallet {
                     name: String::from("Society"),
-                    description: get_config(pallet_configs.clone(), "Pallet society"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet society"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Proxy"),
-                    description: get_config(pallet_configs.clone(), "Pallet proxy"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet proxy"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Multisig"),
-                    description: get_config(pallet_configs.clone(), "Pallet multisig"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet multisig"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Identity"),
-                    description: get_config(pallet_configs.clone(), "Pallet identity"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet identity"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Scheduler"),
-                    description: get_config(pallet_configs.clone(), "Pallet scheduler"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet scheduler"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Membership"),
-                    description: get_config(pallet_configs.clone(), "Pallet membership"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet membership"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Bounties"),
-                    description: get_config(pallet_configs.clone(), "Pallet bounties"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet bounties"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Child Bounties"),
-                    description: get_config(pallet_configs.clone(), "Pallet child bounties"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet child bounties"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Collective"),
-                    description: get_config(pallet_configs.clone(), "Pallet collective"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet collective"),
                     category: String::from("Core"),
                 },
                 Pallet {
                     name: String::from("Democracy"),
-                    description: get_config(pallet_configs, "Pallet democracy"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet democracy"),
                     category: String::from("Core"),
                 },
             ],

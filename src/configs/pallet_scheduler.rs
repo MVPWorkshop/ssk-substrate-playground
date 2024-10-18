@@ -1,6 +1,5 @@
 use super::super::pallet_index::SCHEDULER;
 use super::super::types::*;
-use chrono::Utc;
 use std::fmt;
 
 // The Scheduler pallet is dependent on the Treasury and Assets pallets, and they must be invoked together.
@@ -63,7 +62,7 @@ impl PalletSchedulerConfig {
             short_description: "FRAME scheduler pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            updated: Utc::now().timestamp().to_string(),
+            //updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Runtime]),

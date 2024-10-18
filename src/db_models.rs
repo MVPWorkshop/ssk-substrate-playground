@@ -80,11 +80,6 @@ pub fn pallet_config_to_model(config: PalletConfig) -> HashMap<String, String> {
         config.metadata.license.unwrap_or_default(),
     );
 
-    // Insert the last update date and the descriptions.
-    map.insert(
-        "package_last_update".to_string(),
-        config.metadata.updated.to_string(),
-    );
     map.insert("description".to_string(), config.metadata.description);
     map.insert(
         "short_description".to_string(),

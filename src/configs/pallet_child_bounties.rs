@@ -1,6 +1,5 @@
 use super::super::pallet_index::CHILD_BOUNTIES;
 use super::super::types::*;
-use chrono::Utc;
 use std::fmt;
 
 // The Child Bounties pallet is dependent on the Bounties,Treasury and Assets pallets, and they must be invoked together.
@@ -53,7 +52,7 @@ impl PalletChildBountiesConfig {
             short_description: "FRAME child bounties pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            updated: Utc::now().timestamp().to_string(),
+            //updated: Utc::now().timestamp().to_string(),
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Governance]),
