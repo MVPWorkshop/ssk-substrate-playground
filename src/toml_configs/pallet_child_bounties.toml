@@ -32,6 +32,9 @@ WeightInfo = "pallet_child_bounties::weights::SubstrateWeight<Runtime>"
 RuntimeEvent = "RuntimeEvent"
 MaxActiveChildBountyCount = "MaxActiveChildBountyCount"
 
+[dependencies]
+required_pallets = ["Pallet bounties"]
+
 [dependencies.pallet]
 package = "pallet-child-bounties"
 alias = "pallet child bounties"

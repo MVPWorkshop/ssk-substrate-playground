@@ -67,6 +67,7 @@ impl PalletUtilityConfig {
             },
             additional_pallets: None,
             additional_deps: None,
+            required_pallets: None,
         };
 
         let runtime = PalletRuntimeConfig {

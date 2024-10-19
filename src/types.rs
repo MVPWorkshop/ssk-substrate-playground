@@ -70,6 +70,7 @@ pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
     pub additional_pallets: Option<Vec<CargoComplexDependency>>,
     pub additional_deps: Option<Vec<CargoSimpleDependency>>,
+    pub required_pallets: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]

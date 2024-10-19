@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::io::ErrorKind;
 use std::sync::Arc;
 
@@ -10,11 +11,10 @@ use substrate_runtime_builder::code_generator::{
     generate_project, get_all_pallet_configs_from_dir,
 };
 use substrate_runtime_builder::route::get_templates;
-use substrate_runtime_builder::types::{ESupportedPallets, PalletConfig};
+use substrate_runtime_builder::types::PalletConfig;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
-use substrate_runtime_builder::utils::util::*;
 
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
@@ -48,11 +48,28 @@ async fn generate_a_project(
     let github_token = project.github_token.clone();
     let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
 
-    // Filter the pallets to only include the ones that are supported
+    // Extended list of pallets to include the with the required pallets
     let filtered = config_pallets
         .iter()
+        // Get the pallets that are in the list of pallet names
         .filter(|pallet| pallet_names.contains(&pallet.name))
+        // Get the required pallets for each pallet
+        .flat_map(|pallet| {
+            let mut palet_with_reqs = vec![pallet.name.clone()];
+            if let Some(required_pallets) = pallet.dependencies.required_pallets.clone() {
+                palet_with_reqs.extend(required_pallets);
+            }
+            palet_with_reqs
+        })
         .collect::<Vec<_>>();
+
+    let filtered_configs = config_pallets
+        .iter()
+        .filter(|pallet| filtered.contains(&pallet.name))
+        .fold(HashMap::new(), |mut acc, pallet| {
+            acc.insert(pallet.name.clone(), pallet.clone());
+            acc
+        });
 
     // Append the username and timestamp to the project name to ensure uniqueness
     project_name = format!("{}_{}_{}", project_name, github_username, timestamp);
@@ -60,87 +77,88 @@ async fn generate_a_project(
     let result = actix_web::web::block({
         let project_name = project_name.clone();
         move || {
-            let mut pallets: Vec<ESupportedPallets> = Vec::new();
+            // let mut pallets: Vec<ESupportedPallets> = Vec::new();
 
-            for pallet in &pallet_names {
-                match ESupportedPallets::try_from(pallet.as_str())
-                    .unwrap_or(ESupportedPallets::Unknown)
-                {
-                    ESupportedPallets::PalletUtility => {
-                        pallets.push(ESupportedPallets::PalletUtility);
-                    }
-                    ESupportedPallets::PalletIdentity => {
-                        pallets.push(ESupportedPallets::PalletIdentity);
-                    }
-                    ESupportedPallets::PalletMultisig => {
-                        pallets.push(ESupportedPallets::PalletMultisig);
-                    }
-                    ESupportedPallets::PalletProxy => {
-                        pallets.push(ESupportedPallets::PalletProxy);
-                    }
-                    ESupportedPallets::PalletUniques => {
-                        pallets.push(ESupportedPallets::PalletUniques);
-                    }
-                    ESupportedPallets::PalletNfts => {
-                        pallets.push(ESupportedPallets::PalletNfts);
-                    }
-                    ESupportedPallets::PalletMembership => {
-                        pallets.push(ESupportedPallets::PalletMembership);
-                    }
-                    ESupportedPallets::PalletAssets => {
-                        pallets.push(ESupportedPallets::PalletAssets);
-                    }
-                    ESupportedPallets::PalletBounties => {
-                        pallets.push(ESupportedPallets::PalletBounties);
+            // for pallet in &pallet_names {
+            //     match ESupportedPallets::try_from(pallet.as_str())
+            //         .unwrap_or(ESupportedPallets::Unknown)
+            //     {
+            //         ESupportedPallets::PalletUtility => {
+            //             pallets.push(ESupportedPallets::PalletUtility);
+            //         }
+            //         ESupportedPallets::PalletIdentity => {
+            //             pallets.push(ESupportedPallets::PalletIdentity);
+            //         }
+            //         ESupportedPallets::PalletMultisig => {
+            //             pallets.push(ESupportedPallets::PalletMultisig);
+            //         }
+            //         ESupportedPallets::PalletProxy => {
+            //             pallets.push(ESupportedPallets::PalletProxy);
+            //         }
+            //         ESupportedPallets::PalletUniques => {
+            //             pallets.push(ESupportedPallets::PalletUniques);
+            //         }
+            //         ESupportedPallets::PalletNfts => {
+            //             pallets.push(ESupportedPallets::PalletNfts);
+            //         }
+            //         ESupportedPallets::PalletMembership => {
+            //             pallets.push(ESupportedPallets::PalletMembership);
+            //         }
+            //         ESupportedPallets::PalletAssets => {
+            //             pallets.push(ESupportedPallets::PalletAssets);
+            //         }
+            //         ESupportedPallets::PalletBounties => {
+            //             pallets.push(ESupportedPallets::PalletBounties);
 
-                        if !pallets.contains(&ESupportedPallets::PalletAssets) {
-                            pallets.push(ESupportedPallets::PalletAssets);
-                        }
+            //             if !pallets.contains(&ESupportedPallets::PalletAssets) {
+            //                 pallets.push(ESupportedPallets::PalletAssets);
+            //             }
 
-                        if !pallets.contains(&ESupportedPallets::PalletTreasury) {
-                            pallets.push(ESupportedPallets::PalletTreasury);
-                        }
-                    }
-                    ESupportedPallets::PalletTreasury => {
-                        pallets.push(ESupportedPallets::PalletTreasury);
-                    }
-                    ESupportedPallets::PalletChildBounties => {
-                        pallets.push(ESupportedPallets::PalletChildBounties);
+            //             if !pallets.contains(&ESupportedPallets::PalletTreasury) {
+            //                 pallets.push(ESupportedPallets::PalletTreasury);
+            //             }
+            //         }
+            //         ESupportedPallets::PalletTreasury => {
+            //             pallets.push(ESupportedPallets::PalletTreasury);
+            //         }
+            //         ESupportedPallets::PalletChildBounties => {
+            //             pallets.push(ESupportedPallets::PalletChildBounties);
 
-                        if !pallets.contains(&ESupportedPallets::PalletBounties) {
-                            pallets.push(ESupportedPallets::PalletBounties);
-                        }
-                    }
-                    ESupportedPallets::PalletVesting => {
-                        pallets.push(ESupportedPallets::PalletVesting);
-                    }
-                    ESupportedPallets::PalletSociety => {
-                        pallets.push(ESupportedPallets::PalletSociety);
-                    }
-                    ESupportedPallets::PalletCollective => {
-                        pallets.push(ESupportedPallets::PalletCollective);
-                    }
-                    ESupportedPallets::PalletScheduler => {
-                        pallets.push(ESupportedPallets::PalletScheduler);
-                    }
-                    ESupportedPallets::PalletDemocracy => {
-                        pallets.push(ESupportedPallets::PalletDemocracy);
+            //             if !pallets.contains(&ESupportedPallets::PalletBounties) {
+            //                 pallets.push(ESupportedPallets::PalletBounties);
+            //             }
+            //         }
+            //         ESupportedPallets::PalletVesting => {
+            //             pallets.push(ESupportedPallets::PalletVesting);
+            //         }
+            //         ESupportedPallets::PalletSociety => {
+            //             pallets.push(ESupportedPallets::PalletSociety);
+            //         }
+            //         ESupportedPallets::PalletCollective => {
+            //             pallets.push(ESupportedPallets::PalletCollective);
+            //         }
+            //         ESupportedPallets::PalletScheduler => {
+            //             pallets.push(ESupportedPallets::PalletScheduler);
+            //         }
+            //         ESupportedPallets::PalletDemocracy => {
+            //             pallets.push(ESupportedPallets::PalletDemocracy);
 
-                        if !pallets.contains(&ESupportedPallets::PalletScheduler) {
-                            pallets.push(ESupportedPallets::PalletScheduler);
-                        }
+            //             if !pallets.contains(&ESupportedPallets::PalletScheduler) {
+            //                 pallets.push(ESupportedPallets::PalletScheduler);
+            //             }
 
-                        if !pallets.contains(&ESupportedPallets::PalletCollective) {
-                            pallets.push(ESupportedPallets::PalletCollective);
-                        }
-                    }
-                    _ => continue,
-                }
-            }
+            //             if !pallets.contains(&ESupportedPallets::PalletCollective) {
+            //                 pallets.push(ESupportedPallets::PalletCollective);
+            //             }
+            //         }
+            //         _ => continue,
+            //     }
+            // }
 
-            remove_duplicate_pallets(&mut pallets);
+            // remove_duplicate_pallets(&mut pallets);
 
             // Calls the function to generate the project with the given name and pallets
+            let pallets = filtered_configs.values().cloned().collect::<Vec<_>>();
             if generate_project(&project_name, pallets).is_ok() {
                 Ok(format!("{} project generated successfully", project_name))
             } else {

@@ -70,6 +70,7 @@ impl PalletChildBountiesConfig {
             },
             additional_pallets: None,
             additional_deps: None,
+            required_pallets: Some(vec!["Pallet bounties".to_string()]),
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {

@@ -80,6 +80,7 @@ impl PalletSchedulerConfig {
             },
             additional_pallets: None,
             additional_deps: None,
+            required_pallets: None,
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {

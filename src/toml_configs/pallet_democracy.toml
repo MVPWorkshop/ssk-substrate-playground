@@ -59,6 +59,9 @@ BlacklistOrigin = "EnsureRoot<AccountId>"
 MinimumDeposit = "MinimumDeposit"
 RuntimeEvent = "RuntimeEvent"
 
+[dependencies]
+required_pallets = ["Pallet Scheduler, Pallet collective"]
+
 [dependencies.pallet]
 package = "pallet-democracy"
 alias = "pallet democracy"

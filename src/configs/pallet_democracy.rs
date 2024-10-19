@@ -113,6 +113,10 @@ impl PalletDemocracyConfig {
             },
             additional_pallets: None,
             additional_deps: None,
+            required_pallets: Some(vec![
+                "Pallet Scheduler".to_string(),
+                "Pallet collective".to_string(),
+            ]),
         };
         let runtime = PalletRuntimeConfig {
             construct_runtime: PalletConstructRuntimeConfig {

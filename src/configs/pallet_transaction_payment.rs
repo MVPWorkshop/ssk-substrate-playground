@@ -82,6 +82,7 @@ impl PalletTransactionPaymentConfig {
                 },
                 additional_pallets: None,
                 additional_deps: None,
+                required_pallets: None,
             },
         }
     }

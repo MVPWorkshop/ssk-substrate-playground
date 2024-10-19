@@ -572,7 +572,7 @@ pub fn get_pallet_configs(
 ///
 /// * `project_name` - The name of the project to generate.
 /// * `pallets` - A list of supported pallets to be integrated into the project.
-pub fn generate_project(
+pub fn generate_project_depricated(
     project_name: &String,
     pallets: Vec<ESupportedPallets>,
 ) -> Result<(), PalletConfigLoadError> {
@@ -586,6 +586,21 @@ pub fn generate_project(
 
     // Add the pallets to the new project.
     add_pallets(project_name, pallet_configs);
+    println!("Added pallets to the project: {}", project_name);
+    Ok(())
+}
+
+pub fn generate_project(
+    project_name: &String,
+    pallets: Vec<PalletConfig>,
+) -> Result<(), PalletConfigLoadError> {
+    // Create a new project directory and copy the template.
+    create_new_project(project_name);
+
+    println!("Created project: {}", project_name);
+
+    // Add the pallets to the new project.
+    add_pallets(project_name, pallets);
     println!("Added pallets to the project: {}", project_name);
     Ok(())
 }
