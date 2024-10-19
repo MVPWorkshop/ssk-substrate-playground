@@ -5,6 +5,7 @@ description = """
 The Treasury pallet provides a pot of funds that can be managed by stakeholders in the system and a structure for making spending proposals from this pot.
 The Treasury Pallet itself provides the pot to store funds, and a means for stakeholders to propose and claim expenditures (aka spends). The chain will need to provide a method to approve spends (e.g. public referendum) and a method for collecting funds (e.g. inflation, fees)."""
 short_description = "FRAME Treasury pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -31,18 +32,15 @@ parameter_types! {
 }
 '''
 additional_runtime_lib_code = [
-    "use sp_runtime::Percent;",
-    "use frame_system::EnsureWithSuccess;",
-    "use frame_support::traits::tokens::pay::PayAssetFromAccount;",
-    "use frame_support::traits::tokens::UnityAssetBalanceConversion;",
+	"use sp_runtime::Percent;",
+	"use frame_system::EnsureWithSuccess;",
+	"use frame_support::traits::tokens::pay::PayAssetFromAccount;",
+	"use frame_support::traits::tokens::UnityAssetBalanceConversion;",
 ]
 
 [runtime.construct_runtime]
 index = 13
-runtime = [
-    "Treasury",
-    "pallet_treasury::Pallet<Runtime>",
-]
+runtime = ["Treasury", "pallet_treasury::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 RejectOrigin = "EnsureRoot<AccountId>"

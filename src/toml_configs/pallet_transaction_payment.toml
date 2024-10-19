@@ -9,6 +9,7 @@ This pallet provides the basic logic needed to pay the absolute minimum amount n
 - _tip_: An optional tip. Tip increases the priority of the transaction, giving it a higher chance to be included by the transaction queue.
 The base fee and adjusted weight and length fees constitute the _inclusion fee_, which is the minimum fee for a transaction to be included in a block."""
 short_description = "FRAME Transaction payment pallet"
+is_essential = true
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -17,13 +18,12 @@ size = 5078
 updated = "1729175503"
 
 [runtime]
-additional_runtime_lib_code = ["use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};"]
+additional_runtime_lib_code = [
+    "use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};",
+]
 
 [runtime.construct_runtime]
-runtime = [
-    "TransactionPayment",
-    "pallet_transaction_payment",
-]
+runtime = ["TransactionPayment", "pallet_transaction_payment"]
 
 [runtime.pallet_traits]
 OnChargeTransaction = "FungibleAdapter<Balances, ()>"

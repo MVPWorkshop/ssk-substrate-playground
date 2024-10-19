@@ -3,6 +3,7 @@ name = "Pallet society"
 [metadata]
 description = "The Society module is an economic game which incentivizes users to participate and maintain a membership society."
 short_description = "FRAME society pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -28,10 +29,7 @@ parameter_types! {
 
 [runtime.construct_runtime]
 index = 21
-runtime = [
-    "Society",
-    "pallet_society::Pallet<Runtime>",
-]
+runtime = ["Society", "pallet_society::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 GraceStrikes = "GraceStrikes"

@@ -3,6 +3,7 @@ name = "Pallet uniques"
 [metadata]
 description = "A module for managing non-fungible tokens (NFTs) and collections, providing a secure and flexible framework."
 short_description = "FRAME uniques pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -12,10 +13,7 @@ updated = "1729175503"
 
 [runtime.construct_runtime]
 index = 17
-runtime = [
-    "Uniques",
-    "pallet_uniques::Pallet<Runtime>",
-]
+runtime = ["Uniques", "pallet_uniques::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 Locker = "()"

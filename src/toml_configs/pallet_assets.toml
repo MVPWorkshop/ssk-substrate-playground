@@ -3,6 +3,7 @@ name = "Pallet assets"
 [metadata]
 description = "A simple, secure module for dealing with sets of assets implementing fungible traits."
 short_description = "FRAME Assets pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -21,14 +22,13 @@ parameter_types! {
 \tpub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
 }
 """
-additional_runtime_lib_code = ["use frame_support::traits::AsEnsureOriginWithArg;"]
+additional_runtime_lib_code = [
+    "use frame_support::traits::AsEnsureOriginWithArg;",
+]
 
 [runtime.construct_runtime]
 index = 12
-runtime = [
-    "Assets",
-    "pallet_assets::Pallet<Runtime>",
-]
+runtime = ["Assets", "pallet_assets::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 ApprovalDeposit = "ApprovalDeposit"

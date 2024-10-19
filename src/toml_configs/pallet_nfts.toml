@@ -5,6 +5,7 @@ description = """
 A pallet for dealing with non-fungible assets.
 The NFTs pallet provides functionality for non-fungible tokens' management, including:Collection Creation, NFT Minting, NFT Transfers and Atomic Swaps, NFT Trading methods, Attributes Management, NFT Burning"""
 short_description = "FRAME nfts pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -23,10 +24,7 @@ additional_runtime_lib_code = ["use pallet_nfts::PalletFeatures;"]
 
 [runtime.construct_runtime]
 index = 18
-runtime = [
-    "Nfts",
-    "pallet_nfts::Pallet<Runtime>",
-]
+runtime = ["Nfts", "pallet_nfts::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 ItemDeposit = "ConstU128<{ 1 * 1000 }>"

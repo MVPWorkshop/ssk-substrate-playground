@@ -3,6 +3,7 @@ name = "Pallet collective"
 [metadata]
 description = "The Collective pallet allows a group of account IDs to make collective decisions through voting on proposals. Voting happens over a defined period, and a  member can influence the default vote. Proposals are executed once the required number of approvals is reached. "
 short_description = "FRAME collective pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -25,10 +26,7 @@ parameter_types! {
 
 [runtime.construct_runtime]
 index = 24
-runtime = [
-    "Collective",
-    "pallet_collective::Pallet<Runtime>",
-]
+runtime = ["Collective", "pallet_collective::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 MaxProposals = "CouncilMaxProposals"

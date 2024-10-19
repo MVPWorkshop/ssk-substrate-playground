@@ -3,6 +3,7 @@ name = "Pallet Grandpa"
 [metadata]
 description = "This manages the GRANDPA authority set ready for the native code. These authorities are only for GRANDPA finality, not for consensus overall."
 short_description = "FRAME Grandpa consensus pallet"
+is_essential = true
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -14,10 +15,7 @@ updated = "1729175503"
 additional_runtime_lib_code = ["use pallet_grandpa::AuthorityId as GrandpaId;"]
 
 [runtime.construct_runtime]
-runtime = [
-    "Grandpa",
-    "pallet_grandpa",
-]
+runtime = ["Grandpa", "pallet_grandpa"]
 
 [runtime.pallet_traits]
 MaxSetIdSessionEntries = "ConstU64<0>"

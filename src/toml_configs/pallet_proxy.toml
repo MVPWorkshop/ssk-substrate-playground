@@ -3,6 +3,7 @@ name = "Pallet proxy"
 [metadata]
 description = "A pallet allowing accounts to give permission to other accounts to dispatch types of calls from their signed origin."
 short_description = "FRAME proxy pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -66,10 +67,7 @@ additional_runtime_lib_code = [
 
 [runtime.construct_runtime]
 index = 11
-runtime = [
-    "Proxy",
-    "pallet_proxy::Pallet<Runtime>",
-]
+runtime = ["Proxy", "pallet_proxy::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 CallHasher = "BlakeTwo256"

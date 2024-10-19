@@ -54,7 +54,7 @@ impl PalletVestingConfig {
             short_description: "FRAME vesting pallet".to_string(),
             compatibility: SubstrateVersion::Two,
             size: 10500,
-            //updated: Utc::now().timestamp().to_string(),
+            is_essential: false,
             license: Some("Apache-2.0".to_string()),
             authors: vec![CommonAuthors::ParityTechnologies],
             categories: Some(vec![PalletCategories::Runtime]),

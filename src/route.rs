@@ -1,10 +1,10 @@
-use crate::types::{ESupportedPallets, PalletConfig};
+use crate::types::{ESupportedPallets, PalletCategories, PalletConfig};
 use actix_web::web::Data;
 use actix_web::{web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
 
 // Pallet structure that will be returned as JSON
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq, Eq, Debug)]
 pub struct Pallet {
     name: String,
     description: String,
@@ -12,7 +12,7 @@ pub struct Pallet {
 }
 
 // Chain use case structure that will be returned as JSON
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq, Eq, Debug)]
 pub struct UseCase {
     name: String,
     description: String,
@@ -20,7 +20,7 @@ pub struct UseCase {
 }
 
 // Blockchain template structure.
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq, Eq, Debug)]
 pub struct BlockchainTemplate {
     template_type: String,
     essential_pallets: Vec<Pallet>,
@@ -35,11 +35,81 @@ pub struct TemplateQuery {
     template_type: Option<String>, // Query parameter
 }
 
-// Function that returns JSON based on the query parameter for templates.
 pub async fn get_templates(
     pallet_configs: Data<Vec<PalletConfig>>,
     query: web::Query<TemplateQuery>,
 ) -> impl Responder {
+    let templates = get_templates_internal(pallet_configs.to_vec(), &query.template_type).await;
+    HttpResponse::Ok().json(templates)
+}
+
+pub async fn get_templates_internal(
+    pallet_configs: Vec<PalletConfig>,
+    query_template_type: &Option<String>,
+) -> Vec<BlockchainTemplate> {
+    let templates: Vec<BlockchainTemplate> = vec![
+        BlockchainTemplate {
+            template_type: String::from("solochain"),
+            essential_pallets: pallet_configs
+                .iter()
+                .filter(|pallet| pallet.metadata.is_essential)
+                .map(|pallet| Pallet {
+                    name: pallet.name.clone(),
+                    description: pallet.metadata.description.clone(),
+                    category: "Core".to_string(),
+                })
+                .collect::<Vec<_>>(),
+            supported_pallets: pallet_configs
+                .iter()
+                .filter(|pallet| !pallet.metadata.is_essential)
+                .map(|pallet| Pallet {
+                    name: pallet.name.clone(),
+                    description: pallet.metadata.description.clone(),
+                    category: pallet
+                        .metadata
+                        .categories
+                        .as_ref()
+                        .unwrap_or(&vec![PalletCategories::Runtime])[0]
+                        .to_string(),
+                })
+                .collect::<Vec<_>>(),
+            use_cases: vec![],
+            chain_type: vec![],
+        },
+        BlockchainTemplate {
+            template_type: String::from("parachain"),
+            essential_pallets: vec![],
+            supported_pallets: vec![],
+            use_cases: vec![],
+            chain_type: vec![],
+        },
+    ];
+    // Filtering the templates based on the `template_type` query parameter
+    let filtered_templates: Vec<BlockchainTemplate> = match query_template_type {
+        Some(template_type) => templates
+            .into_iter()
+            .filter(|t| t.template_type == *template_type)
+            .collect(),
+        None => templates,
+    };
+
+    // Return JSON response
+    filtered_templates
+}
+
+pub async fn get_templates_depricated(
+    pallet_configs: Data<Vec<PalletConfig>>,
+    query: web::Query<TemplateQuery>,
+) -> impl Responder {
+    let templates =
+        get_templates_depricated_internal(pallet_configs.to_vec(), &query.template_type).await;
+    HttpResponse::Ok().json(templates)
+}
+// Function that returns JSON based on the query parameter for templates.
+pub async fn get_templates_depricated_internal(
+    pallet_configs: Vec<PalletConfig>,
+    query_template_type: &Option<String>,
+) -> Vec<BlockchainTemplate> {
     let templates = vec![
         BlockchainTemplate {
             template_type: String::from("solochain"),
@@ -128,7 +198,7 @@ pub async fn get_templates(
                 },
                 Pallet {
                     name: String::from("Scheduler"),
-                    description: get_config(pallet_configs.to_vec(), "Pallet scheduler"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet Scheduler"),
                     category: String::from("Core"),
                 },
                 Pallet {
@@ -153,7 +223,7 @@ pub async fn get_templates(
                 },
                 Pallet {
                     name: String::from("Democracy"),
-                    description: get_config(pallet_configs.to_vec(), "Pallet democracy"),
+                    description: get_config(pallet_configs.to_vec(), "Pallet Democracy"),
                     category: String::from("Core"),
                 },
             ],
@@ -170,20 +240,16 @@ pub async fn get_templates(
     ];
 
     // Filtering the templates based on the `template_type` query parameter
-    let filtered_templates: Vec<BlockchainTemplate> = match &query.template_type {
-        Some(template_type) if template_type == "solochain" => templates
+    let filtered_templates: Vec<BlockchainTemplate> = match query_template_type {
+        Some(template_type) => templates
             .into_iter()
-            .filter(|t| t.template_type == "solochain")
+            .filter(|t| t.template_type == *template_type)
             .collect(),
-        Some(template_type) if template_type == "parachain" => templates
-            .into_iter()
-            .filter(|t| t.template_type == "parachain")
-            .collect(),
-        _ => templates,
+        None => templates,
     };
 
     // Return JSON response
-    HttpResponse::Ok().json(filtered_templates)
+    filtered_templates
 }
 
 pub fn get_config(pallet_configs: Vec<PalletConfig>, pallet: &str) -> String {
@@ -191,5 +257,45 @@ pub fn get_config(pallet_configs: Vec<PalletConfig>, pallet: &str) -> String {
         assets_config.metadata.description.to_string()
     } else {
         "Polkadot Frame Pallet".to_string()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::code_generator::get_pallet_configs;
+
+    use super::*;
+    use strum::IntoEnumIterator;
+
+    #[actix_rt::test]
+    async fn test_get_templates() {
+        let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
+        let toml_pallet_configs = get_pallet_configs(supported_configs).unwrap();
+        let response =
+            get_templates_internal(toml_pallet_configs.clone(), &Some("solochain".to_string()))
+                .await;
+        let response_deprecated =
+            get_templates_depricated_internal(toml_pallet_configs, &Some("solochain".to_string()))
+                .await;
+        assert_eq!(response.len(), 1);
+        assert_eq!(response_deprecated.len(), 1);
+        let template = &response[0];
+        let template_deprecated = &response_deprecated[0];
+        assert_eq!(template.template_type, "solochain");
+        assert_eq!(template_deprecated.template_type, "solochain");
+        assert_eq!(template.essential_pallets.len(), 6);
+        assert_eq!(template_deprecated.essential_pallets.len(), 6);
+        assert_eq!(template.supported_pallets.len(), 16);
+        assert_eq!(template_deprecated.supported_pallets.len(), 16);
+        let supported_pallet_names = template
+            .supported_pallets
+            .iter()
+            .map(|p| p.name.split(' ').collect::<Vec<_>>()[1].to_lowercase())
+            .collect::<Vec<_>>();
+
+        template_deprecated.supported_pallets.iter().for_each(|p| {
+            let name = p.name.split(' ').collect::<Vec<_>>()[0].to_lowercase();
+            assert!(supported_pallet_names.contains(&name));
+        });
     }
 }

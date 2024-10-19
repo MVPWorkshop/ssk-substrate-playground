@@ -41,7 +41,7 @@ impl PalletBalancesConfig {
             name: String::from("Pallet Balances"),
             metadata: PalletMetadata {
                 size: 5078,
-                //updated: Utc::now().timestamp().to_string(),
+                is_essential: true,
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],

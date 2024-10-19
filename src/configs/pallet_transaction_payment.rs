@@ -38,7 +38,7 @@ impl PalletTransactionPaymentConfig {
             name: String::from("Pallet Transaction Payment"),
             metadata: PalletMetadata {
                 size: 5078,
-                //updated: Utc::now().timestamp().to_string(),
+                is_essential: true,
                 license: Some(String::from("Apache-2.0")),
                 compatibility: SubstrateVersion::Two,
                 authors: vec![CommonAuthors::ParityTechnologies],

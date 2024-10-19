@@ -78,7 +78,7 @@ pub enum SubstrateVersion {
     Two,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display)]
 pub enum PalletCategories {
     Accounts,
     Assets,
@@ -107,6 +107,7 @@ pub struct PalletMetadata {
     pub authors: Vec<CommonAuthors>,
     pub categories: Option<Vec<PalletCategories>>,
     pub size: usize,
+    pub is_essential: bool,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]

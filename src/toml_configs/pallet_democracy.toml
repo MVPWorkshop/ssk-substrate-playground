@@ -3,6 +3,7 @@ name = "Pallet Democracy"
 [metadata]
 description = "The Democracy pallet enables stakeholder voting on referenda, managing proposals from public and external queues, and utilizing time-lock voting with conviction-based vote power scaling."
 short_description = "FRAME democracy pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -25,10 +26,7 @@ additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
 
 [runtime.construct_runtime]
 index = 25
-runtime = [
-    "Democracy",
-    "pallet_democracy::Pallet<Runtime>",
-]
+runtime = ["Democracy", "pallet_democracy::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 MaxBlacklisted = "MaxAll"

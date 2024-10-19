@@ -3,6 +3,7 @@ name = "Pallet Aura"
 [metadata]
 description = "The Aura module extends Aura consensus by managing offline reporting."
 short_description = "FRAME AURA consensus pallet"
+is_essential = true
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -12,13 +13,12 @@ updated = "1729175503"
 
 [runtime]
 additional_chain_spec_code = ["use node_template_runtime::AuraId;"]
-additional_runtime_lib_code = ["use sp_consensus_aura::sr25519::AuthorityId as AuraId;"]
+additional_runtime_lib_code = [
+    "use sp_consensus_aura::sr25519::AuthorityId as AuraId;",
+]
 
 [runtime.construct_runtime]
-runtime = [
-    "Aura",
-    "pallet_aura",
-]
+runtime = ["Aura", "pallet_aura"]
 
 [runtime.pallet_traits]
 AuthorityId = "AuraId"

@@ -3,6 +3,7 @@ name = "Pallet Scheduler"
 [metadata]
 description = "The Scheduler pallet allows scheduling the execution of specific calls at a designated block or within a specific time period. These scheduled calls can be named or anonymous, with the option to cancel them before execution."
 short_description = "FRAME scheduler pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -21,10 +22,7 @@ additional_runtime_lib_code = ["use frame_support::traits::EqualPrivilegeOnly;"]
 
 [runtime.construct_runtime]
 index = 23
-runtime = [
-    "Scheduler",
-    "pallet_scheduler::Pallet<Runtime>",
-]
+runtime = ["Scheduler", "pallet_scheduler::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 MaxScheduledPerBlock = "()"

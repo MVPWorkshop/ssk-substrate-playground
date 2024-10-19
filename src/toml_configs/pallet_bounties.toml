@@ -3,6 +3,7 @@ name = "Pallet bounties"
 [metadata]
 description = "The Bounties pallet facilitates the management and payout of rewards for completing specific tasks or objectives, with a curator overseeing the process, and the ability to create child bounties for splitting larger tasks. It works closely with the Treasury pallet."
 short_description = "FRAME bounties pallet"
+is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
@@ -28,10 +29,7 @@ parameter_types! {
 
 [runtime.construct_runtime]
 index = 19
-runtime = [
-    "Bounties",
-    "pallet_bounties::Pallet<Runtime>",
-]
+runtime = ["Bounties", "pallet_bounties::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 BountyDepositPayoutDelay = "BountyDepositPayoutDelay"
