@@ -77,88 +77,8 @@ async fn generate_a_project(
     let result = actix_web::web::block({
         let project_name = project_name.clone();
         move || {
-            // let mut pallets: Vec<ESupportedPallets> = Vec::new();
-
-            // for pallet in &pallet_names {
-            //     match ESupportedPallets::try_from(pallet.as_str())
-            //         .unwrap_or(ESupportedPallets::Unknown)
-            //     {
-            //         ESupportedPallets::PalletUtility => {
-            //             pallets.push(ESupportedPallets::PalletUtility);
-            //         }
-            //         ESupportedPallets::PalletIdentity => {
-            //             pallets.push(ESupportedPallets::PalletIdentity);
-            //         }
-            //         ESupportedPallets::PalletMultisig => {
-            //             pallets.push(ESupportedPallets::PalletMultisig);
-            //         }
-            //         ESupportedPallets::PalletProxy => {
-            //             pallets.push(ESupportedPallets::PalletProxy);
-            //         }
-            //         ESupportedPallets::PalletUniques => {
-            //             pallets.push(ESupportedPallets::PalletUniques);
-            //         }
-            //         ESupportedPallets::PalletNfts => {
-            //             pallets.push(ESupportedPallets::PalletNfts);
-            //         }
-            //         ESupportedPallets::PalletMembership => {
-            //             pallets.push(ESupportedPallets::PalletMembership);
-            //         }
-            //         ESupportedPallets::PalletAssets => {
-            //             pallets.push(ESupportedPallets::PalletAssets);
-            //         }
-            //         ESupportedPallets::PalletBounties => {
-            //             pallets.push(ESupportedPallets::PalletBounties);
-
-            //             if !pallets.contains(&ESupportedPallets::PalletAssets) {
-            //                 pallets.push(ESupportedPallets::PalletAssets);
-            //             }
-
-            //             if !pallets.contains(&ESupportedPallets::PalletTreasury) {
-            //                 pallets.push(ESupportedPallets::PalletTreasury);
-            //             }
-            //         }
-            //         ESupportedPallets::PalletTreasury => {
-            //             pallets.push(ESupportedPallets::PalletTreasury);
-            //         }
-            //         ESupportedPallets::PalletChildBounties => {
-            //             pallets.push(ESupportedPallets::PalletChildBounties);
-
-            //             if !pallets.contains(&ESupportedPallets::PalletBounties) {
-            //                 pallets.push(ESupportedPallets::PalletBounties);
-            //             }
-            //         }
-            //         ESupportedPallets::PalletVesting => {
-            //             pallets.push(ESupportedPallets::PalletVesting);
-            //         }
-            //         ESupportedPallets::PalletSociety => {
-            //             pallets.push(ESupportedPallets::PalletSociety);
-            //         }
-            //         ESupportedPallets::PalletCollective => {
-            //             pallets.push(ESupportedPallets::PalletCollective);
-            //         }
-            //         ESupportedPallets::PalletScheduler => {
-            //             pallets.push(ESupportedPallets::PalletScheduler);
-            //         }
-            //         ESupportedPallets::PalletDemocracy => {
-            //             pallets.push(ESupportedPallets::PalletDemocracy);
-
-            //             if !pallets.contains(&ESupportedPallets::PalletScheduler) {
-            //                 pallets.push(ESupportedPallets::PalletScheduler);
-            //             }
-
-            //             if !pallets.contains(&ESupportedPallets::PalletCollective) {
-            //                 pallets.push(ESupportedPallets::PalletCollective);
-            //             }
-            //         }
-            //         _ => continue,
-            //     }
-            // }
-
-            // remove_duplicate_pallets(&mut pallets);
-
-            // Calls the function to generate the project with the given name and pallets
             let pallets = filtered_configs.values().cloned().collect::<Vec<_>>();
+            // TODO: make generate_project async (it's IO bound, no need to block)
             if generate_project(&project_name, pallets).is_ok() {
                 Ok(format!("{} project generated successfully", project_name))
             } else {

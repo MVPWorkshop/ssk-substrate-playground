@@ -1,11 +1,9 @@
 use super::types::*;
-use crate::code_generator::get_pallet_configs;
+use crate::code_generator::get_all_pallet_configs_from_dir;
 use crate::database::insert_record;
-use crate::types::ESupportedPallets;
 use mongodb::Collection;
 use std::collections::HashMap;
 use std::sync::Arc;
-use strum::IntoEnumIterator;
 use uuid::Uuid;
 
 /// Inserts pallet data into the MongoDB database.
@@ -14,11 +12,10 @@ use uuid::Uuid;
 /// into a format compatible with MongoDB, and inserts them into the specified collection.
 pub async fn insert_pallet_data_to_db() {
     // Retrieve the list of supported pallets.
-    let pallets: Vec<_> = ESupportedPallets::iter().collect();
 
     // Get the configuration for each pallet.
     // TODO: handle error case
-    let pallet_configs = get_pallet_configs(pallets).unwrap();
+    let pallet_configs = get_all_pallet_configs_from_dir("src/toml_configs").unwrap();
 
     // MongoDB connection parameters
     let uri: &str = "";

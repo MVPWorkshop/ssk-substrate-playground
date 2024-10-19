@@ -1,7 +1,6 @@
-use convert_case::{Case, Casing};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use strum_macros::{Display, EnumIter};
+use strum_macros::Display;
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum PalletModuleParts {
@@ -119,98 +118,5 @@ pub struct PalletConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
-#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize, Deserialize, Display)]
-pub enum ESupportedPallets {
-    PalletAssets,
-    PalletAura,     // non-optional
-    PalletBalances, // non-optional
-    PalletBounties,
-    PalletChildBounties,
-    PalletCollective,
-    PalletDemocracy,
-    PalletGrandpa, // non-optional
-    PalletIdentity,
-    PalletMembership,
-    PalletMultisig,
-    PalletNfts,
-    PalletProxy,
-    PalletScheduler,
-    PalletSociety,
-    PalletSudo,               // non-optional
-    PalletTimestamp,          // non-optional
-    PalletTransactionPayment, // non-optional
-    PalletTreasury,
-    PalletUniques,
-    PalletUtility,
-    PalletVesting,
-    Unknown,
-}
-
-impl ESupportedPallets {
-    pub fn toml_path(&self) -> String {
-        format!(
-            "src/toml_configs/{}.toml",
-            self.to_string().to_case(Case::Snake)
-        )
-    }
-}
-
-impl TryFrom<&str> for ESupportedPallets {
-    type Error = ();
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        match value {
-            "Assets" => Ok(ESupportedPallets::PalletAssets),
-            "Treasury" => Ok(ESupportedPallets::PalletTreasury),
-            "Vesting" => Ok(ESupportedPallets::PalletVesting),
-            "Society" => Ok(ESupportedPallets::PalletSociety),
-            "Utility" => Ok(ESupportedPallets::PalletUtility),
-            "Identity" => Ok(ESupportedPallets::PalletIdentity),
-            "Multisig" => Ok(ESupportedPallets::PalletMultisig),
-            "Proxy" => Ok(ESupportedPallets::PalletProxy),
-            "Uniques" => Ok(ESupportedPallets::PalletUniques),
-            "Nfts" => Ok(ESupportedPallets::PalletNfts),
-            "Membership" => Ok(ESupportedPallets::PalletMembership),
-            "ChildBounties" => Ok(ESupportedPallets::PalletChildBounties),
-            "Bounties" => Ok(ESupportedPallets::PalletBounties),
-            "Collective" => Ok(ESupportedPallets::PalletCollective),
-            "Scheduler" => Ok(ESupportedPallets::PalletScheduler),
-            _ => Ok(ESupportedPallets::Unknown),
-        }
-    }
-}
-
 #[cfg(test)]
-mod tests {
-    use strum::IntoEnumIterator;
-
-    use super::*;
-    use crate::code_generator::{get_pallet_configs, get_pallet_configs_depricated};
-
-    #[test]
-    #[ignore]
-    // This test is ignored because it writes to the file system.
-    // Special test used to generate toml files for pallets.
-    fn print_pallet_config() {
-        let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
-        let pallet_configs = get_pallet_configs_depricated(supported_configs);
-        let directory = "src/toml_configs";
-        for pallet_config in pallet_configs {
-            let filename = format!(
-                "{}/{}.toml",
-                directory,
-                pallet_config.name.to_lowercase().replace(" ", "_")
-            );
-            let toml_string = toml::to_string_pretty(&pallet_config).unwrap();
-            std::fs::write(filename, toml_string).unwrap();
-        }
-    }
-
-    #[test]
-    fn confirm_two_pallet_configs() {
-        let supported_configs = ESupportedPallets::iter().collect::<Vec<_>>();
-        let pallet_configs = get_pallet_configs_depricated(supported_configs.clone());
-        let toml_pallet_configs = get_pallet_configs(supported_configs).unwrap();
-        assert_eq!(pallet_configs, toml_pallet_configs);
-    }
-}
+mod tests {}
