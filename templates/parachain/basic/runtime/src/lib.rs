@@ -236,6 +236,9 @@ pub fn native_version() -> NativeVersion {
     }
 }
 
+use frame_support::traits::WithdrawReasons;
+use sp_runtime::traits::{ConvertInto};
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -297,9 +300,32 @@ mod runtime {
     // Template
     #[runtime::pallet_index(50)]
     pub type TemplatePallet = pallet_parachain_template;
+
+    #[runtime::pallet_index(54)]
+    pub type Vesting = pallet_vesting;
 }
 
 cumulus_pallet_parachain_system::register_validate_block! {
     Runtime = Runtime,
     BlockExecutor = cumulus_pallet_aura_ext::BlockExecutor::<Runtime, Executive>,
+}
+
+
+parameter_types! {
+	pub const MinVestedTransfer: Balance = 100 * DOLLARS;
+	pub UnvestedFundsAllowedWithdrawReasons: WithdrawReasons =
+		WithdrawReasons::except(WithdrawReasons::TRANSFER | WithdrawReasons::RESERVE);
+}
+
+impl pallet_vesting::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type Currency = Balances;
+    type BlockNumberToBalance = ConvertInto;
+    type MinVestedTransfer = MinVestedTransfer;
+    type WeightInfo = pallet_vesting::weights::SubstrateWeight<Runtime>;
+    type UnvestedFundsAllowedWithdrawReasons = UnvestedFundsAllowedWithdrawReasons;
+    type BlockNumberProvider = System;
+    // `VestingInfo` encode length is 36bytes. 28 schedules gets encoded as 1009 bytes, which is the
+    // highest number of schedules that encodes less than 2^10.
+    const MAX_VESTING_SCHEDULES: u32 = 28;
 }
