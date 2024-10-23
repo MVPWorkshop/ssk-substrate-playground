@@ -20,13 +20,13 @@ use sp_std::prelude::*;
 
 
 
-use pallet_elections_phragmen::Pallet as ElectionsPhragmen;
-use sp_consensus_aura::Aura;
-use sp_runtime::traits::BlakeTwo256;
-use sp_finality_grandpa::Grandpa;
+// use pallet_elections_phragmen::Pallet as ElectionsPhragmen;
+// use sp_consensus_aura::Aura;
+// use sp_runtime::traits::BlakeTwo256;
+// use sp_finality_grandpa::Grandpa;
 
-use sp_std::vec;
-use sp_std::vec::Vec;
+// use sp_std::vec;
+// use sp_std::vec::Vec;
 
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
@@ -34,7 +34,7 @@ use sp_version::RuntimeVersion;
 use pallet_nfts::PalletFeatures;
 use frame_support::traits::EqualPrivilegeOnly;
 use frame_support::traits::EitherOfDiverse;
-use frame_support::traits::LockIdentifier;
+//use frame_support::traits::LockIdentifier;
 pub use frame_support::{
     construct_runtime, derive_impl, parameter_types,
     traits::{
@@ -462,57 +462,57 @@ impl pallet_democracy::Config for Runtime {
 }
 
 
-impl pallet_tips::Config for Runtime {
-	type DataDepositPerByte = DataDepositPerByte;
-    type RuntimeEvent= RuntimeEvent;
-	type MaximumReasonLength = MaximumReasonLength;
-	type TipCountdown = TipCountdown;
-	type TipFindersFee = TipFindersFee;
-	type TipReportDepositBase = TipReportDepositBase;
-	type Tippers = pallet_elections_phragmen::Pallet<Runtime>;//we need PhragmenElection pallets (	type Tippers = PhragmenElection;)
-    type OnSlash=();
-    type MaxTipAmount=ConstU128<{ 500 * DOLLARS }>;
-	type WeightInfo = pallet_tips::weights::SubstrateWeight<Runtime>;
-}
+// impl pallet_tips::Config for Runtime {
+// 	type DataDepositPerByte = DataDepositPerByte;
+//     type RuntimeEvent= RuntimeEvent;
+// 	type MaximumReasonLength = MaximumReasonLength;
+// 	type TipCountdown = TipCountdown;
+// 	type TipFindersFee = TipFindersFee;
+// 	type TipReportDepositBase = TipReportDepositBase;
+// 	type Tippers = pallet_elections_phragmen::Pallet<Runtime>;//we need PhragmenElection pallets (	type Tippers = PhragmenElection;)
+//     type OnSlash=();
+//     type MaxTipAmount=ConstU128<{ 500 * DOLLARS }>;
+// 	type WeightInfo = pallet_tips::weights::SubstrateWeight<Runtime>;
+// }
 
-parameter_types! {
-	pub const CandidacyBond: Balance = 10 * DOLLARS;
-	// 1 storage item created, key size is 32 bytes, value size is 16+16.
-	pub const VotingBondBase: Balance = deposit(1, 64);
-	// additional data per vote is 32 bytes (account id).
-	pub const VotingBondFactor: Balance = deposit(0, 32);
-	pub const TermDuration: BlockNumber = 7 * DAYS;
-	pub const DesiredMembers: u32 = 13;
-	pub const DesiredRunnersUp: u32 = 7;
-	pub const MaxVotesPerVoter: u32 = 16;
-	pub const MaxVoters: u32 = 512;
-	pub const MaxCandidates: u32 = 64;
-	pub const ElectionsPhragmenPalletId: LockIdentifier = *b"phrelect";
-}
+// parameter_types! {
+// 	pub const CandidacyBond: Balance = 10 * DOLLARS;
+// 	// 1 storage item created, key size is 32 bytes, value size is 16+16.
+// 	pub const VotingBondBase: Balance = deposit(1, 64);
+// 	// additional data per vote is 32 bytes (account id).
+// 	pub const VotingBondFactor: Balance = deposit(0, 32);
+// 	pub const TermDuration: BlockNumber = 7 * DAYS;
+// 	pub const DesiredMembers: u32 = 13;
+// 	pub const DesiredRunnersUp: u32 = 7;
+// 	pub const MaxVotesPerVoter: u32 = 16;
+// 	pub const MaxVoters: u32 = 512;
+// 	pub const MaxCandidates: u32 = 64;
+// 	pub const ElectionsPhragmenPalletId: LockIdentifier = *b"phrelect";
+// }
 
 
 
-impl pallet_elections_phragmen::Config for Runtime {
-	type RuntimeEvent = RuntimeEvent;
-	type PalletId = ElectionsPhragmenPalletId;
-	type Currency = Balances;
-	type ChangeMembers =  pallet_collective::Pallet<Runtime, ()>;
-	// NOTE: this implies that council's genesis members cannot be set directly and must come from
-	// this module.
-	type InitializeMembers =  pallet_collective::Pallet<Runtime, ()>;
-	type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
-	type CandidacyBond = CandidacyBond;
-	type VotingBondBase = VotingBondBase;
-	type VotingBondFactor = VotingBondFactor;
-	type LoserCandidate = ();
-	type KickedMember = ();
-	type DesiredMembers = DesiredMembers;
-	type DesiredRunnersUp = DesiredRunnersUp;
-	type TermDuration = TermDuration;
-	type MaxVoters = MaxVoters;
-	type MaxVotesPerVoter = MaxVotesPerVoter;
-	type MaxCandidates = MaxCandidates;
-	type WeightInfo = pallet_elections_phragmen::weights::SubstrateWeight<Runtime>;}
+// impl pallet_elections_phragmen::Config for Runtime {
+// 	type RuntimeEvent = RuntimeEvent;
+// 	type PalletId = ElectionsPhragmenPalletId;
+// 	type Currency = Balances;
+// 	type ChangeMembers =  pallet_collective::Pallet<Runtime, ()>;
+// 	// NOTE: this implies that council's genesis members cannot be set directly and must come from
+// 	// this module.
+// 	type InitializeMembers =  pallet_collective::Pallet<Runtime, ()>;
+// 	type CurrencyToVote = sp_staking::currency_to_vote::U128CurrencyToVote;
+// 	type CandidacyBond = CandidacyBond;
+// 	type VotingBondBase = VotingBondBase;
+// 	type VotingBondFactor = VotingBondFactor;
+// 	type LoserCandidate = ();
+// 	type KickedMember = ();
+// 	type DesiredMembers = DesiredMembers;
+// 	type DesiredRunnersUp = DesiredRunnersUp;
+// 	type TermDuration = TermDuration;
+// 	type MaxVoters = MaxVoters;
+// 	type MaxVotesPerVoter = MaxVotesPerVoter;
+// 	type MaxCandidates = MaxCandidates;
+// 	type WeightInfo = pallet_elections_phragmen::weights::SubstrateWeight<Runtime>;}
 
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -581,12 +581,12 @@ mod runtime {
     #[runtime::pallet_index(30)]
     pub type Democracy = pallet_democracy;
 
-    #[runtime::pallet_index(31)]
-    pub type Tips = pallet_tips;
+    // #[runtime::pallet_index(31)]
+    // pub type Tips = pallet_tips;
 
 
-    #[runtime::pallet_index(32)]
-    pub type ElectionsPhragmen = pallet_elections_phragmen::Pallet<Runtime>;
+    // #[runtime::pallet_index(32)]
+    // pub type ElectionsPhragmen = pallet_elections_phragmen::Pallet<Runtime>;
 }
 
 /// The address format for describing accounts.
