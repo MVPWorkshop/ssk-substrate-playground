@@ -586,7 +586,7 @@ mod runtime {
 
 
     // #[runtime::pallet_index(32)]
-    // pub type ElectionsPhragmen = pallet_elections_phragmen::Pallet<Runtime>;
+    // pub type ElectionsPhragmen = pallet_elections_phragmen;
 }
 
 /// The address format for describing accounts.
