@@ -45,6 +45,9 @@ pallet-collective = { git = "https://github.com/paritytech/polkadot-sdk.git", ta
 
 pallet-democracy = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
+pallet-lottery = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
+
+
 #pallet-tips = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
 #pallet-elections-phragmen = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false,optional = true , features = ["std"] }
@@ -120,6 +123,7 @@ std = [
 	"pallet-scheduler/std",
 	"pallet-collective/std",
 	"pallet-democracy/std",
+	"pallet-lottery/std",
 	#"pallet-tips/std",
 	#"pallet-elections-phragmen",
 

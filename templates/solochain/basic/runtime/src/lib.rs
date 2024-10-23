@@ -515,6 +515,32 @@ impl pallet_democracy::Config for Runtime {
 // 	type WeightInfo = pallet_elections_phragmen::weights::SubstrateWeight<Runtime>;}
 
 
+type EnsureRootOrHalfCouncil = EitherOfDiverse<
+    EnsureRoot<AccountId>,
+    pallet_collective::EnsureProportionMoreThan<AccountId,(), 1, 2>,
+>;
+
+parameter_types! {
+    pub const LotteryPalletId: PalletId = PalletId(*b"py/lotto");
+    pub const MaxCalls: u32 = 10;
+    pub const MaxGenerateRandom: u32 = 10;
+}
+
+impl pallet_lottery::Config for Runtime {
+    type PalletId = LotteryPalletId;
+    type RuntimeCall = RuntimeCall;
+    type Currency = Balances;
+    type Randomness = RandomnessCollectiveFlip;
+    type RuntimeEvent = RuntimeEvent;
+    type ManagerOrigin = EnsureRootOrHalfCouncil;
+    type MaxCalls = MaxCalls;
+    type ValidateCall = Lottery;
+    type MaxGenerateRandom = MaxGenerateRandom;
+    type WeightInfo = pallet_lottery::weights::SubstrateWeight<Runtime>;
+}
+
+
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
 mod runtime {
@@ -587,6 +613,9 @@ mod runtime {
 
     // #[runtime::pallet_index(32)]
     // pub type ElectionsPhragmen = pallet_elections_phragmen;
+
+    #[runtime::pallet_index(33)]
+    pub type Lottery = pallet_lottery;
 }
 
 /// The address format for describing accounts.
