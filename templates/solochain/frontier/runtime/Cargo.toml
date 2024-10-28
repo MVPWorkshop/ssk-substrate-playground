@@ -57,6 +57,8 @@ pallet-evm-chain-id = { workspace = true }
 pallet-evm-precompile-modexp = { workspace = true }
 pallet-evm-precompile-sha3fips = { workspace = true }
 pallet-evm-precompile-simple = { workspace = true }
+pallet-vesting = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
+
 
 [build-dependencies]
 substrate-wasm-builder = { workspace = true, optional = true }
@@ -96,6 +98,7 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
+	"pallet-vesting/std",
 	# Frontier
 	"fp-account/std",
 	"fp-evm/std",
