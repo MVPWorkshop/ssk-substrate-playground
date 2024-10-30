@@ -58,6 +58,15 @@ pub fn native_version() -> NativeVersion {
 	NativeVersion { runtime_version: VERSION, can_author_with: Default::default() }
 }
 
+/// Balance of an account.
+pub type Balance = u64;
+
+// DOLLARS = the base number of indivisible units for balances
+pub const DOLLARS: Balance = 1_000_000_000_000;
+pub const MILLIUNIT: Balance = 1_000_000_000;
+pub const MICROUNIT: Balance = 1_000_000;
+
+
 /// The signed extensions that are added to the runtime.
 type SignedExtra = (
 	// Checks that the sender is not the zero address.
