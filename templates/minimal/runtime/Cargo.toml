@@ -32,6 +32,7 @@ sp-runtime = { features = ["serde"], workspace = true }
 
 # local pallet templates
 pallet-minimal-template = { workspace = true }
+pallet-vesting = { git = 'https://github.com/paritytech/polkadot-sdk.git', tag = "polkadot-v1.14.0", default-features = false }
 
 [build-dependencies]
 substrate-wasm-builder = { optional = true, workspace = true, default-features = true }
@@ -51,7 +52,7 @@ std = [
 	"pallet-transaction-payment/std",
 
 	"pallet-minimal-template/std",
-
+	"pallet-vesting/std",
 	"sp-genesis-builder/std",
 	"sp-runtime/std",
 	"substrate-wasm-builder",
