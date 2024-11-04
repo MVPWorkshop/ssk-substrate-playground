@@ -119,4 +119,22 @@ pub struct PalletConfig {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use crate::code_generator::{generate_project, get_all_pallet_configs_from_dir};
+
+    #[test]
+    #[ignore]
+    fn build_all_pallets() {
+        let pallets = get_all_pallet_configs_from_dir("src/toml_configs").unwrap();
+        let total_pallets_len = pallets.len();
+        let pallets = pallets
+            .into_iter()
+            .filter(|pallet| pallet.runtime.construct_runtime.index.is_some())
+            .collect::<Vec<_>>();
+        assert!(
+            pallets.len() == total_pallets_len - 6,
+            "All pallets should have an index",
+        );
+        let _ = generate_project(&"test_project".to_string(), pallets);
+    }
+}
