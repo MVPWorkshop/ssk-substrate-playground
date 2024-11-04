@@ -17,7 +17,6 @@ updated = "1729175503"
 additional_runtime_lib_code = ["use pallet_identity::legacy::IdentityInfo;"]
 
 [runtime.construct_runtime]
-index = 9
 runtime = ["Identity", "pallet_identity::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

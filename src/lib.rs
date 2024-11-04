@@ -9,3 +9,5 @@ pub mod utils {
     pub mod manifest;
     pub mod runtime;
 }
+
+pub const CONFIG_DIR: &str = "configs";

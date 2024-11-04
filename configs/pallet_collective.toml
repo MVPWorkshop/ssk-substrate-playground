@@ -25,7 +25,6 @@ parameter_types! {
 """
 
 [runtime.construct_runtime]
-index = 24
 runtime = ["Collective", "pallet_collective::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

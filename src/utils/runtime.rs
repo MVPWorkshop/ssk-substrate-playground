@@ -126,11 +126,12 @@ impl SubstrateRuntimeUtil {
         self.update_construct_runtime(current_construct_runtime, construct_runtime);
     }
 
-    fn add_pallet_to_construct_runtime(&mut self) {
+    fn add_pallet_to_construct_runtime(&mut self, index: usize) {
         let construct_runtime_module = format!(
             "{} #[runtime::pallet_index({})]\n {}pub type {} = {};",
             tabs(1),
-            self.pallet_config.runtime.construct_runtime.index.unwrap(),
+            // starts from 9 because essential pallets and template pallets are already added
+            index + 9,
             tabs(1),
             self.pallet_config.runtime.construct_runtime.runtime.0,
             self.pallet_config.runtime.construct_runtime.runtime.1,
@@ -294,11 +295,11 @@ impl SubstrateRuntimeUtil {
         }
     }
 
-    pub fn generate_runtime_code(&mut self) -> GeneratedRuntime {
+    pub fn generate_runtime_code(&mut self, index: usize) -> GeneratedRuntime {
         if !self.check_if_pallet_implemented() {
             // self.check_if_pallet_implemented();
             self.add_pallet_traits();
-            self.add_pallet_to_construct_runtime();
+            self.add_pallet_to_construct_runtime(index);
             self.add_chain_spec_code();
 
             // Extract the additional code and chain spec code for modification

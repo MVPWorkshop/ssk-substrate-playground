@@ -12,7 +12,6 @@ size = 10500
 updated = "1729175503"
 
 [runtime.construct_runtime]
-index = 10
 runtime = ["Multisig", "pallet_multisig::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

@@ -25,7 +25,6 @@ additional_pallet_impl_code = """
 additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
 
 [runtime.construct_runtime]
-index = 25
 runtime = ["Democracy", "pallet_democracy::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

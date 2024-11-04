@@ -23,7 +23,6 @@ parameter_types! {
 additional_runtime_lib_code = ["use pallet_nfts::PalletFeatures;"]
 
 [runtime.construct_runtime]
-index = 18
 runtime = ["Nfts", "pallet_nfts::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

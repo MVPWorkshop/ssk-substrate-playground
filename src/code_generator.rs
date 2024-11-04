@@ -50,7 +50,7 @@ pub fn create_new_project(project_name: &String) {
 /// * `project_name` - The name of the project where pallets are to be added.
 /// * `pallet_configs` - A list of configurations for the pallets to be added.
 pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
-    for pallet_config in pallet_configs {
+    for (index, pallet_config) in pallet_configs.into_iter().enumerate() {
         // Project directory path.
         let project_directory = format!("generated_code/{}", project_name);
 
@@ -114,7 +114,7 @@ pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
         // Generate new runtime code with the added pallet.
         let mut pallet_config =
             SubstrateRuntimeUtil::new(pallet_config, runtime_string, chain_spec_string);
-        let updated_code = pallet_config.generate_runtime_code();
+        let updated_code = pallet_config.generate_runtime_code(index);
 
         // Replace runtime code with the new generated code.
         let runtime_path = Path::new(&runtime_file_path);

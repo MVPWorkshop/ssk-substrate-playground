@@ -21,7 +21,6 @@ parameter_types! {
 additional_runtime_lib_code = ["use frame_support::traits::EqualPrivilegeOnly;"]
 
 [runtime.construct_runtime]
-index = 23
 runtime = ["Scheduler", "pallet_scheduler::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

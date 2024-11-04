@@ -15,7 +15,7 @@ pub async fn insert_pallet_data_to_db() {
 
     // Get the configuration for each pallet.
     // TODO: handle error case
-    let pallet_configs = get_all_pallet_configs_from_dir("src/toml_configs").unwrap();
+    let pallet_configs = get_all_pallet_configs_from_dir(crate::CONFIG_DIR).unwrap();
 
     // MongoDB connection parameters
     let uri: &str = "";

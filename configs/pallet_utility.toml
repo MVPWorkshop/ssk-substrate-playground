@@ -17,7 +17,6 @@ size = 10500
 updated = "1729175503"
 
 [runtime.construct_runtime]
-index = 14
 runtime = ["Utility", "pallet_utility::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
