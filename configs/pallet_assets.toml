@@ -27,7 +27,6 @@ additional_runtime_lib_code = [
 ]
 
 [runtime.construct_runtime]
-index = 12
 runtime = ["Assets", "pallet_assets::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

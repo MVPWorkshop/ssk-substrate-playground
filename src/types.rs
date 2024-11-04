@@ -16,7 +16,6 @@ pub enum PalletModuleParts {
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletConstructRuntimeConfig {
-    pub index: Option<u32>,
     pub runtime: (String, String),
 }
 
@@ -120,20 +119,23 @@ pub struct PalletConfig {
 
 #[cfg(test)]
 mod tests {
-    use crate::code_generator::{generate_project, get_all_pallet_configs_from_dir};
+    use crate::{
+        code_generator::{generate_project, get_all_pallet_configs_from_dir},
+        CONFIG_DIR,
+    };
 
     #[test]
     #[ignore]
     fn build_all_pallets() {
-        let pallets = get_all_pallet_configs_from_dir("src/toml_configs").unwrap();
+        let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).unwrap();
         let total_pallets_len = pallets.len();
         let pallets = pallets
             .into_iter()
-            .filter(|pallet| pallet.runtime.construct_runtime.index.is_some())
+            .filter(|pallet_config| !pallet_config.metadata.is_essential)
             .collect::<Vec<_>>();
         assert!(
             pallets.len() == total_pallets_len - 6,
-            "All pallets should have an index",
+            "6 essential pallets are not filtered out",
         );
         let _ = generate_project(&"test_project".to_string(), pallets);
     }

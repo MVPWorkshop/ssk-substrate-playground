@@ -38,7 +38,6 @@ additional_runtime_lib_code = [
 ]
 
 [runtime.construct_runtime]
-index = 15
 runtime = ["Vesting", "pallet_vesting::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

@@ -15,6 +15,7 @@ use substrate_runtime_builder::types::PalletConfig;
 use substrate_runtime_builder::utils::file_manager::create_github_repo;
 use substrate_runtime_builder::utils::file_manager::download_project;
 use substrate_runtime_builder::utils::file_manager::push_to_github;
+use substrate_runtime_builder::CONFIG_DIR;
 
 // Define a struct for the project with a vector of pallets
 #[derive(Serialize, Deserialize)]
@@ -137,7 +138,7 @@ async fn main() -> std::io::Result<()> {
 
     //insert_pallet_data_to_db().await;
     let data = Data::from(Arc::new(
-        get_all_pallet_configs_from_dir("src/toml_configs")
+        get_all_pallet_configs_from_dir(CONFIG_DIR)
             .map_err(|err| std::io::Error::new(ErrorKind::Other, err.to_string()))?,
     ));
 

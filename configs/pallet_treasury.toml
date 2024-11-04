@@ -39,7 +39,6 @@ additional_runtime_lib_code = [
 ]
 
 [runtime.construct_runtime]
-index = 13
 runtime = ["Treasury", "pallet_treasury::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

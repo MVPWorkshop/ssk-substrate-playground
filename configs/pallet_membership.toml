@@ -20,7 +20,6 @@ parameter_types! {
 """
 
 [runtime.construct_runtime]
-index = 16
 runtime = ["Membership", "pallet_membership::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

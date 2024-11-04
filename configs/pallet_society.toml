@@ -28,7 +28,6 @@ parameter_types! {
 '''
 
 [runtime.construct_runtime]
-index = 21
 runtime = ["Society", "pallet_society::Pallet<Runtime>"]
 
 [runtime.pallet_traits]

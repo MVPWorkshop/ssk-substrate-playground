@@ -28,7 +28,6 @@ parameter_types! {
 """
 
 [runtime.construct_runtime]
-index = 19
 runtime = ["Bounties", "pallet_bounties::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
