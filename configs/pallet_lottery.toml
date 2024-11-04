@@ -1,0 +1,46 @@
+name = "Pallet Lottery"
+
+[metadata]
+description = "The lottery pallet in Polkadot FRAME enables the creation and management of lotteries where users can purchase tickets and participate in prize draws in a transparent and fair manner."
+short_description = "FRAME lottery pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Other"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+parameter_types! {
+    pub const LotteryPalletId: PalletId = PalletId(*b"py/lotto");
+    pub const MaxCalls: u32 = 10;
+    pub const MaxGenerateRandom: u32 = 10;
+}
+"""
+additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
+
+[runtime.construct_runtime]
+runtime = ["Lottery", "pallet_lottery::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+PalletId = "LotteryPalletId"
+RuntimeCall = "RuntimeCall"
+Currency = "Balances"
+Randomness = "RandomnessCollectiveFlip"
+RuntimeEvent = "RuntimeEvent"
+ManagerOrigin = "EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionMoreThan<AccountId,(), 1, 2>,>"
+MaxCalls = "MaxCalls"
+ValidateCall = "Lottery"
+MaxGenerateRandom = "MaxGenerateRandom"
+WeightInfo = "pallet_lottery::weights::SubstrateWeight<Runtime>"
+
+[dependencies.pallet]
+package = "pallet-lottery"
+alias = "pallet lottery"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
