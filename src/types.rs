@@ -1,8 +1,8 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use strum_macros::EnumIter;
+use strum_macros::Display;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum PalletModuleParts {
     Module,
     Call,
@@ -14,14 +14,14 @@ pub enum PalletModuleParts {
     ValidateUnsigned,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletConstructRuntimeConfig {
     pub index: Option<u32>,
     pub runtime: (String, String),
 }
 
 #[allow(unused)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletTraitsConfig {
     custom_name: Option<String>,
     type_: String,
@@ -29,13 +29,13 @@ pub struct PalletTraitsConfig {
     is_not_const: Option<bool>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletGenesisConfig {
     pub config_struct_name: String,
     pub struct_fields: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletRuntimeConfig {
     pub construct_runtime: PalletConstructRuntimeConfig,
     pub pallet_traits: HashMap<String, String>,
@@ -47,13 +47,13 @@ pub struct PalletRuntimeConfig {
 }
 
 #[allow(unused)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct CargoSimpleDependency {
     package: String,
     version: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct CargoComplexDependency {
     pub package: String,
     pub version: Option<String>,
@@ -64,20 +64,21 @@ pub struct CargoComplexDependency {
     pub branch: Option<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
     pub additional_pallets: Option<Vec<CargoComplexDependency>>,
     pub additional_deps: Option<Vec<CargoSimpleDependency>>,
+    pub required_pallets: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub enum SubstrateVersion {
     One,
     Two,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display)]
 pub enum PalletCategories {
     Accounts,
     Assets,
@@ -90,14 +91,14 @@ pub enum PalletCategories {
     Other,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq)]
 pub enum CommonAuthors {
     ParityTechnologies,
     IndividualDevelopers,
     SubstrateDevHub,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletMetadata {
     pub description: String,
     pub short_description: String,
@@ -106,10 +107,10 @@ pub struct PalletMetadata {
     pub authors: Vec<CommonAuthors>,
     pub categories: Option<Vec<PalletCategories>>,
     pub size: usize,
-    pub updated: String,
+    pub is_essential: bool,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletConfig {
     pub name: String,
     pub metadata: PalletMetadata,
@@ -117,49 +118,23 @@ pub struct PalletConfig {
     pub dependencies: PalletDependencyConfig,
 }
 
-#[derive(PartialEq, Eq, Hash, Clone, Debug, EnumIter, Serialize)]
-pub enum ESupportedPallets {
-    PalletUtility,
-    PalletIdentity,
-    PalletMultisig,
-    PalletProxy,
-    PalletUniques,
-    PalletNfts,
-    PalletMembership,
-    PalletAssets,
-    PalletBounties,
-    PalletTreasury,
-    PalletChildBounties,
-    PalletVesting,
-    PalletSociety,
-    PalletCollective,
-    PalletScheduler,
-    PalletDemocracy,
-    Unknown,
-}
+#[cfg(test)]
+mod tests {
+    use crate::code_generator::{generate_project, get_all_pallet_configs_from_dir};
 
-impl TryFrom<&str> for ESupportedPallets {
-    type Error = ();
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        match value {
-            "Assets" => Ok(ESupportedPallets::PalletAssets),
-            "Treasury" => Ok(ESupportedPallets::PalletTreasury),
-            "Vesting" => Ok(ESupportedPallets::PalletVesting),
-            "Society" => Ok(ESupportedPallets::PalletSociety),
-            "Utility" => Ok(ESupportedPallets::PalletUtility),
-            "Identity" => Ok(ESupportedPallets::PalletIdentity),
-            "Multisig" => Ok(ESupportedPallets::PalletMultisig),
-            "Proxy" => Ok(ESupportedPallets::PalletProxy),
-            "Uniques" => Ok(ESupportedPallets::PalletUniques),
-            "Nfts" => Ok(ESupportedPallets::PalletNfts),
-            "Membership" => Ok(ESupportedPallets::PalletMembership),
-            "ChildBounties" => Ok(ESupportedPallets::PalletChildBounties),
-            "Bounties" => Ok(ESupportedPallets::PalletBounties),
-            "Collective" => Ok(ESupportedPallets::PalletCollective),
-            "Scheduler" => Ok(ESupportedPallets::PalletScheduler),
-            "Democracy" => Ok(ESupportedPallets::PalletDemocracy),
-            _ => Ok(ESupportedPallets::Unknown),
-        }
+    #[test]
+    #[ignore]
+    fn build_all_pallets() {
+        let pallets = get_all_pallet_configs_from_dir("src/toml_configs").unwrap();
+        let total_pallets_len = pallets.len();
+        let pallets = pallets
+            .into_iter()
+            .filter(|pallet| pallet.runtime.construct_runtime.index.is_some())
+            .collect::<Vec<_>>();
+        assert!(
+            pallets.len() == total_pallets_len - 6,
+            "All pallets should have an index",
+        );
+        let _ = generate_project(&"test_project".to_string(), pallets);
     }
 }

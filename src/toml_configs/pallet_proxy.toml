@@ -1,0 +1,91 @@
+name = "Pallet proxy"
+
+[metadata]
+description = "A pallet allowing accounts to give permission to other accounts to dispatch types of calls from their signed origin."
+short_description = "FRAME proxy pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+\t// One storage item; key size 32, value size 8; .
+\tpub const ProxyDepositBase: Balance = deposit(1, 8);
+\t// Additional storage item size of 33 bytes.
+\tpub const ProxyDepositFactor: Balance = deposit(0, 33);
+\tpub const AnnouncementDepositBase: Balance = deposit(1, 8);
+\tpub const AnnouncementDepositFactor: Balance = deposit(0, 66);
+}
+
+/// The type used to represent the kinds of proxying allowed.
+#[derive(
+\tCopy,
+\tClone,
+\tEq,
+\tPartialEq,
+\tOrd,
+\tPartialOrd,
+\tEncode,
+\tDecode,
+\tRuntimeDebug,
+\tMaxEncodedLen,
+\tscale_info::TypeInfo,
+)]
+pub enum ProxyType {
+\tAny,
+}
+impl Default for ProxyType {
+\tfn default() -> Self {
+\t\tSelf::Any
+\t}
+}
+impl InstanceFilter<RuntimeCall> for ProxyType {
+\tfn filter(&self, _c: &RuntimeCall) -> bool {
+\t\tmatch self {
+\t\t\tProxyType::Any => true,
+\t\t}
+\t}
+\tfn is_superset(&self, o: &Self) -> bool {
+\t\tmatch (self, o) {
+\t\t\t(x, y) if x == y => true,
+\t\t\t(ProxyType::Any, _) => true,
+\t\t}
+\t}
+}
+"""
+additional_runtime_lib_code = [
+    "use codec::{Decode, Encode, MaxEncodedLen};",
+    "use frame_support::traits::InstanceFilter;",
+    "use sp_runtime::RuntimeDebug;",
+]
+
+[runtime.construct_runtime]
+index = 11
+runtime = ["Proxy", "pallet_proxy::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+CallHasher = "BlakeTwo256"
+AnnouncementDepositBase = "AnnouncementDepositBase"
+MaxPending = "ConstU32<32>"
+ProxyType = "ProxyType"
+RuntimeCall = "RuntimeCall"
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+ProxyDepositBase = "ProxyDepositBase"
+ProxyDepositFactor = "ProxyDepositFactor"
+MaxProxies = "ConstU32<32>"
+AnnouncementDepositFactor = "AnnouncementDepositFactor"
+WeightInfo = "pallet_proxy::weights::SubstrateWeight<Runtime>"
+
+[dependencies.pallet]
+package = "pallet-proxy"
+alias = "pallet proxy"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

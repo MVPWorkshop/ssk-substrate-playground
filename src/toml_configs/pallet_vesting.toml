@@ -1,0 +1,51 @@
+name = "Pallet vesting"
+
+[metadata]
+description = """
+A simple pallet providing a means of placing a linear curve on an account's locked balance. This pallet ensures that there is a lock in place preventing the balance to drop below the *unvested* amount for any reason other than the ones specified in `UnvestedFundsAllowedWithdrawReasons` configuration value.
+As the amount vested increases over time, the amount unvested reduces. However, locks remain in place and explicit action is needed on behalf of the user to ensure that the amount locked is equivalent to the amount remaining to be vested. This is done through a dispatchable function, either `vest` (in typical case where the sender is calling on their own behalf) or `vest_other` in case the sender is calling on another account's behalf."""
+short_description = "FRAME vesting pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+\tpub const MinVestedTransfer: Balance = 100 * DOLLARS;
+\tpub UnvestedFundsAllowedWithdrawReasons: WithdrawReasons =
+\t\tWithdrawReasons::except(WithdrawReasons::TRANSFER | WithdrawReasons::RESERVE);
+}
+impl pallet_vesting::Config for Runtime {
+\ttype RuntimeEvent = RuntimeEvent;
+\ttype Currency = Balances;
+\ttype BlockNumberToBalance = ConvertInto;
+\ttype MinVestedTransfer = MinVestedTransfer;
+\ttype WeightInfo = pallet_vesting::weights::SubstrateWeight<Runtime>;
+\ttype UnvestedFundsAllowedWithdrawReasons = UnvestedFundsAllowedWithdrawReasons;
+\ttype BlockNumberProvider = System;
+\tconst MAX_VESTING_SCHEDULES: u32 = 28;
+}
+"""
+additional_runtime_lib_code = [
+    "use frame_support::traits::WithdrawReasons;",
+    "use sp_runtime::traits::ConvertInto;",
+]
+
+[runtime.construct_runtime]
+index = 15
+runtime = ["Vesting", "pallet_vesting::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+
+[dependencies.pallet]
+package = "pallet-vesting"
+alias = "pallet vesting"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

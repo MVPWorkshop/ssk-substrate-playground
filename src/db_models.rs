@@ -1,11 +1,9 @@
 use super::types::*;
-use crate::code_generator::get_pallet_configs;
+use crate::code_generator::get_all_pallet_configs_from_dir;
 use crate::database::insert_record;
-use crate::types::ESupportedPallets;
 use mongodb::Collection;
 use std::collections::HashMap;
 use std::sync::Arc;
-use strum::IntoEnumIterator;
 use uuid::Uuid;
 
 /// Inserts pallet data into the MongoDB database.
@@ -14,10 +12,10 @@ use uuid::Uuid;
 /// into a format compatible with MongoDB, and inserts them into the specified collection.
 pub async fn insert_pallet_data_to_db() {
     // Retrieve the list of supported pallets.
-    let pallets: Vec<_> = ESupportedPallets::iter().collect();
 
     // Get the configuration for each pallet.
-    let pallet_configs = get_pallet_configs(pallets);
+    // TODO: handle error case
+    let pallet_configs = get_all_pallet_configs_from_dir("src/toml_configs").unwrap();
 
     // MongoDB connection parameters
     let uri: &str = "";
@@ -79,11 +77,6 @@ pub fn pallet_config_to_model(config: PalletConfig) -> HashMap<String, String> {
         config.metadata.license.unwrap_or_default(),
     );
 
-    // Insert the last update date and the descriptions.
-    map.insert(
-        "package_last_update".to_string(),
-        config.metadata.updated.to_string(),
-    );
     map.insert("description".to_string(), config.metadata.description);
     map.insert(
         "short_description".to_string(),

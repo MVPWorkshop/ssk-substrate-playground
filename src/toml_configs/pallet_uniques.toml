@@ -1,0 +1,41 @@
+name = "Pallet uniques"
+
+[metadata]
+description = "A module for managing non-fungible tokens (NFTs) and collections, providing a secure and flexible framework."
+short_description = "FRAME uniques pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["NFT"]
+size = 10500
+updated = "1729175503"
+
+[runtime.construct_runtime]
+index = 17
+runtime = ["Uniques", "pallet_uniques::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+Locker = "()"
+StringLimit = "ConstU32<256>"
+ForceOrigin = "EnsureRoot<Self::AccountId>"
+CreateOrigin = "EnsureSigned<Self::AccountId>"
+Currency = "Balances"
+DepositPerByte = "ConstU128<10>"
+CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
+ItemId = "u32"
+ValueLimit = "ConstU32<256>"
+AttributeDepositBase = "ConstU128<{ 1 * 1000 }>"
+ItemDeposit = "ConstU128<{ 1 * 1000 }>"
+CollectionId = "u32"
+KeyLimit = "ConstU32<64>"
+RuntimeEvent = "RuntimeEvent"
+MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
+WeightInfo = "pallet_uniques::weights::SubstrateWeight<Runtime>"
+
+[dependencies.pallet]
+package = "pallet-uniques"
+alias = "pallet uniques"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

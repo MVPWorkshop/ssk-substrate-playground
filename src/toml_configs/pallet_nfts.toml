@@ -1,0 +1,60 @@
+name = "Pallet nfts"
+
+[metadata]
+description = """
+A pallet for dealing with non-fungible assets.
+The NFTs pallet provides functionality for non-fungible tokens' management, including:Collection Creation, NFT Minting, NFT Transfers and Atomic Swaps, NFT Trading methods, Attributes Management, NFT Burning"""
+short_description = "FRAME nfts pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["NFT"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+        pub NftsPalletFeatures: PalletFeatures = PalletFeatures::all_enabled();
+}
+"""
+additional_runtime_lib_code = ["use pallet_nfts::PalletFeatures;"]
+
+[runtime.construct_runtime]
+index = 18
+runtime = ["Nfts", "pallet_nfts::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+ItemDeposit = "ConstU128<{ 1 * 1000 }>"
+MaxDeadlineDuration = "ConstU32<1000>"
+MaxAttributesPerCall = "ConstU32<5>"
+Features = "NftsPalletFeatures"
+WeightInfo = "pallet_nfts::weights::SubstrateWeight<Runtime>"
+Locker = "()"
+OffchainPublic = "<Signature as sp_runtime::traits::Verify>::Signer"
+KeyLimit = "ConstU32<64>"
+StringLimit = "ConstU32<256>"
+OffchainSignature = "Signature"
+CollectionId = "u32"
+MaxTips = "ConstU32<10>"
+MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
+ValueLimit = "ConstU32<256>"
+CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
+Currency = "Balances"
+CreateOrigin = "EnsureSigned<Self::AccountId>"
+DepositPerByte = "ConstU128<10>"
+RuntimeEvent = "RuntimeEvent"
+AttributeDepositBase = "ConstU128<{ 1 * 1000 }>"
+ItemId = "u32"
+ForceOrigin = "EnsureRoot<Self::AccountId>"
+ApprovalsLimit = "ConstU32<100>"
+ItemAttributesApprovalsLimit = "ConstU32<100>"
+
+[dependencies.pallet]
+package = "pallet-nfts"
+alias = "pallet nfts"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

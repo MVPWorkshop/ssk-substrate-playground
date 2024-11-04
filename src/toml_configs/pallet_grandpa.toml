@@ -1,0 +1,40 @@
+name = "Pallet Grandpa"
+
+[metadata]
+description = "This manages the GRANDPA authority set ready for the native code. These authorities are only for GRANDPA finality, not for consensus overall."
+short_description = "FRAME Grandpa consensus pallet"
+is_essential = true
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Consensus"]
+size = 5078
+updated = "1729175503"
+
+[runtime]
+additional_runtime_lib_code = ["use pallet_grandpa::AuthorityId as GrandpaId;"]
+
+[runtime.construct_runtime]
+runtime = ["Grandpa", "pallet_grandpa"]
+
+[runtime.pallet_traits]
+MaxSetIdSessionEntries = "ConstU64<0>"
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "()"
+KeyOwnerProof = "sp_core::Void"
+MaxAuthorities = "ConstU32<32>"
+MaxNominators = "ConstU32<0>"
+EquivocationReportSystem = "()"
+
+[runtime.genesis_config]
+config_struct_name = "grandpa"
+
+[runtime.genesis_config.struct_fields]
+authorities = "initial_authorities.iter().map(|x| (x.1.clone(), 1)).collect::<Vec<_>>(),"
+
+[dependencies.pallet]
+package = "pallet-grandpa"
+alias = "pallet-grandpa"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

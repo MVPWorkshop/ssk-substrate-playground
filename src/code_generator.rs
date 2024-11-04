@@ -1,13 +1,3 @@
-use super::configs::pallet_bounties::PalletBountiesConfig;
-use super::configs::pallet_child_bounties::PalletChildBountiesConfig;
-use super::configs::pallet_identity::PalletIdentityConfig;
-use super::configs::pallet_membership::PalletMembershipConfig;
-use super::configs::pallet_nfts::PalletNftsConfig;
-use super::configs::pallet_proxy::PalletProxyConfig;
-use super::configs::pallet_scheduler::PalletSchedulerConfig;
-use super::configs::pallet_uniques::PalletUniquesConfig;
-use super::configs::pallet_utility::PalletUtilityConfig;
-
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
@@ -15,16 +5,9 @@ use super::utils::file_manager::{
 use super::utils::manifest::ManifestPalletConfig;
 use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
-use crate::configs::pallet_assets::PalletAssetsConfig;
-use crate::configs::pallet_collective::PalletCollectiveConfig;
-use crate::configs::pallet_democracy::PalletDemocracyConfig;
-use crate::configs::pallet_multisig::PalletMultisigConfig;
-use crate::configs::pallet_society::PalletSocietyConfig;
-use crate::configs::pallet_treasury::PalletTreasuryConfig;
-use crate::configs::pallet_vesting::PalletVestingConfig;
 
-use crate::types::ESupportedPallets;
 use log::{error, info};
+use std::fmt;
 use std::path::Path;
 
 /// Creates a new project directory and copies a basic template into it.
@@ -32,12 +15,12 @@ use std::path::Path;
 /// # Arguments
 ///
 /// * `project_name` - The name of the project to be created.
-pub fn create_new_project(project_name: String) {
+pub fn create_new_project(project_name: &String) {
     // Base path for generated projects.
     let base_path = Path::new("generated_code");
 
     // Create a new folder for the project.
-    if let Err(e) = create_new_folder(base_path, &project_name) {
+    if let Err(e) = create_new_folder(base_path, project_name) {
         error!("Failed to create project folder '{}': {}", project_name, e);
         return;
     }
@@ -66,7 +49,7 @@ pub fn create_new_project(project_name: String) {
 ///
 /// * `project_name` - The name of the project where pallets are to be added.
 /// * `pallet_configs` - A list of configurations for the pallets to be added.
-pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
+pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
     for pallet_config in pallet_configs {
         // Project directory path.
         let project_directory = format!("generated_code/{}", project_name);
@@ -161,242 +144,103 @@ pub fn add_pallets(project_name: String, pallet_configs: Vec<PalletConfig>) {
     }
 }
 
-/// Generates configurations for the supported pallets.
+// TODO: Make proper Errors, with thiserror
+#[derive(Debug, Clone)]
+pub struct PalletConfigLoadError {
+    pub message: String,
+}
+
+impl fmt::Display for PalletConfigLoadError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+/// Reads all `.toml` files from the specified directory and parses them into `PalletConfig` objects.
 ///
 /// # Arguments
 ///
-/// * `pallets` - A list of supported pallets to configure.
+/// * `dir` - A `String` representing the path to the directory containing the `.toml` files.
 ///
 /// # Returns
 ///
-/// A vector containing configurations for the specified pallets.
-pub fn get_pallet_configs(pallets: Vec<ESupportedPallets>) -> Vec<PalletConfig> {
-    let mut pallets_config: Vec<PalletConfig> = Vec::new();
+/// * `Result<Vec<PalletConfig>, PalletConfigLoadError>` - A result containing a vector of `PalletConfig` objects
+///   if successful, or a `PalletConfigLoadError` if an error occurs.
+///
+/// # Errors
+///
+/// This function will return a `PalletConfigLoadError` if:
+/// - The directory cannot be read.
+/// - Any directory entry cannot be read.
+/// - Any `.toml` file cannot be read.
+/// - Any `.toml` file cannot be parsed into a `PalletConfig`.
+///
+/// # Example
+///
+/// ```rust
+/// use substrate_runtime_builder::code_generator::get_all_pallet_configs_from_dir;
+/// let configs = get_all_pallet_configs_from_dir("path/to/dir");
+/// match configs {
+///     Ok(configs) => println!("Successfully loaded configs: {:?}", configs),
+///     Err(e) => eprintln!("Error loading configs: {}", e),
+/// }
+/// ```
+pub fn get_all_pallet_configs_from_dir(
+    dir: &str,
+) -> Result<Vec<PalletConfig>, PalletConfigLoadError> {
+    // Read directory entries
+    let dir_entries = std::fs::read_dir(dir)
+        .map_err(|_| PalletConfigLoadError {
+            message: "read dir error.".to_string(),
+        })?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|_| PalletConfigLoadError {
+            message: "Failed to read directory entry.".to_string(),
+        })?;
 
-    for pallet in pallets {
-        match pallet {
-            ESupportedPallets::PalletUtility => {
-                // Get configuration for the utility pallet.
-                let config = PalletUtilityConfig::new();
+    // Filter and read .toml files into strings
+    let toml_strings_no_updated = dir_entries
+        .into_iter()
+        // Filter out non-.toml files
+        .filter_map(|entry| {
+            let path = entry.path();
+            if path.extension().and_then(|ext| ext.to_str()) == Some("toml") {
+                Some(path)
+            } else {
+                None
+            }
+        })
+        // Read .toml files into strings
+        .map(|path| {
+            std::fs::read_to_string(&path).map_err(|_| PalletConfigLoadError {
+                message: format!("Failed to read file: {:?}", path),
+            })
+        })
+        .collect::<Result<Vec<_>, _>>()?;
 
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletIdentity => {
-                // Get configuration for the identity pallet.
-                let config = PalletIdentityConfig::new();
-
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletMultisig => {
-                // Get configuration for the multisig pallet.
-                let config = PalletMultisigConfig::new();
-
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletProxy => {
-                // Get configuration for the proxy pallet.
-                let config = PalletProxyConfig::new();
-
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletUniques => {
-                // Get configuration for the uniques pallet.
-                let config = PalletUniquesConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletMembership => {
-                // Get configuration for the Membership pallet.
-                let config = PalletMembershipConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletNfts => {
-                // Get configuration for the uniques pallet.
-                let config = PalletNftsConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletAssets => {
-                // Get configuration for the assets pallet.
-                let config = PalletAssetsConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-
-            ESupportedPallets::PalletBounties => {
-                // Get configuration for the bounties pallet.
-                let config = PalletBountiesConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-
-            ESupportedPallets::PalletTreasury => {
-                // Get configuration for the treasury pallet.
-                let config = PalletTreasuryConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletChildBounties => {
-                // Get configuration for the child bounties pallet.
-                let config = PalletChildBountiesConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletVesting => {
-                // Get configuration for the vesting pallet.
-                let config = PalletVestingConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletSociety => {
-                // Get configuration for the society pallet.
-                let config = PalletSocietyConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletCollective => {
-                // Get configuration for the collective pallet.
-                let config = PalletCollectiveConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-
-            ESupportedPallets::PalletScheduler => {
-                // Get configuration for the scheduler pallet.
-                let config = PalletSchedulerConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            ESupportedPallets::PalletDemocracy => {
-                // Get configuration for the democracy pallet.
-                let config = PalletDemocracyConfig::new();
-                // Create a pallet configuration and add it to the list.
-                let pallet_config = PalletConfig {
-                    name: config.name,
-                    metadata: config.metadata,
-                    runtime: config.runtime,
-                    dependencies: config.dependencies.clone(),
-                };
-                pallets_config.push(pallet_config);
-            }
-            _ => {}
-        }
-    }
-
-    pallets_config
+    // Parse TOML strings into PalletConfigNoUpdated
+    let pallet_configs = toml_strings_no_updated
+        .into_iter()
+        .map(|x| {
+            toml::from_str(x.as_str()).map_err(|_| PalletConfigLoadError {
+                message: "cenvert to toml error.".to_string(),
+            })
+        })
+        .collect::<Result<Vec<PalletConfig>, PalletConfigLoadError>>()?;
+    Ok(pallet_configs)
 }
 
-/// Generates a new project and integrates specified pallets into it.
-///
-/// # Arguments
-///
-/// * `project_name` - The name of the project to generate.
-/// * `pallets` - A list of supported pallets to be integrated into the project.
-pub fn generate_project(project_name: String, pallets: Vec<ESupportedPallets>) {
+pub fn generate_project(
+    project_name: &String,
+    pallets: Vec<PalletConfig>,
+) -> Result<(), PalletConfigLoadError> {
     // Create a new project directory and copy the template.
-    create_new_project(project_name.clone());
+    create_new_project(project_name);
 
-    println!("Created project: {}", project_name.clone());
-
-    // Generate configurations for the specified pallets.
-    let pallet_configs = get_pallet_configs(pallets);
+    println!("Created project: {}", project_name);
 
     // Add the pallets to the new project.
-    add_pallets(project_name.clone(), pallet_configs);
+    add_pallets(project_name, pallets);
     println!("Added pallets to the project: {}", project_name);
+    Ok(())
 }

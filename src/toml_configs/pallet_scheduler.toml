@@ -1,0 +1,44 @@
+name = "Pallet Scheduler"
+
+[metadata]
+description = "The Scheduler pallet allows scheduling the execution of specific calls at a designated block or within a specific time period. These scheduled calls can be named or anonymous, with the option to cancel them before execution."
+short_description = "FRAME scheduler pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+        pub MaximumSchedulerWeight: Weight = Perbill::from_percent(80) * BlockWeights::get().max_block;
+        }
+"""
+additional_runtime_lib_code = ["use frame_support::traits::EqualPrivilegeOnly;"]
+
+[runtime.construct_runtime]
+index = 23
+runtime = ["Scheduler", "pallet_scheduler::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+MaxScheduledPerBlock = "()"
+RuntimeOrigin = "RuntimeOrigin"
+PalletsOrigin = "OriginCaller"
+WeightInfo = "()"
+OriginPrivilegeCmp = "EqualPrivilegeOnly"
+RuntimeCall = "RuntimeCall"
+ScheduleOrigin = "EnsureRoot<AccountId>"
+Preimages = "()"
+RuntimeEvent = "RuntimeEvent"
+MaximumWeight = "MaximumSchedulerWeight"
+
+[dependencies.pallet]
+package = "pallet-scheduler"
+alias = "pallet scheduler"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

@@ -1,0 +1,33 @@
+name = "pallet_sudo"
+
+[metadata]
+description = "A pallet to provide a way to execute privileged runtime calls using a specified sudo (“superuser do”) account."
+short_description = "FRAME Sudo consensus pallet"
+is_essential = true
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Consensus"]
+size = 5078
+updated = "1729175503"
+
+[runtime.construct_runtime]
+runtime = ["Sudo", "pallet_sudo"]
+
+[runtime.pallet_traits]
+RuntimeCall = "RuntimeCall"
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_sudo::weights::SubstrateWeight<Runtime>"
+
+[runtime.genesis_config]
+config_struct_name = "sudo"
+
+[runtime.genesis_config.struct_fields]
+key = "Some(root_key)"
+
+[dependencies.pallet]
+package = "pallet-sudo"
+alias = "pallet-sudo"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

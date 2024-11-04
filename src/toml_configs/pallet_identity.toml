@@ -1,0 +1,48 @@
+name = "Pallet identity"
+
+[metadata]
+description = """
+A federated naming system, allowing for multiple registrars to be added from a specified origin.
+Registrars can set a fee to provide identity-verification service. Anyone can put forth a proposed identity for a fixed deposit and ask for review by any number of registrars (paying each of their fees). Registrar judgements are given as an `enum`, allowing for sophisticated, multi-tier opinions."""
+short_description = "FRAME identity pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Identity"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_runtime_lib_code = ["use pallet_identity::legacy::IdentityInfo;"]
+
+[runtime.construct_runtime]
+index = 9
+runtime = ["Identity", "pallet_identity::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+MaxUsernameLength = "ConstU32<32>"
+Currency = "Balances"
+MaxRegistrars = "ConstU32<20>"
+RegistrarOrigin = "EnsureRoot<Self::AccountId>"
+MaxSuffixLength = "ConstU32<7>"
+WeightInfo = "pallet_identity::weights::SubstrateWeight<Runtime>"
+PendingUsernameExpiration = "ConstU32<{ 7 * DAYS }>"
+SigningPublicKey = "<Signature as sp_runtime::traits::Verify>::Signer"
+RuntimeEvent = "RuntimeEvent"
+BasicDeposit = "ConstU128<{ 1 * 1000 }>"
+SubAccountDeposit = "ConstU128<{ 100 * 1000 }>"
+ByteDeposit = "ConstU128<{ 1 * 1000 }>"
+IdentityInformation = "IdentityInfo<ConstU32<100>>"
+Slashed = "()"
+OffchainSignature = "Signature"
+MaxSubAccounts = "ConstU32<100>"
+UsernameAuthorityOrigin = "EnsureRoot<Self::AccountId>"
+ForceOrigin = "EnsureRoot<Self::AccountId>"
+
+[dependencies.pallet]
+package = "pallet-identity"
+alias = "pallet identity"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
