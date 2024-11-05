@@ -1,0 +1,43 @@
+name = "Pallet Preimage"
+
+[metadata]
+description = "The preimage pallet enables efficient on-chain storage and referencing of large data, which is useful for proposals in pallets like democracy and collective decision-making."
+short_description = "FRAME Preimage pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729175503"
+
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+parameter_types! {
+	pub const PreimageBaseDeposit: Balance = deposit(2, 64);
+	pub const PreimageByteDeposit: Balance = deposit(0, 1);
+	pub const PreimageHoldReason: RuntimeHoldReason = RuntimeHoldReason::Preimage(pallet_preimage::HoldReason::Preimage);
+}
+"""
+additional_runtime_lib_code = ["use frame_support::traits::fungible::HoldConsideration;"]
+
+[runtime.construct_runtime]
+runtime = ["Preimage", "pallet_preimage::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+WeightInfo = "pallet_preimage::weights::SubstrateWeight<Runtime>"
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+ManagerOrigin = "EnsureRoot<AccountId>"
+Consideration = "HoldConsideration<AccountId,Balances,PreimageHoldReason,LinearStoragePrice<PreimageBaseDeposit, PreimageByteDeposit, Balance>,>"
+
+
+[dependencies.pallet]
+package = "pallet-preimage"
+alias = "pallet preimage"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
