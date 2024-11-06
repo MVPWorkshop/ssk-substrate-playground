@@ -1,0 +1,35 @@
+name = "Pallet Transaction Storage"
+
+[metadata]
+description = """Indexes transactions and manages storage proofs. Allows storing arbitrary data on the chain. Data is automatically removed after StoragePeriod blocks, unless the storage is renewed. Validators must submit proof of storing a random chunk of data for block N - StoragePeriod when producing block N."""
+short_description = "FRAME transaction storage pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Other"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+
+[runtime.construct_runtime]
+runtime = ["TransactionStorage", "pallet_transaction_storage::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeCall = "RuntimeCall"
+Currency = "Balances"
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_transaction_storage::weights::SubstrateWeight<Runtime>"
+FeeDestination = "()"
+RuntimeHoldReason = "()"
+MaxBlockTransactions = "ConstU32<1000>"
+MaxTransactionSize = "ConstU32<1000>"
+
+
+[dependencies.pallet]
+package = "pallet-transaction-storage"
+alias = "pallet transaction storage"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
