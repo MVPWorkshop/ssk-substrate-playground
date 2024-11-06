@@ -1,0 +1,26 @@
+name = "Pallet Paged List"
+
+[metadata]
+description = """A thin wrapper pallet around a paged_list::StoragePagedList. It provides an API for a single paginated list. It can be instantiated multiple times to provide multiple lists."""
+short_description = "FRAME Paged List pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Other"]
+size = 10500
+updated = "1729175503"
+
+[runtime.construct_runtime]
+runtime = ["PagedList", "pallet_paged_list::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+Value = "u32"
+ValuesPerNewPage = "ConstU32<11>"
+
+[dependencies.pallet]
+package = "pallet-paged-list"
+alias = "pallet paged list"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
