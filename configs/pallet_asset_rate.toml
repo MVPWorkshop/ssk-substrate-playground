@@ -13,7 +13,7 @@ updated = "1729175503"
 
 
 [runtime.construct_runtime]
-runtime = ["Asset_Rate", "pallet_asset_rate::Pallet<Runtime>"]
+runtime = ["AssetRate", "pallet_asset_rate::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
     WeightInfo = "pallet_asset_rate::weights::SubstrateWeight<Runtime>"
