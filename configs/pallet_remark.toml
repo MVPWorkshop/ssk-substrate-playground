@@ -1,0 +1,26 @@
+name = "Pallet Remark"
+
+[metadata]
+description = """Remark storage pallet. Indexes remarks and stores them off chain. Allows storing arbitrary data off chain."""
+short_description = "FRAME Remark pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Other"]
+size = 10500
+updated = "1729175503"
+
+[runtime.construct_runtime]
+runtime = ["Remark", "pallet_remark::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_remark::weights::SubstrateWeight<Runtime>"
+
+[dependencies.pallet]
+package = "pallet-remark"
+alias = "pallet remark"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
