@@ -1,9 +1,9 @@
+use crate::utils::manifest::generate_manifest_file;
+
 use super::types::PalletConfig;
 use super::utils::file_manager::{
     copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
 };
-use super::utils::manifest::ManifestPalletConfig;
-use super::utils::manifest::SubstrateManifestUtil;
 use super::utils::runtime::SubstrateRuntimeUtil;
 
 use log::{error, info};
@@ -50,6 +50,11 @@ pub fn create_new_project(project_name: &String) {
 /// * `project_name` - The name of the project where pallets are to be added.
 /// * `pallet_configs` - A list of configurations for the pallets to be added.
 pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
+    generate_manifest_file(
+        format!("generated_code/{}/runtime/Cargo.toml.hbs", project_name).as_str(),
+        &pallet_configs,
+    )
+    .unwrap();
     for (index, pallet_config) in pallet_configs.into_iter().enumerate() {
         // Project directory path.
         let project_directory = format!("generated_code/{}", project_name);
@@ -57,36 +62,6 @@ pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
         // File paths for runtime, chain spec, and manifest.
         let runtime_file_path = project_directory.clone() + "/runtime/src/lib.rs";
         let chain_spec_file_path = project_directory.clone() + "/node/src/chain_spec.rs";
-        let manifest_path = project_directory + "/runtime/Cargo.toml";
-
-        // Create manifest configuration for the pallet.
-        let pallet_manifest_config = ManifestPalletConfig {
-            name: pallet_config.name.to_string(),
-            dependencies: pallet_config.dependencies.clone(),
-        };
-
-        // Read and update the manifest file.
-        let content = match read_file_to_string(&manifest_path) {
-            Ok(content) => content,
-            Err(e) => {
-                error!(
-                    "Failed to read the manifest file '{}': {}",
-                    manifest_path, e
-                );
-                continue;
-            }
-        };
-
-        let mut util = SubstrateManifestUtil::new(pallet_manifest_config, content);
-        let updated_manifest = util.generate_code();
-        if let Err(e) = replace_file_content(Path::new(&manifest_path), &updated_manifest) {
-            error!(
-                "Failed to replace manifest content in '{}': {}",
-                manifest_path, e
-            );
-            continue;
-        }
-        info!("Manifest file '{}' updated successfully", manifest_path);
 
         // Read runtime and chain spec files.
         let runtime_string = match read_file_to_string(&runtime_file_path) {
