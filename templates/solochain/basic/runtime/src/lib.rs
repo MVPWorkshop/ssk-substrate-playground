@@ -38,7 +38,7 @@ pub use frame_support::{
 use frame_support::{
     genesis_builder_helper::{build_state, get_preset},
     traits::VariantCountOf,
-    traits::LinearStoragePrice,
+    
 };
 pub use frame_system::Call as SystemCall;
 pub use pallet_balances::Call as BalancesCall;

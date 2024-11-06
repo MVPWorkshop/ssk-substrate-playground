@@ -59,7 +59,7 @@ MinimumDeposit = "MinimumDeposit"
 RuntimeEvent = "RuntimeEvent"
 
 [dependencies]
-required_pallets = ["Pallet Scheduler, Pallet collective, Pallet Preimage"]
+required_pallets = ["Pallet Scheduler", "Pallet collective", "Pallet Preimage"]
 
 [dependencies.pallet]
 package = "pallet-democracy"
