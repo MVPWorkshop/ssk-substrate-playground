@@ -1,0 +1,36 @@
+name = "Pallet Atomic Swap"
+
+[metadata]
+description = """A module for atomically sending funds from an origin to a target. A proof is used to allow the target to approve (claim) the swap. If the swap is not claimed within a specified duration of time, the sender may cancel it."""
+short_description = "FRAME Atomic Swap pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+parameter_types! {
+	pub ProofLimit: u32 = 1024;
+}
+"""
+
+[runtime.construct_runtime]
+runtime = ["AtomicSwap", "pallet_atomic_swap::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+ProofLimit = "ProofLimit"
+SwapAction = "pallet_atomic_swap::BalanceSwapAction<Self::AccountId, Balances>"
+
+[dependencies.pallet]
+package = "pallet-atomic-swap"
+alias = "pallet atomic swap"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
