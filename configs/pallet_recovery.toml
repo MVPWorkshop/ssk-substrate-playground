@@ -1,0 +1,44 @@
+name = "Pallet Recovery"
+
+[metadata]
+description = "The Recovery pallet is an M-of-N social recovery tool for users to gain access to their accounts if the private key or other authentication mechanism is lost. Through this pallet, a user is able to make calls on-behalf-of another account which they have recovered. The recovery process is protected by trusted friends whom the original account owner chooses. A threshold (M) out of N friends are needed to give another account access to the recoverable account."
+short_description = "FRAME Recovery pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Accounts"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code ="""
+parameter_types! {
+	pub const ConfigDepositBase: Balance = 5 *  DOLLARS;
+	pub const FriendDepositFactor: Balance = 50 * CENTS;
+	pub const MaxFriends: u16 = 9;
+	pub const RecoveryDeposit: Balance = 5 *  DOLLARS;
+}
+"""
+
+
+[runtime.construct_runtime]
+runtime = ["Recovery", "pallet_recovery::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_recovery::weights::SubstrateWeight<Runtime>"
+RuntimeCall = "RuntimeCall"
+Currency = "Balances"
+ConfigDepositBase = "ConfigDepositBase"
+FriendDepositFactor = "FriendDepositFactor"
+MaxFriends = "MaxFriends"
+RecoveryDeposit = "RecoveryDeposit"
+
+
+[dependencies.pallet]
+package = "pallet-recovery"
+alias = "pallet recovery"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
