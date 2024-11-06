@@ -1,0 +1,38 @@
+name = "Pallet Indices"
+
+[metadata]
+description = """An index is a short form of an address. This module handles allocation of indices for a newly created accounts."""
+short_description = "FRAME Indices pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Other"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+parameter_types! {
+    pub const IndexDeposit: Balance = 100 * CENTS;
+}
+"""
+
+[runtime.construct_runtime]
+runtime = ["Indices", "pallet_indices::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+WeightInfo = "pallet_indices::weights::SubstrateWeight<Runtime>"
+Deposit = "IndexDeposit"
+AccountIndex = "u32"
+
+[dependencies.pallet]
+package = "pallet-indices"
+alias = "pallet indices"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
