@@ -30,7 +30,7 @@ runtime = ["Democracy", "pallet_democracy::Pallet<Runtime>"]
 [runtime.pallet_traits]
 MaxBlacklisted = "MaxAll"
 WeightInfo = "pallet_democracy::weights::SubstrateWeight<Runtime>"
-Preimages = "()"
+Preimages = "Preimage"
 SubmitOrigin = "EnsureSigned<AccountId>"
 PalletsOrigin = "OriginCaller"
 MaxVotes = "MaxAll"
@@ -59,7 +59,7 @@ MinimumDeposit = "MinimumDeposit"
 RuntimeEvent = "RuntimeEvent"
 
 [dependencies]
-required_pallets = ["Pallet Scheduler, Pallet collective"]
+required_pallets = ["Pallet Scheduler", "Pallet collective", "Pallet Preimage"]
 
 [dependencies.pallet]
 package = "pallet-democracy"
