@@ -1,0 +1,52 @@
+name = "Pallet Tips"
+
+[metadata]
+description = """NOTE: This pallet is tightly coupled with pallet-treasury.
+
+A subsystem to allow for an agile “tipping” process, whereby a reward may be given without first having a pre-determined stakeholder group come to consensus on how much should be paid.
+
+A group of Tippers is determined through the config Config. After half of these have declared some amount that they believe a particular reported reason deserves, then a countdown period is entered where any remaining members can declare their tip amounts also. After the close of the countdown period, the median of all declared tips is paid to the reported beneficiary, along with any finders fee, in case of a public (and bonded) original report.
+"""
+
+short_description = "FRAME tips pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+	pub const MaxTipAmount: u128 = 5_000_000 * 1_000_000_000; 
+}
+
+
+"""
+
+
+[runtime.construct_runtime]
+runtime = ["Tips", "pallet_tips::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+Tippers = "pallet_membership::Pallet<Runtime>"
+TipCountdown = "TipCountdown"
+OnSlash = "()"
+RuntimeEvent = "RuntimeEvent"
+DataDepositPerByte = "DataDepositPerByte"
+MaxTipAmount = "MaxTipAmount"
+TipReportDepositBase = "TipReportDepositBase"
+WeightInfo = "::pallet_tips::weights::SubstrateWeight<Runtime>"
+MaximumReasonLength = "MaximumReasonLength"
+TipFindersFee = "TipFindersFee"
+
+
+[dependencies.pallet]
+package = "pallet-tips"
+alias = "pallet tips"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
