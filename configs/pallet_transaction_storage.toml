@@ -22,7 +22,7 @@ Currency = "Balances"
 RuntimeEvent = "RuntimeEvent"
 WeightInfo = "pallet_transaction_storage::weights::SubstrateWeight<Runtime>"
 FeeDestination = "()"
-RuntimeHoldReason = "()"
+RuntimeHoldReason = "RuntimeHoldReason"
 MaxBlockTransactions = "ConstU32<1000>"
 MaxTransactionSize = "ConstU32<1000>"
 
