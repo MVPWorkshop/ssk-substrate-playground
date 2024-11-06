@@ -1,0 +1,50 @@
+name = "Pallet Tx Pause"
+
+[metadata]
+description = """Allows dynamic, chain-state-based pausing and unpausing of specific extrinsics via call filters."""
+short_description = "FRAME Tx Pause pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+/// Calls that cannot be paused by the tx-pause pallet.
+pub struct TxPauseWhitelistedCalls;
+/// All calls are pauseable.
+impl Contains<RuntimeCallNameOf<Runtime>> for TxPauseWhitelistedCalls {
+	fn contains(_full_name: &RuntimeCallNameOf<Runtime>) -> bool {
+		false
+	}
+}
+"""
+
+additional_runtime_lib_code = [
+    "use pallet_tx_pause::RuntimeCallNameOf;",
+    "use frame_support::traits::Contains;",
+]
+
+[runtime.construct_runtime]
+runtime = ["TxPause", "pallet_tx_pause::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+RuntimeCall = "RuntimeCall"
+PauseOrigin = "EnsureRoot<AccountId>"
+UnpauseOrigin = "EnsureRoot<AccountId>"
+WhitelistedCalls = "TxPauseWhitelistedCalls"
+MaxNameLen = "ConstU32<256>"
+WeightInfo = "pallet_tx_pause::weights::SubstrateWeight<Runtime>"
+
+[dependencies.pallet]
+package = "pallet-tx-pause"
+alias = "pallet tx pause"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
