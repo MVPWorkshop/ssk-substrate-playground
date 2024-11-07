@@ -1,0 +1,56 @@
+name = "Pallet Nft Fractionalization"
+
+[metadata]
+description = "The NFT Fractionalization pallet enables the division of a single NFT into multiple fungible token shares, allowing shared ownership and easier liquidity for high-value NFTs. It provides functionalities for creating, managing, and trading fractionalized NFT shares while ensuring transparency and security in ownership distribution."
+short_description = "FRAME Nft Fractionalization pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["NFT"]
+size = 10500
+updated = "1729175503"
+
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+	pub const NftFractionalizationPalletId: PalletId = PalletId(*b"fraction");
+	pub NewAssetSymbol: BoundedVec<u8, AssetsStringLimit> = (*b"FRAC").to_vec().try_into().unwrap();
+	pub NewAssetName: BoundedVec<u8, AssetsStringLimit> = (*b"Frac").to_vec().try_into().unwrap();
+	pub const AssetsStringLimit: u32 = 50;
+}
+"""
+additional_runtime_lib_code = ["use frame_support::BoundedVec;"]
+
+[runtime.construct_runtime]
+runtime = ["NftFractionalization", "pallet_nft_fractionalization::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent "
+Deposit = "AssetDeposit "
+Currency = "Balances "
+NewAssetSymbol = "NewAssetSymbol "
+NewAssetName = "NewAssetName "
+StringLimit = "AssetsStringLimit "
+NftCollectionId = "<Self as pallet_nfts::Config>::CollectionId "
+NftId = "<Self as pallet_nfts::Config>::ItemId "
+AssetBalance = "<Self as pallet_balances::Config>::Balance "
+AssetId = "<Self as pallet_assets::Config>::AssetId "
+Assets = "Assets "
+Nfts = "Nfts "
+PalletId = "NftFractionalizationPalletId "
+WeightInfo = "pallet_nft_fractionalization::weights::SubstrateWeight<Runtime>"
+RuntimeHoldReason = "RuntimeHoldReason "
+
+
+[dependencies]
+required_pallets = ["Pallet nfts","Pallet assets"]
+
+[dependencies.pallet]
+package = "pallet-nft-fractionalization"
+alias = "pallet nft fractionalization"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
