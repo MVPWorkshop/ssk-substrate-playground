@@ -60,6 +60,8 @@ UploadOrigin = "EnsureSigned<Self::AccountId> "
 InstantiateOrigin = "EnsureSigned<Self::AccountId> "
 
 
+[dependencies]
+required_pallets = ["Pallet Scheduler"]
 
 [dependencies.pallet]
 package = "pallet-contracts"
