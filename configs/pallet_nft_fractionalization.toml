@@ -45,6 +45,9 @@ WeightInfo = "pallet_nft_fractionalization::weights::SubstrateWeight<Runtime>"
 RuntimeHoldReason = "RuntimeHoldReason "
 
 
+[dependencies]
+required_pallets = ["Pallet nfts","Pallet assets"]
+
 [dependencies.pallet]
 package = "pallet-nft-fractionalization"
 alias = "pallet nft fractionalization"
