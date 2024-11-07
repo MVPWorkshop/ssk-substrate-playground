@@ -1,0 +1,69 @@
+name = "Pallet Contracts"
+
+[metadata]
+description = "The Contracts pallet provides a framework for deploying and executing WebAssembly (Wasm) smart contracts on the Substrate blockchain, enabling features like contract creation, interaction, and storage management while supporting gas metering and runtime upgrades."
+short_description = "FRAME Node Authorization pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["SmartContracts"]
+size = 10500
+updated = "1729175503"
+
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+	pub const DepositPerItem: Balance = deposit(1, 0);
+	pub const DepositPerByte: Balance = deposit(0, 1);
+    pub Schedule: pallet_contracts::Schedule<Runtime> = pallet_contracts::Schedule::default();
+	pub const DefaultDepositLimit: Balance = deposit(1024, 1024 * 1024);
+	pub const CodeHashLockupDepositPercent: Perbill = Perbill::from_percent(20);
+	pub const MaxDelegateDependencies: u32 = 32;
+}
+"""
+
+[runtime.construct_runtime]
+runtime = ["Contracts", "pallet_contracts::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+Time = "Timestamp "
+Randomness = "RandomnessCollectiveFlip "
+Currency = "Balances "
+RuntimeEvent = "RuntimeEvent "
+RuntimeCall = "RuntimeCall "
+CallFilter = "frame_support::traits::Everything "
+DepositPerItem = "DepositPerItem "
+DepositPerByte = "DepositPerByte "
+CallStack = "[pallet_contracts::Frame<Self>; 23] "
+WeightPrice = "pallet_transaction_payment::Pallet<Self> "
+WeightInfo = "pallet_contracts::weights::SubstrateWeight<Self> "
+ChainExtension = "() "
+Schedule = "Schedule "
+AddressGenerator = "pallet_contracts::DefaultAddressGenerator "
+MaxCodeLen = "ConstU32<{ 128 * 1024 }> "
+DefaultDepositLimit = "DefaultDepositLimit "
+MaxStorageKeyLen = "ConstU32<128> "
+MaxDebugBufferLen = "ConstU32<{ 2 * 1024 * 1024 }> "
+UnsafeUnstableInterface = "ConstBool<true> "
+CodeHashLockupDepositPercent = "CodeHashLockupDepositPercent "
+MaxDelegateDependencies = "MaxDelegateDependencies "
+RuntimeHoldReason = "RuntimeHoldReason "
+Environment = "() "
+Debug = "() "
+ApiVersion = "() "
+Migrations = "() "
+Xcm = "() "
+UploadOrigin = "EnsureSigned<Self::AccountId> "
+InstantiateOrigin = "EnsureSigned<Self::AccountId> "
+
+
+
+[dependencies.pallet]
+package = "pallet-contracts"
+alias = "pallet contracts"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
