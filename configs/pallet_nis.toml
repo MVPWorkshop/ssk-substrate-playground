@@ -1,0 +1,69 @@
+name = "Pallet Non-Interactive Staking"
+
+[metadata]
+description = "A pallet allowing accounts to auction for being frozen and receive open-ended inflation-protection in return. Lock up tokens, for at least as long as you offer, and be free from both inflation and intermediate reward or exchange until the tokens become unlocked."
+short_description = "FRAME nis pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+parameter_types! {
+	pub const NisBasePeriod: BlockNumber = 30 * DAYS;
+	pub const MinBid: Balance = 100;
+	pub MinReceipt: Perquintill = Perquintill::from_rational(1u64, 10_000_000u64);
+	pub const IntakePeriod: BlockNumber = 5 * MINUTES;
+	pub MaxIntakeWeight: Weight = Weight::from_parts(10_000, u64::MAX);
+	pub const ThawThrottle: (Perquintill, BlockNumber) = (Perquintill::from_percent(25), 5);
+	pub storage NisTarget: Perquintill = Perquintill::zero();
+	pub const NisPalletId: PalletId = PalletId(*b"py/nis  ");
+}
+    """
+
+additional_runtime_lib_code = [
+        "use sp_runtime::Perquintill;",
+        "use pallet_nis::WithMaximumOf;",
+]
+
+[runtime.construct_runtime]
+runtime = ["Nis", "pallet_nis::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+WeightInfo = "pallet_nis::weights::SubstrateWeight<Runtime>"
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+CurrencyBalance = "Balance"
+FundOrigin = "EnsureSigned<AccountId>"
+Counterpart = "Balances"                                                       #"NisCounterpartBalances" #???
+CounterpartAmount = "WithMaximumOf<ConstU128<21_000_000_000_000_000_000u128>>"
+Deficit = "()"
+IgnoredIssuance = "()"
+Target = "NisTarget"
+PalletId = "NisPalletId"
+QueueCount = "ConstU32<300>"
+MaxQueueLen = "ConstU32<1000>"
+FifoQueueLen = "ConstU32<250>"
+BasePeriod = "NisBasePeriod"
+MinBid = "MinBid"
+MinReceipt = "MinReceipt"
+IntakePeriod = "IntakePeriod"
+MaxIntakeWeight = "MaxIntakeWeight"
+ThawThrottle = "ThawThrottle"
+RuntimeHoldReason = "RuntimeHoldReason"
+
+[dependencies]
+# required_pallets = ["Pallet Scheduler", "Pallet collective", "Pallet Preimage"]
+
+[dependencies.pallet]
+package = "pallet-nis"
+alias = "pallet nis"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
