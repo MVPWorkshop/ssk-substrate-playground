@@ -22,7 +22,6 @@ additional_pallet_impl_code = """
             pub const MaxAll: u32 = 128;
         }
     """
-additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
 
 [runtime.construct_runtime]
 runtime = ["Democracy", "pallet_democracy::Pallet<Runtime>"]
