@@ -1,0 +1,43 @@
+name = "Pallet Node Authorization"
+
+[metadata]
+description = "The Node Authorization pallet allows for managing a whitelist of nodes authorized to produce blocks or participate in the network, ensuring only trusted nodes can operate within a permissioned Substrate network."
+short_description = "FRAME Node Authorization pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Runtime"]
+size = 10500
+updated = "1729175503"
+
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+  pub const MaxWellKnownNodes: u32 = 8;
+  pub const MaxPeerIdLength: u32 = 128;
+}
+"""
+
+[runtime.construct_runtime]
+runtime = ["NodeAuthorization", "pallet_node_authorization::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent "
+MaxWellKnownNodes = "MaxWellKnownNodes "
+MaxPeerIdLength = "MaxPeerIdLength "
+AddOrigin = "EnsureRoot<AccountId> " 
+RemoveOrigin = "EnsureRoot<AccountId> "
+SwapOrigin = "EnsureRoot<AccountId> "
+ResetOrigin = "EnsureRoot<AccountId> "
+WeightInfo = "()"
+
+
+[dependencies.pallet]
+package = "pallet-node-authorization"
+alias = "pallet node authorization"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
