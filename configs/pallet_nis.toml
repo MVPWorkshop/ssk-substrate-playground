@@ -28,8 +28,8 @@ parameter_types! {
     """
 
 additional_runtime_lib_code = [
-        "use sp_runtime::Perquintill;",
-        "use pallet_nis::WithMaximumOf;",
+	"use sp_runtime::Perquintill;",
+	"use pallet_nis::WithMaximumOf;",
 ]
 
 [runtime.construct_runtime]
@@ -57,9 +57,6 @@ IntakePeriod = "IntakePeriod"
 MaxIntakeWeight = "MaxIntakeWeight"
 ThawThrottle = "ThawThrottle"
 RuntimeHoldReason = "RuntimeHoldReason"
-
-[dependencies]
-# required_pallets = ["Pallet Scheduler", "Pallet collective", "Pallet Preimage"]
 
 [dependencies.pallet]
 package = "pallet-nis"
