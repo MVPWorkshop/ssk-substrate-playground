@@ -1,0 +1,50 @@
+name = "Pallet Ranked Collective"
+
+[metadata]
+description = """The pallet_ranked_collective is a module within the Substrate framework designed to manage ranked decision-making processes in blockchain governance. This pallet enables the establishment of a collective body where members are ranked based on predefined criteria. Members can propose changes, and their votes are weighted according to their rank and vote weight configuration. It introduces a dynamic and flexible mechanism for promoting or demoting members within the collective, ensuring that governance remains efficient and adaptive to the network's needs."""
+short_description = "FRAME ranked collective governance"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 12500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+	pub const PromoteLimit: u16 = 65535;
+	pub const DemoteLimit: u16 = 65535;
+}
+pub struct Geometric;
+impl Convert<Rank, Votes> for Geometric {
+	fn convert(r: Rank) -> Votes {
+		let v = (r + 1) as Votes;
+		v * (v + 1) / 2
+	}
+}
+"""
+
+[runtime.construct_runtime]
+runtime = ["RankedCollective", "pallet_ranked_collective::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+WeightInfo = "pallet_ranked_collective::weights::SubstrateWeight<Runtime>"
+RuntimeEvent = "RuntimeEvent"
+PromoteOrigin = "EnsureRootWithSuccess<AccountId, ConstU16<PromoteLimit>>"
+DemoteOrigin = "EnsureRootWithSuccess<AccountId, ConstU16<DemoteLimit>>"
+Polls = "pallet_referenda::<Instance2>" #need make instance for pallet referenda https://github.com/icpc-muet/substrate/blob/b2b90a674f969b4b6545936804da8eb99fabe3a9/bin/node/runtime/src/lib.rs#L1876
+MinRankOfClass = "traits::Identity"
+VoteWeight = "pallet_ranked_collective::Geometric"
+
+[dependencies]
+required_pallets = [""]
+
+[dependencies.pallet]
+package = "pallet-ranked-collective"
+alias = "pallet ranked collective"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
