@@ -130,10 +130,10 @@ mod tests {
         CONFIG_DIR,
     };
 
-    #[test]
+    #[tokio::test]
     #[ignore]
-    fn build_all_pallets() {
-        let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).unwrap();
+    async fn build_all_pallets() {
+        let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
         let total_pallets_len = pallets.len();
         let pallets = pallets
             .into_iter()
@@ -143,6 +143,6 @@ mod tests {
             pallets.len() == total_pallets_len - 6,
             "6 essential pallets are not filtered out",
         );
-        let _ = generate_project(&"test_project".to_string(), pallets);
+        let _ = generate_project(&"test_project".to_string(), pallets).await;
     }
 }

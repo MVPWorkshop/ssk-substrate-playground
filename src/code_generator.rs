@@ -1,24 +1,19 @@
+use crate::utils::file_manager::{copy_dir_recursive, create_new_folder};
 use crate::utils::manifest::generate_manifest_file;
 use crate::utils::runtime_lib::generate_runtime_lib_file;
 
 use super::types::PalletConfig;
-use super::utils::file_manager::{copy_dir_recursive, create_new_folder};
 
 use log::{error, info};
 use std::fmt;
 use std::path::Path;
 
-/// Creates a new project directory and copies a basic template into it.
-///
-/// # Arguments
-///
-/// * `project_name` - The name of the project to be created.
-pub fn create_new_project(project_name: &String) {
+pub async fn create_new_project_async(project_name: &String) {
     // Base path for generated projects.
     let base_path = Path::new("generated_code");
 
     // Create a new folder for the project.
-    if let Err(e) = create_new_folder(base_path, project_name) {
+    if let Err(e) = create_new_folder(base_path, project_name).await {
         error!("Failed to create project folder '{}': {}", project_name, e);
         return;
     }
@@ -31,7 +26,7 @@ pub fn create_new_project(project_name: &String) {
     let dest = Path::new(&path);
 
     // Copy the basic template to the new project folder.
-    if let Err(e) = copy_dir_recursive(src, dest) {
+    if let Err(e) = copy_dir_recursive(src, dest).await {
         error!(
             "Failed to copy template for project '{}': {}",
             project_name, e
@@ -72,50 +67,28 @@ impl fmt::Display for PalletConfigLoadError {
     }
 }
 
-/// Reads all `.toml` files from the specified directory and parses them into `PalletConfig` objects.
-///
-/// # Arguments
-///
-/// * `dir` - A `String` representing the path to the directory containing the `.toml` files.
-///
-/// # Returns
-///
-/// * `Result<Vec<PalletConfig>, PalletConfigLoadError>` - A result containing a vector of `PalletConfig` objects
-///   if successful, or a `PalletConfigLoadError` if an error occurs.
-///
-/// # Errors
-///
-/// This function will return a `PalletConfigLoadError` if:
-/// - The directory cannot be read.
-/// - Any directory entry cannot be read.
-/// - Any `.toml` file cannot be read.
-/// - Any `.toml` file cannot be parsed into a `PalletConfig`.
-///
-/// # Example
-///
-/// ```rust
-/// use substrate_runtime_builder::code_generator::get_all_pallet_configs_from_dir;
-/// let configs = get_all_pallet_configs_from_dir("path/to/dir");
-/// match configs {
-///     Ok(configs) => println!("Successfully loaded configs: {:?}", configs),
-///     Err(e) => eprintln!("Error loading configs: {}", e),
-/// }
-/// ```
-pub fn get_all_pallet_configs_from_dir(
+pub async fn get_all_pallet_configs_from_dir(
     dir: &str,
 ) -> Result<Vec<PalletConfig>, PalletConfigLoadError> {
     // Read directory entries
-    let dir_entries = std::fs::read_dir(dir)
+    let mut read_dir = tokio::fs::read_dir(dir)
+        .await
         .map_err(|_| PalletConfigLoadError {
             message: "read dir error.".to_string(),
-        })?
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|_| PalletConfigLoadError {
-            message: "Failed to read directory entry.".to_string(),
         })?;
 
+    let mut dir_entries = vec![];
+    while let Some(entry) = read_dir
+        .next_entry()
+        .await
+        .map_err(|_| PalletConfigLoadError {
+            message: "Failed to read directory entry.".to_string(),
+        })?
+    {
+        dir_entries.push(entry);
+    }
     // Filter and read .toml files into strings
-    let toml_strings_no_updated = dir_entries
+    let file_paths = dir_entries
         .into_iter()
         // Filter out non-.toml files
         .filter_map(|entry| {
@@ -126,13 +99,17 @@ pub fn get_all_pallet_configs_from_dir(
                 None
             }
         })
-        // Read .toml files into strings
-        .map(|path| {
-            std::fs::read_to_string(&path).map_err(|_| PalletConfigLoadError {
-                message: format!("Failed to read file: {:?}", path),
-            })
-        })
-        .collect::<Result<Vec<_>, _>>()?;
+        .collect::<Vec<_>>();
+    let mut toml_strings_no_updated = vec![];
+    for file_path in file_paths {
+        let string =
+            tokio::fs::read_to_string(&file_path)
+                .await
+                .map_err(|_| PalletConfigLoadError {
+                    message: format!("Failed to read file: {:?}", file_path),
+                })?;
+        toml_strings_no_updated.push(string);
+    }
 
     // Parse TOML strings into PalletConfigNoUpdated
     let pallet_configs = toml_strings_no_updated
@@ -146,17 +123,22 @@ pub fn get_all_pallet_configs_from_dir(
     Ok(pallet_configs)
 }
 
-pub fn generate_project(
+pub async fn generate_project(
     project_name: &String,
     pallets: Vec<PalletConfig>,
 ) -> Result<(), PalletConfigLoadError> {
     // Create a new project directory and copy the template.
-    create_new_project(project_name);
+    create_new_project_async(project_name).await;
 
     println!("Created project: {}", project_name);
 
     // Add the pallets to the new project.
-    add_pallets(project_name, pallets);
+    let x = project_name.clone();
+    tokio::task::spawn_blocking(move || add_pallets(&x, pallets))
+        .await
+        .map_err(|e| PalletConfigLoadError {
+            message: format!("Error adding pallets: {:?}", e),
+        })?;
     println!("Added pallets to the project: {}", project_name);
     Ok(())
 }
