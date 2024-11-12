@@ -1,10 +1,8 @@
 use crate::utils::manifest::generate_manifest_file;
+use crate::utils::runtime_lib::generate_runtime_lib_file;
 
 use super::types::PalletConfig;
-use super::utils::file_manager::{
-    copy_dir_recursive, create_new_folder, read_file_to_string, replace_file_content,
-};
-use super::utils::runtime::SubstrateRuntimeUtil;
+use super::utils::file_manager::{copy_dir_recursive, create_new_folder};
 
 use log::{error, info};
 use std::fmt;
@@ -55,68 +53,11 @@ pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
         &pallet_configs,
     )
     .unwrap();
-    for (index, pallet_config) in pallet_configs.into_iter().enumerate() {
-        // Project directory path.
-        let project_directory = format!("generated_code/{}", project_name);
-
-        // File paths for runtime, chain spec, and manifest.
-        let runtime_file_path = project_directory.clone() + "/runtime/src/lib.rs";
-        let chain_spec_file_path = project_directory.clone() + "/node/src/chain_spec.rs";
-
-        // Read runtime and chain spec files.
-        let runtime_string = match read_file_to_string(&runtime_file_path) {
-            Ok(content) => content,
-            Err(e) => {
-                error!(
-                    "Failed to read the runtime file '{}': {}",
-                    runtime_file_path, e
-                );
-                continue;
-            }
-        };
-
-        let chain_spec_string = match read_file_to_string(&chain_spec_file_path) {
-            Ok(content) => content,
-            Err(e) => {
-                error!(
-                    "Failed to read the chain spec file '{}': {}",
-                    chain_spec_file_path, e
-                );
-                continue;
-            }
-        };
-
-        // Generate new runtime code with the added pallet.
-        let mut pallet_config =
-            SubstrateRuntimeUtil::new(pallet_config, runtime_string, chain_spec_string);
-        let updated_code = pallet_config.generate_runtime_code(index);
-
-        // Replace runtime code with the new generated code.
-        let runtime_path = Path::new(&runtime_file_path);
-        if let Err(e) = replace_file_content(runtime_path, &updated_code.updated_runtime_code) {
-            error!(
-                "Failed to replace runtime content in '{}': {}",
-                runtime_file_path, e
-            );
-            continue;
-        }
-        info!("Runtime file '{}' updated successfully", runtime_file_path);
-
-        // Replace chain spec code with the new generated code.
-        let chain_spec_path = Path::new(&chain_spec_file_path);
-        if let Err(e) = replace_file_content(chain_spec_path, &updated_code.updated_chain_spec_code)
-        {
-            error!(
-                "Failed to replace chain spec content in '{}': {}",
-                chain_spec_file_path, e
-            );
-            continue;
-        }
-        info!(
-            "Chain spec file '{}' updated successfully",
-            chain_spec_file_path
-        );
-    }
+    generate_runtime_lib_file(
+        format!("generated_code/{}/runtime/src/lib.rs.hbs", project_name).as_str(),
+        &pallet_configs,
+    )
+    .unwrap();
 }
 
 // TODO: Make proper Errors, with thiserror

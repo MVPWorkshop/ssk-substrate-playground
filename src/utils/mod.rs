@@ -1,6 +1,6 @@
 pub mod file_manager;
 pub mod manifest;
-pub mod runtime;
+pub mod runtime_lib;
 
 use std::fs::File;
 
