@@ -1,0 +1,89 @@
+name = "Pallet Parameters"
+
+[metadata]
+description = """The `pallet_parameters` is a versatile Substrate module that allows dynamic runtime parameter adjustments through on-chain governance or privileged origins. This pallet enables the configuration of various runtime parameters without requiring a full runtime upgrade, offering flexibility and control over the blockchain's behavior. Administrators or governance bodies can update parameters securely and efficiently, ensuring the network adapts to evolving requirements."""
+short_description = "Dynamic runtime parameters management"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 8900
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+
+/// Dynamic params that can be adjusted at runtime.
+#[dynamic_params(RuntimeParameters, pallet_parameters::Parameters::<Runtime>)]
+pub mod dynamic_params {
+    use super::*;
+
+    #[dynamic_pallet_params]
+    #[codec(index = 0)]
+    pub mod preimage {
+        use super::*;
+
+        #[codec(index = 0)]
+        pub static BaseDeposit: Balance = deposit(2, 64);
+
+        #[codec(index = 1)]
+        pub static ByteDeposit: Balance = deposit(0, 1);
+    }
+}
+
+#[cfg(feature = "runtime-benchmarks")]
+impl Default for RuntimeParameters {
+    fn default() -> Self {
+        RuntimeParameters::Preimage(dynamic_params::preimage::Parameters::BaseDeposit(
+            dynamic_params::preimage::BaseDeposit,
+            Some(1u32.into()),
+        ))
+    }
+}
+
+/// Defines what origin can modify which dynamic parameters.
+pub struct DynamicParameterOrigin;
+impl EnsureOriginWithArg<RuntimeOrigin, RuntimeParametersKey> for DynamicParameterOrigin {
+    type Success = ();
+
+    fn try_origin(
+        origin: RuntimeOrigin,
+        key: &RuntimeParametersKey,
+    ) -> Result<Self::Success, RuntimeOrigin> {
+        use crate::RuntimeParametersKey::*;
+
+        match key {
+            Preimage(_) => frame_system::ensure_root(origin.clone()),
+        }
+        .map_err(|_| origin)
+    }
+
+    #[cfg(feature = "runtime-benchmarks")]
+    fn try_successful_origin(_key: &RuntimeParametersKey) -> Result<RuntimeOrigin, ()> {
+        // Provide the origin for the parameter returned by `Default`:
+        Ok(RuntimeOrigin::root())
+    }
+}
+"""
+additional_runtime_lib_code = ["use frame_support::dynamic_params::dynamic_params;"," use frame_support::dynamic_params::dynamic_pallet_params;","use frame_support::traits::EnsureOriginWithArg;"]
+
+[runtime.construct_runtime]
+runtime = ["Parameters", "pallet_parameters::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+RuntimeParameters = "RuntimeParameters"
+AdminOrigin = "DynamicParameterOrigin"
+WeightInfo = "()"
+
+[dependencies]
+required_pallets = ["Pallet Preimage"]
+
+[dependencies.pallet]
+package = "pallet-parameters"
+alias = "pallet parameters"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
