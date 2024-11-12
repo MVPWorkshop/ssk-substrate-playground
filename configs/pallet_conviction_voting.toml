@@ -1,0 +1,43 @@
+name = "Pallet Conviction Voting"
+
+[metadata]
+description = """The pallet_conviction_voting is a module within the Substrate framework designed to manage voting mechanisms in blockchain governance. It enables stakeholders to cast votes on referenda, allowing them to express their support or opposition to proposals. A distinctive feature of this pallet is the incorporation of "conviction," which allows voters to amplify the weight of their votes by committing to lock their tokens for extended periods. This mechanism incentivizes long-term commitment and ensures that those willing to lock their tokens for longer durations have a more significant influence on decision-making processes. """
+short_description = "FRAME conviction voting"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+
+parameter_types! {
+	pub const VoteLockingPeriod: BlockNumber = 1 * DAYS;
+}
+"""
+
+[runtime.construct_runtime]
+runtime = ["ConvictionVoting", "pallet_conviction_voting::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+WeightInfo = "pallet_conviction_voting::weights::SubstrateWeight<Runtime>"
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+Polls = "Referenda"
+MaxTurnout = "frame_support::traits::ActiveIssuanceOf<Balances, Self::AccountId>"
+MaxVotes = "ConstU32<512>"
+VoteLockingPeriod = "VoteLockingPeriod"
+
+
+[dependencies]
+required_pallets = ["Pallet Referenda"]
+
+[dependencies.pallet]
+package = "pallet-conviction-voting"
+alias = "pallet conviction voting"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
