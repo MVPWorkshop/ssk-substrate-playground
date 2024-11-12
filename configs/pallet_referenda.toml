@@ -90,7 +90,7 @@ WeightInfo = "pallet_referenda::weights::SubstrateWeight<Runtime>"
 
 
 [dependencies]
-required_pallets = ["Pallet Conviction Voting"]
+required_pallets = ["Pallet Conviction Voting","Pallet treasury","Pallet Scheduler","Pallet Preimage"]
 
 [dependencies.pallet]
 package = "pallet-referenda"
