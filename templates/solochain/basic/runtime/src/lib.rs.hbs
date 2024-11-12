@@ -2,6 +2,9 @@
 #![recursion_limit = "256"]
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+{{#each additional_runtime_lib_code}}
+{{this}}
+{{/each}}
 
 #[allow(unused_imports)]
 use frame_system::{EnsureRoot, EnsureSigned};
@@ -319,8 +322,17 @@ mod runtime {
 
     #[runtime::pallet_index(8)]
     pub type RandomnessCollectiveFlip = pallet_insecure_randomness_collective_flip::Pallet<Runtime>;
-
+    {{#each construct_runtime}}
+    
+    {{{this}}}{{/each}}
 }
+{{#each impl_blocks}}
+{{{this.additional_pallet_impl_code}}}
+
+{{#if this.pallet_traits}}impl {{this.pallet_name}}::Config for Runtime {
+{{#each this.pallet_traits}}{{{this}}}{{/each}}
+}{{/if}}
+{{/each}}
 
 /// The address format for describing accounts.
 pub type Address = sp_runtime::MultiAddress<AccountId, ()>;

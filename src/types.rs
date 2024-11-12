@@ -63,6 +63,12 @@ pub struct CargoComplexDependency {
     pub branch: Option<String>,
 }
 
+impl CargoComplexDependency {
+    pub fn name_cebab_case(&self) -> String {
+        self.alias.to_lowercase().replace(" ", "-")
+    }
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
