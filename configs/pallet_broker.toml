@@ -1,0 +1,75 @@
+name = "Pallet Atomic"
+
+[metadata]
+description = """Brokerage tool for managing Polkadot Core scheduling.
+
+Properly described in RFC-0001 Agile Coretime."""
+short_description = "FRAME Broker pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Other"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_runtime_lib_code = [
+    "use sp_runtime::traits::Convert;",
+    "use sp_runtime::traits::ConvertBack;",
+]
+additional_pallet_impl_code = """
+
+pub struct SimpleBalanceConverter;
+
+impl Convert<u128, u64> for SimpleBalanceConverter {
+    fn convert(amount: u128) -> u64 {
+        amount as u64  // This will truncate if the `u128` value is too large
+    }
+}
+
+impl ConvertBack<u128, u64> for SimpleBalanceConverter {
+    fn convert_back(amount: u64) -> u128 {
+        amount as u128
+    }
+}
+
+parameter_types! {
+   
+
+
+    pub TimeslicePeriod: u32 = 20;
+    pub MaxBroker: u32 = 100;
+    pub const BrokerPalletId: PalletId = PalletId(*b"py/broke");
+
+}
+
+
+
+"""
+
+
+[runtime.construct_runtime]
+runtime = ["Broker", "pallet_broker::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_broker::weights::SubstrateWeight<Runtime>"
+Currency = "Balances"
+AdminOrigin = "EnsureRoot<AccountId>"
+OnRevenue = "()"                                                # "BurnCoretimeRevenue"
+Coretime = "()"                                                 #"CoretimeInterface"
+PriceAdapter = "pallet_broker::CenterTargetPrice<Balance>"
+ConvertBalance = "SimpleBalanceConverter"                       # "sp_runtime::traits::Identity"
+PalletId = "BrokerPalletId"
+TimeslicePeriod = "TimeslicePeriod"
+MaxLeasedCores = "MaxBroker"
+MaxReservedCores = "MaxBroker"
+
+
+[dependencies.pallet]
+package = "pallet-broker"
+alias = "pallet broker"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
