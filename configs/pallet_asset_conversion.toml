@@ -27,36 +27,65 @@ additional_pallet_impl_code = """
 
 parameter_types! {
 
-	pub const PoolSetupFee: Balance = 1000000000000; // should be more or equal to the existential deposit
+	pub const AssetConversionPalletId: PalletId = PalletId(*b"py/ascon");
+    pub const PoolSetupFee: Balance = 1 * DOLLARS; // should be more or equal to the existential deposit
 	pub const MintMinLiquidity: Balance = 100;  // 100 is good enough when the main currency has 10-12 decimals.
-	pub const LiquidityWithdrawalFee: Permill = Permill::from_percent(0);  // should be non-zero if AllowMultiAssetPools is true, otherwise can be zero.
-
+	pub const LiquidityWithdrawalFee: Permill = Permill::from_percent(0);
+	pub const Native: NativeOrWithId<u32> = NativeOrWithId::Native;
 
 }
+
+
+pub type NativeAndAssets =
+	UnionOf<Balances, Assets, NativeFromLeft, NativeOrWithId<u32>, AccountId>;
+
 """
+additional_runtime_lib_code = [
+    "use frame_support::traits::fungible::NativeOrWithId;",
+    "use frame_support::traits::fungible::UnionOf;",
+    "use frame_support::traits::fungible::NativeFromLeft;",
+    "use pallet_asset_conversion::Chain;",
+    "use pallet_asset_conversion::WithFirstAsset;",
+    "use pallet_asset_conversion::AccountIdConverter;",
+    "use pallet_asset_conversion::Ascending;",
+]
 
 [runtime.construct_runtime]
-runtime = ["Collective", "pallet_collective::Pallet<Runtime>"]
+runtime = ["AssetConversion", "pallet_asset_conversion::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 RuntimeEvent = "RuntimeEvent"
 Balance = "<Self as pallet_balances::Config>::Balance"
 HigherPrecisionBalance = "u128"
-AssetKind = ""
-Assets = "Assets"
-PoolId = ""
-PoolLocator = ""
-PoolAssetId = "u128"
+AssetKind = "NativeOrWithId<u32>"
+Assets = "NativeAndAssets"
+PoolId = "(Self::AssetKind, Self::AssetKind)"
+PoolLocator = """Chain<
+		WithFirstAsset<
+			Native,
+			AccountId,
+			NativeOrWithId<u32>,
+			AccountIdConverter<AssetConversionPalletId, Self::PoolId>,
+		>,
+		Ascending<
+			AccountId,
+			NativeOrWithId<u32>,
+			AccountIdConverter<AssetConversionPalletId, Self::PoolId>,
+		>,
+	>"""
+PoolAssetId = "u32" # "<Self as pallet_assets::Config<Instance2>>::AssetId"
+#should be instance2
 PoolAssets = "Assets"
-LPFee = "ConstU32<3> // means 0.3%"
+# means 0.3%
+LPFee = "ConstU32<3> "
 PoolSetupFee = "PoolSetupFee"
-PoolSetupFeeAsset = ""
-PoolSetupFeeTarget = ""
+PoolSetupFeeAsset = "Native"
+PoolSetupFeeTarget = "()"                                                 #"ResolveAssetTo<AssetConversionOrigin, Self::Assets>"
 LiquidityWithdrawalFee = "LiquidityWithdrawalFee"
 MintMinLiquidity = "MintMinLiquidity"
 MaxSwapPathLength = "ConstU32<4>"
 PalletId = "AssetConversionPalletId"
-WeightInfo = "pallet_asset_conversion::weights::SubstrateWeight<Test>"
+WeightInfo = "pallet_asset_conversion::weights::SubstrateWeight<Runtime>"
 
 [dependencies]
 required_pallets = ["Pallet assets"]
