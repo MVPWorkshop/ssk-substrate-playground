@@ -1,0 +1,28 @@
+name = "Pallet Assets Conversion"
+
+[metadata]
+description = """Provides freezing features to `pallet-assets`"""
+short_description = "FRAME Assets Freezer pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Assets"]
+size = 10500
+updated = "1729175503"
+
+
+[runtime.construct_runtime]
+runtime = ["AssetsFreezer", "pallet_assets_freezer::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeFreezeReason = "RuntimeHoldReason" #"RuntimeFreezeReason"
+RuntimeEvent = "RuntimeEvent"
+
+
+[dependencies.pallet]
+package = "pallet-assets-freezer"
+alias = "pallet assets freezer"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
