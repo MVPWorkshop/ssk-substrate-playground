@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 log = "0.4.22"
 reqwest = { version = "0.11", features = ["json", "blocking", "rustls-tls"] }
-tokio = "1.0"
+tokio = { version = "1.41.1", features = ["full"] }
 warp = "0.3"
 uuid = { version = "0.8", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
@@ -16,6 +16,7 @@ regex = "1.10.6"
 # For handling JSON requests and responses
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+futures = "0.3.31"
 
 # For spawning blocking tasks (web::block)
 actix-rt = "2.8"
@@ -25,7 +26,7 @@ thiserror = "1.0"
 
 actix-files = "0.6"
 
-zip = "0.6"  # Add this line
+zip = "0.6" # Add this line
 
 mongodb = "2.7.0"
 

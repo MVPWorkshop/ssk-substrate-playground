@@ -1,6 +1,4 @@
 pub mod code_generator;
-pub mod database;
-pub mod db_models;
 pub mod route;
 pub mod types;
 

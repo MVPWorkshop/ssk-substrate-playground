@@ -1,7 +1,24 @@
+use std::collections::HashMap;
+
+use crate::code_generator::generate_project;
 use crate::types::{PalletCategories, PalletConfig};
+use crate::utils::file_manager::{create_github_repo, push_to_github};
 use actix_web::web::Data;
+use actix_web::Error;
 use actix_web::{web, HttpResponse, Responder};
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
+
+// Define a struct for the project with a vector of pallets
+#[derive(Serialize, Deserialize)]
+pub struct NewProject {
+    name: String,
+    pallets: Vec<String>,
+    push_to_git: Option<bool>,
+    github_username: String,
+    github_email: String,
+    github_token: String,
+}
 
 // Pallet structure that will be returned as JSON
 #[derive(Serialize, PartialEq, Eq, Debug)]
@@ -103,6 +120,105 @@ pub fn get_config(pallet_configs: Vec<PalletConfig>, pallet: &str) -> String {
     } else {
         "Polkadot Frame Pallet".to_string()
     }
+}
+
+// A function to greet a user by their name (path parameter)
+pub async fn greet_user(path: web::Path<String>) -> impl Responder {
+    let name = path.into_inner();
+    HttpResponse::Ok()
+        .content_type("text/plain")
+        .body(format!("Hello, {}!", name))
+}
+
+// A function to create a new project with a list of pallets
+pub async fn generate_a_project(
+    config_pallets: Data<Vec<PalletConfig>>,
+    project: web::Json<NewProject>,
+) -> actix_web::Result<HttpResponse, Error> {
+    let mut project_name = project.name.clone();
+    let pallet_names = project.pallets.clone();
+    let push_to_git = project.push_to_git.unwrap_or(false);
+    let github_username = project.github_username.clone();
+    let github_email = project.github_email.clone();
+    let github_token = project.github_token.clone();
+    let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
+
+    // Extended list of pallets to include the with the required pallets
+    let filtered = config_pallets
+        .iter()
+        // Get the pallets that are in the list of pallet names
+        .filter(|pallet| pallet_names.contains(&pallet.name))
+        // Get the required pallets for each pallet
+        .flat_map(|pallet| {
+            let mut palet_with_reqs = vec![pallet.name.clone()];
+            if let Some(required_pallets) = pallet.dependencies.required_pallets.clone() {
+                palet_with_reqs.extend(required_pallets);
+            }
+            palet_with_reqs
+        })
+        .collect::<Vec<_>>();
+
+    let filtered_configs = config_pallets
+        .iter()
+        .filter(|pallet| filtered.contains(&pallet.name))
+        .fold(HashMap::new(), |mut acc, pallet| {
+            acc.insert(pallet.name.clone(), pallet.clone());
+            acc
+        });
+
+    // Append the username and timestamp to the project name to ensure uniqueness
+    project_name = format!("{}_{}_{}", project_name, github_username, timestamp);
+    let pallets = filtered_configs.values().cloned().collect::<Vec<_>>();
+    let result = match generate_project(&project_name, pallets).await {
+        Ok(_) => {
+            Ok(HttpResponse::Ok().body(format!("{} project generated successfully", project_name)))
+        }
+        Err(err) => {
+            return Err(actix_web::error::ErrorInternalServerError(format!(
+                "Error generating project: {}",
+                err
+            )));
+        }
+    };
+
+    // If push_to_git is true, create a GitHub repository and push the code
+    if push_to_git {
+        // Create a GitHub repository using the username, token, and project name
+        match create_github_repo(&github_username, &github_token, &project_name).await {
+            Ok(_) => println!("GitHub repo created"),
+            Err(err) => {
+                return Err(actix_web::error::ErrorInternalServerError(format!(
+                    "Error creating GitHub repo: {}",
+                    err
+                )));
+            }
+        }
+        // Attempt to push the code to GitHub
+        match push_to_github(
+            &project_name,
+            &github_username,
+            &github_email,
+            &github_token,
+        ) {
+            Ok(_) => println!("Successfully pushed to GitHub"), // Log success when the push is successful
+            Err(err) => {
+                return Err(actix_web::error::ErrorInternalServerError(format!(
+                    "Error pushing to GitHub: {}",
+                    err,
+                )));
+            }
+        }
+    }
+    result
+}
+
+// A function to return the list of supported pallets
+pub async fn list_supported_pallets(config_pallets: Data<Vec<PalletConfig>>) -> impl Responder {
+    let supported_pallets: Vec<String> = config_pallets
+        .iter()
+        .map(|pallet| pallet.name.clone())
+        .collect();
+    HttpResponse::Ok().json(supported_pallets)
 }
 
 #[cfg(test)]
