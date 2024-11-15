@@ -1,27 +1,24 @@
 use std::collections::HashMap;
+use std::sync::Arc;
 
 use crate::code_generator::generate_project;
 use crate::types::{PalletCategories, PalletConfig};
-use crate::utils::file_manager::{create_github_repo, push_to_github};
-use actix_web::web::Data;
-use actix_web::Error;
-use actix_web::{web, HttpResponse, Responder};
+
 use chrono::Utc;
+use poem_openapi::param::Path;
+use poem_openapi::payload::{Json, PlainText};
+use poem_openapi::{ApiResponse, Enum, Object, OpenApi};
 use serde::{Deserialize, Serialize};
 
 // Define a struct for the project with a vector of pallets
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Object)]
 pub struct NewProject {
     name: String,
     pallets: Vec<String>,
-    push_to_git: Option<bool>,
-    github_username: String,
-    github_email: String,
-    github_token: String,
 }
 
 // Pallet structure that will be returned as JSON
-#[derive(Serialize, PartialEq, Eq, Debug)]
+#[derive(Serialize, PartialEq, Eq, Debug, Object)]
 pub struct Pallet {
     name: String,
     description: String,
@@ -29,44 +26,36 @@ pub struct Pallet {
 }
 
 // Chain use case structure that will be returned as JSON
-#[derive(Serialize, PartialEq, Eq, Debug)]
+#[derive(Serialize, PartialEq, Eq, Debug, Object)]
 pub struct UseCase {
     name: String,
     description: String,
     pallets: Vec<String>,
 }
 
+#[derive(Serialize, PartialEq, Eq, Debug, Enum)]
+pub enum TemplateType {
+    SoloChain,
+    ParaChain,
+}
+
 // Blockchain template structure.
-#[derive(Serialize, PartialEq, Eq, Debug)]
+#[derive(Serialize, PartialEq, Eq, Debug, Object)]
 pub struct BlockchainTemplate {
-    template_type: String,
+    template_type: TemplateType,
     essential_pallets: Vec<Pallet>,
     supported_pallets: Vec<Pallet>,
     use_cases: Vec<UseCase>,
     chain_type: Vec<UseCase>,
 }
 
-// Query structure for extracting query parameters from the URL
-#[derive(Deserialize)]
-pub struct TemplateQuery {
-    template_type: Option<String>, // Query parameter
-}
-
 pub async fn get_templates(
-    pallet_configs: Data<Vec<PalletConfig>>,
-    query: web::Query<TemplateQuery>,
-) -> impl Responder {
-    let templates = get_templates_internal(pallet_configs.to_vec(), &query.template_type).await;
-    HttpResponse::Ok().json(templates)
-}
-
-pub async fn get_templates_internal(
-    pallet_configs: Vec<PalletConfig>,
-    query_template_type: &Option<String>,
-) -> Vec<BlockchainTemplate> {
+    pallet_configs: &[PalletConfig],
+    query_template_type: Path<Option<TemplateType>>,
+) -> GetTemplatesResponse {
     let templates: Vec<BlockchainTemplate> = vec![
         BlockchainTemplate {
-            template_type: String::from("solochain"),
+            template_type: TemplateType::SoloChain,
             essential_pallets: pallet_configs
                 .iter()
                 .filter(|pallet| pallet.metadata.is_essential)
@@ -94,7 +83,7 @@ pub async fn get_templates_internal(
             chain_type: vec![],
         },
         BlockchainTemplate {
-            template_type: String::from("parachain"),
+            template_type: TemplateType::ParaChain,
             essential_pallets: vec![],
             supported_pallets: vec![],
             use_cases: vec![],
@@ -102,16 +91,16 @@ pub async fn get_templates_internal(
         },
     ];
     // Filtering the templates based on the `template_type` query parameter
-    let filtered_templates: Vec<BlockchainTemplate> = match query_template_type {
+    let filtered_templates: Vec<BlockchainTemplate> = match &query_template_type.0 {
         Some(template_type) => templates
             .into_iter()
             .filter(|t| t.template_type == *template_type)
             .collect(),
-        None => templates,
+        _ => templates,
     };
 
     // Return JSON response
-    filtered_templates
+    GetTemplatesResponse::Ok(Json(filtered_templates))
 }
 
 pub fn get_config(pallet_configs: Vec<PalletConfig>, pallet: &str) -> String {
@@ -122,28 +111,25 @@ pub fn get_config(pallet_configs: Vec<PalletConfig>, pallet: &str) -> String {
     }
 }
 
-// A function to greet a user by their name (path parameter)
-pub async fn greet_user(path: web::Path<String>) -> impl Responder {
-    let name = path.into_inner();
-    HttpResponse::Ok()
-        .content_type("text/plain")
-        .body(format!("Hello, {}!", name))
-}
-
 // A function to create a new project with a list of pallets
 pub async fn generate_a_project(
-    config_pallets: Data<Vec<PalletConfig>>,
-    project: web::Json<NewProject>,
-) -> actix_web::Result<HttpResponse, Error> {
+    config_pallets: &[PalletConfig],
+    project: Json<NewProject>,
+) -> GenerateProjectResponse {
     let mut project_name = project.name.clone();
     let pallet_names = project.pallets.clone();
-    let push_to_git = project.push_to_git.unwrap_or(false);
-    let github_username = project.github_username.clone();
-    let github_email = project.github_email.clone();
-    let github_token = project.github_token.clone();
     let timestamp = Utc::now().format("%Y%m%d%H%M%S").to_string();
 
-    // Extended list of pallets to include the with the required pallets
+    // Check if the pallets are supported
+    for pallet in pallet_names.iter() {
+        if !config_pallets.iter().any(|config| config.name == *pallet) {
+            return GenerateProjectResponse::PalletNotFound(PlainText(format!(
+                "Pallet {} not found",
+                pallet
+            )));
+        }
+    }
+    // Get the required pallets for the pallets in the list
     let filtered = config_pallets
         .iter()
         // Get the pallets that are in the list of pallet names
@@ -158,6 +144,7 @@ pub async fn generate_a_project(
         })
         .collect::<Vec<_>>();
 
+    // Filter the pallets that are in the list of pallet names
     let filtered_configs = config_pallets
         .iter()
         .filter(|pallet| filtered.contains(&pallet.name))
@@ -167,59 +154,75 @@ pub async fn generate_a_project(
         });
 
     // Append the username and timestamp to the project name to ensure uniqueness
-    project_name = format!("{}_{}_{}", project_name, github_username, timestamp);
+    project_name = format!("{}_{}", project_name, timestamp);
     let pallets = filtered_configs.values().cloned().collect::<Vec<_>>();
-    let result = match generate_project(&project_name, pallets).await {
+    match generate_project(&project_name, pallets).await {
         Ok(_) => {
-            Ok(HttpResponse::Ok().body(format!("{} project generated successfully", project_name)))
+            GenerateProjectResponse::Ok(PlainText(format!("Project {} created", project_name)))
         }
-        Err(err) => {
-            return Err(actix_web::error::ErrorInternalServerError(format!(
-                "Error generating project: {}",
-                err
-            )));
-        }
-    };
-
-    // If push_to_git is true, create a GitHub repository and push the code
-    if push_to_git {
-        // Create a GitHub repository using the username, token, and project name
-        match create_github_repo(&github_username, &github_token, &project_name).await {
-            Ok(_) => println!("GitHub repo created"),
-            Err(err) => {
-                return Err(actix_web::error::ErrorInternalServerError(format!(
-                    "Error creating GitHub repo: {}",
-                    err
-                )));
-            }
-        }
-        // Attempt to push the code to GitHub
-        match push_to_github(
-            &project_name,
-            &github_username,
-            &github_email,
-            &github_token,
-        ) {
-            Ok(_) => println!("Successfully pushed to GitHub"), // Log success when the push is successful
-            Err(err) => {
-                return Err(actix_web::error::ErrorInternalServerError(format!(
-                    "Error pushing to GitHub: {}",
-                    err,
-                )));
-            }
-        }
+        Err(err) => GenerateProjectResponse::InternalServerError(PlainText(err.to_string())),
     }
-    result
 }
 
-// A function to return the list of supported pallets
-pub async fn list_supported_pallets(config_pallets: Data<Vec<PalletConfig>>) -> impl Responder {
-    let supported_pallets: Vec<String> = config_pallets
-        .iter()
-        .map(|pallet| pallet.name.clone())
-        .collect();
-    HttpResponse::Ok().json(supported_pallets)
+pub struct Api {
+    pub pallet_configs: Arc<Vec<PalletConfig>>,
 }
 
+impl Api {
+    pub fn new(pallet_configs: Arc<Vec<PalletConfig>>) -> Self {
+        Self { pallet_configs }
+    }
+}
+
+#[derive(ApiResponse)]
+pub enum ListSupportedPalletsResponse<'a> {
+    /// Return the specified user.
+    #[oai(status = 200)]
+    Ok(Json<&'a Vec<PalletConfig>>),
+}
+
+#[derive(ApiResponse)]
+pub enum GenerateProjectResponse {
+    /// Returns when the user is successfully updated.
+    #[oai(status = 200)]
+    Ok(PlainText<String>),
+    #[oai(status = 404)]
+    PalletNotFound(PlainText<String>),
+    #[oai(status = 500)]
+    InternalServerError(PlainText<String>),
+}
+
+#[derive(ApiResponse)]
+pub enum GetTemplatesResponse {
+    /// Returns when the user is successfully updated.
+    #[oai(status = 200)]
+    Ok(Json<Vec<BlockchainTemplate>>),
+}
+
+#[OpenApi]
+impl Api {
+    #[oai(path = "/hello/:name", method = "get")]
+    pub async fn greet_user(
+        &self,
+        #[oai(name = "name", validator(max_length = 30, min_length = 1))] name: Path<String>,
+    ) -> PlainText<String> {
+        PlainText(format!("hello, {}!", name.0))
+    }
+    #[oai(path = "/list-supported-pallets", method = "get")]
+    pub async fn list_supported_pallets(&self) -> ListSupportedPalletsResponse {
+        ListSupportedPalletsResponse::Ok(Json(self.pallet_configs.as_ref()))
+    }
+    #[oai(path = "/generate-project", method = "post")]
+    pub async fn generate_a_project(&self, project: Json<NewProject>) -> GenerateProjectResponse {
+        generate_a_project(&self.pallet_configs, project).await
+    }
+    #[oai(path = "/get-templates/:template_type", method = "get")]
+    pub async fn get_templates(
+        &self,
+        template_type: Path<Option<TemplateType>>,
+    ) -> GetTemplatesResponse {
+        get_templates(&self.pallet_configs, template_type).await
+    }
+}
 #[cfg(test)]
 mod tests {}

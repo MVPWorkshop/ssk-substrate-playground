@@ -1,8 +1,9 @@
+use poem_openapi::{Enum, Object};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use strum_macros::Display;
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Enum)]
 pub enum PalletModuleParts {
     Module,
     Call,
@@ -14,13 +15,13 @@ pub enum PalletModuleParts {
     ValidateUnsigned,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletConstructRuntimeConfig {
-    pub runtime: (String, String),
+    pub runtime: Vec<String>,
 }
 
 #[allow(unused)]
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletTraitsConfig {
     custom_name: Option<String>,
     type_: String,
@@ -28,13 +29,13 @@ pub struct PalletTraitsConfig {
     is_not_const: Option<bool>,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletGenesisConfig {
     pub config_struct_name: String,
     pub struct_fields: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletRuntimeConfig {
     pub construct_runtime: PalletConstructRuntimeConfig,
     pub pallet_traits: HashMap<String, String>,
@@ -46,13 +47,13 @@ pub struct PalletRuntimeConfig {
 }
 
 #[allow(unused)]
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct CargoSimpleDependency {
     package: String,
     version: String,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct CargoComplexDependency {
     pub package: String,
     pub version: Option<String>,
@@ -69,7 +70,7 @@ impl CargoComplexDependency {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletDependencyConfig {
     pub pallet: CargoComplexDependency,
     pub additional_pallets: Option<Vec<CargoComplexDependency>>,
@@ -77,13 +78,13 @@ pub struct PalletDependencyConfig {
     pub required_pallets: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Enum)]
 pub enum SubstrateVersion {
     One,
     Two,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display, Enum)]
 pub enum PalletCategories {
     Accounts,
     Assets,
@@ -96,14 +97,14 @@ pub enum PalletCategories {
     Other,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Enum)]
 pub enum CommonAuthors {
     ParityTechnologies,
     IndividualDevelopers,
     SubstrateDevHub,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletMetadata {
     pub description: String,
     pub short_description: String,
@@ -115,7 +116,7 @@ pub struct PalletMetadata {
     pub is_essential: bool,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletConfig {
     pub name: String,
     pub metadata: PalletMetadata,
