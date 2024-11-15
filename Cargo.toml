@@ -5,29 +5,14 @@ edition = "2021"
 
 [dependencies]
 log = "0.4.22"
-reqwest = { version = "0.11", features = ["json", "blocking", "rustls-tls"] }
 tokio = { version = "1.41.1", features = ["full"] }
-warp = "0.3"
-uuid = { version = "0.8", features = ["v4"] }
+uuid = { version = "1.11.0", features = ["v4"] }
 chrono = { version = "0.4", features = ["serde"] }
-actix-web = "4.0"
 time = "0.3"
-regex = "1.10.6"
-# For handling JSON requests and responses
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde = { version = "1.0.215", features = ["derive"] }
+serde_json = "1.0.132"
 futures = "0.3.31"
-
-# For spawning blocking tasks (web::block)
-actix-rt = "2.8"
-
-# Optional: if using error handling, you might want this crate
-thiserror = "1.0"
-
-actix-files = "0.6"
-
-zip = "0.6" # Add this line
-
+thiserror = "2.0.3"
 strum = "0.26"
 strum_macros = "0.26"
 toml = "0.8.19"
@@ -36,3 +21,4 @@ handlebars = "6.2.0"
 poem = "3.1.3"
 poem-openapi = { version = "5.1.2", features = ["swagger-ui"] }
 tracing-subscriber = "0.3.18"
+dyn-fmt = "0.4.3"

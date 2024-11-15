@@ -1,32 +1,11 @@
 use poem_openapi::{Enum, Object};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use strum_macros::Display;
-
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Enum)]
-pub enum PalletModuleParts {
-    Module,
-    Call,
-    Storage,
-    Event,
-    Origin,
-    Config,
-    Inherent,
-    ValidateUnsigned,
-}
+use strum_macros::{Display, EnumString};
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct PalletConstructRuntimeConfig {
     pub runtime: Vec<String>,
-}
-
-#[allow(unused)]
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
-pub struct PalletTraitsConfig {
-    custom_name: Option<String>,
-    type_: String,
-    value: String,
-    is_not_const: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
@@ -44,6 +23,35 @@ pub struct PalletRuntimeConfig {
     pub additional_chain_spec_code: Option<Vec<String>>,
     pub additional_runtime_lib_code: Option<Vec<String>>,
     pub runtime_api_code: Option<String>,
+    pub optional_parameter_types: Option<Vec<ParameterType>>,
+}
+#[derive(EnumString, Display, Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Enum)]
+#[serde(rename_all = "snake_case")]
+pub enum ParameterTypePrefix {
+    #[strum(serialize = " ")]
+    Empty,
+    #[strum(serialize = " const ")]
+    Const,
+    #[strum(serialize = " type ")]
+    Type,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
+pub struct ParameterTypeExpression {
+    pub default_unit: String,
+    pub default_multiiplier: Option<i64>,
+    pub format: String,
+    pub possible_units: Vec<String>,
+    pub multiplier_configurable: bool,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
+pub struct ParameterType {
+    pub name: String,
+    pub description: String,
+    pub prefix: ParameterTypePrefix,
+    pub p_type: String,
+    pub expression: ParameterTypeExpression,
 }
 
 #[allow(unused)]
@@ -128,6 +136,7 @@ pub struct PalletConfig {
 mod tests {
     use crate::{
         code_generator::{generate_project, get_all_pallet_configs_from_dir},
+        types::{ParameterType, ParameterTypeExpression, ParameterTypePrefix},
         CONFIG_DIR,
     };
 
@@ -145,5 +154,40 @@ mod tests {
             "6 essential pallets are not filtered out",
         );
         let _ = generate_project(&"test_project".to_string(), pallets).await;
+    }
+    #[tokio::test]
+    #[ignore]
+    async fn build_optional_parameter_types() {
+        let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
+        let mut bounties = pallets
+            .into_iter()
+            .find(|pallet_config| pallet_config.name == "Pallet bounties")
+            .unwrap();
+        let opt = ParameterType {
+            name: "BountyDepositBase".to_string(),
+            description: "The base amount of deposit for a bounty".to_string(),
+            prefix: ParameterTypePrefix::Const,
+            p_type: "Balance".to_string(),
+            expression: ParameterTypeExpression {
+                default_unit: "DOLLARS".to_string(),
+                default_multiiplier: Some(1),
+                format: "{} * {}".to_string(),
+                possible_units: vec![
+                    "DOLLARS".to_string(),
+                    "CENTS".to_string(),
+                    "MILLICENTS".to_string(),
+                ],
+                multiplier_configurable: true,
+            },
+        };
+        bounties.runtime.optional_parameter_types = Some(vec![opt]);
+        println!("{}", toml::to_string_pretty(&bounties).unwrap());
+    }
+
+    #[test]
+    fn test_parameter_type_prefix() {
+        assert_eq!(ParameterTypePrefix::Const.to_string(), " const ");
+        assert_eq!(ParameterTypePrefix::Type.to_string(), " type ");
+        assert_eq!(ParameterTypePrefix::Empty.to_string(), " ");
     }
 }

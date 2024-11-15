@@ -115,8 +115,8 @@ pub async fn get_all_pallet_configs_from_dir(
     let pallet_configs = toml_strings_no_updated
         .into_iter()
         .map(|x| {
-            toml::from_str(x.as_str()).map_err(|_| PalletConfigLoadError {
-                message: "cenvert to toml error.".to_string(),
+            toml::from_str(x.as_str()).map_err(|e| PalletConfigLoadError {
+                message: format!("convert to toml error:{:?}", e),
             })
         })
         .collect::<Result<Vec<PalletConfig>, PalletConfigLoadError>>()?;

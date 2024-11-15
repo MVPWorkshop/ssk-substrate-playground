@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use dyn_fmt::AsStrFormatExt;
 use serde::Serialize;
 
 use crate::types::PalletConfig;
@@ -11,6 +12,7 @@ pub struct RuntimeImplBlocks {
     pub additional_pallet_impl_code: Option<String>,
     pub pallet_name: String,
     pub pallet_traits: Option<Vec<String>>,
+    pub configurable_parameter_types: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize)]
@@ -58,10 +60,36 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
             } else {
                 Some(pallet_traits)
             };
+
+            let configurable_parameter_types = if let Some(optional_parameter_types) =
+                pallet.runtime.optional_parameter_types.clone()
+            {
+                let mut temp = vec![];
+                for pt in optional_parameter_types {
+                    let v = match pt.expression.default_multiiplier {
+                        Some(v) => v.to_string(),
+                        None => "".to_string(),
+                    };
+                    let s = format!(
+                        "    pub{}{}: {} = {};",
+                        pt.prefix,
+                        pt.name,
+                        pt.p_type,
+                        pt.expression
+                            .format
+                            .format(&[pt.expression.default_unit, v])
+                    );
+                    temp.push(s);
+                }
+                Some(temp)
+            } else {
+                None
+            };
             impl_blocks.push(RuntimeImplBlocks {
                 additional_pallet_impl_code,
                 pallet_name,
                 pallet_traits,
+                configurable_parameter_types,
             });
         }
         RuntimeLibAggregate {

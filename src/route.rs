@@ -1,10 +1,12 @@
 use std::collections::HashMap;
+use std::fmt::format;
 use std::sync::Arc;
 
 use crate::code_generator::generate_project;
-use crate::types::{PalletCategories, PalletConfig};
+use crate::types::{PalletCategories, PalletConfig, ParameterType};
 
 use chrono::Utc;
+use dyn_fmt::AsStrFormatExt;
 use poem_openapi::param::Path;
 use poem_openapi::payload::{Json, PlainText};
 use poem_openapi::{ApiResponse, Enum, Object, OpenApi};
@@ -199,6 +201,45 @@ pub enum GetTemplatesResponse {
     Ok(Json<Vec<BlockchainTemplate>>),
 }
 
+#[derive(Object)]
+pub struct Parameter {
+    pub name: String,
+    pub description: String,
+    pub possible_unit_names: Vec<String>,
+    pub multiplier_configurable: bool,
+    pub example: String,
+}
+
+impl From<&ParameterType> for Parameter {
+    fn from(pt: &ParameterType) -> Self {
+        let unit = if pt.expression.possible_units.len() > 0 {
+            "{{unit}}"
+        } else {
+            ""
+        };
+        let example_expression = pt.expression.format.format(&[unit, "{{multiplier}}"]);
+        Self {
+            name: pt.name.clone(),
+            description: pt.description.clone(),
+            possible_unit_names: pt.expression.possible_units.clone(),
+            multiplier_configurable: pt.expression.multiplier_configurable,
+            example: format!(
+                "pub{}{}: {} = {};",
+                pt.prefix, pt.name, pt.p_type, example_expression
+            ),
+        }
+    }
+}
+
+#[derive(ApiResponse)]
+pub enum GetConfigurableParametersResponse {
+    /// Returns when the user is successfully updated.
+    #[oai(status = 200)]
+    Ok(Json<Vec<Parameter>>),
+    #[oai(status = 404)]
+    PalletNotFound(PlainText<String>),
+}
+
 #[OpenApi]
 impl Api {
     #[oai(path = "/hello/:name", method = "get")]
@@ -222,6 +263,35 @@ impl Api {
         template_type: Path<Option<TemplateType>>,
     ) -> GetTemplatesResponse {
         get_templates(&self.pallet_configs, template_type).await
+    }
+    #[oai(path = "/get-configurable-parameters/:pallet", method = "get")]
+    pub async fn get_configurable_parameters(
+        &self,
+        pallet: Path<String>,
+    ) -> GetConfigurableParametersResponse {
+        let pallet = match self
+            .pallet_configs
+            .iter()
+            .find(|config| config.name == pallet.0)
+        {
+            Some(pallet) => pallet,
+            None => {
+                return GetConfigurableParametersResponse::PalletNotFound(PlainText(format!(
+                    "Pallet {} not found",
+                    pallet.0
+                )))
+            }
+        };
+        let parameters =
+            if let Some(optional_parameter_types) = &pallet.runtime.optional_parameter_types {
+                optional_parameter_types
+                    .iter()
+                    .map(Parameter::from)
+                    .collect::<Vec<_>>()
+            } else {
+                vec![]
+            };
+        GetConfigurableParametersResponse::Ok(Json(parameters))
     }
 }
 #[cfg(test)]
