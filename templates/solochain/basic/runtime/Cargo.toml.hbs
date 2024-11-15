@@ -27,13 +27,6 @@ frame-system = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "
 frame-try-runtime = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false, optional = true }
 frame-executive = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
-# frame pallets
-pallet-aura = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
-pallet-balances = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
-pallet-grandpa = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
-pallet-sudo = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
-pallet-timestamp = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
-pallet-transaction-payment = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 pallet-insecure-randomness-collective-flip = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false }
 
 # primitives
@@ -95,15 +88,8 @@ std = [
 	"frame-benchmarking?/std",
 	"frame-try-runtime?/std",
 
-	"pallet-aura/std",
-	"pallet-balances/std",
-	"pallet-grandpa/std",
-	"pallet-sudo/std",
 	"pallet-template/std",
-	"pallet-timestamp/std",
 	"pallet-insecure-randomness-collective-flip/std",
-	"pallet-transaction-payment-rpc-runtime-api/std",
-	"pallet-transaction-payment/std",
 
 	"sp-api/std",
 	"sp-block-builder/std",

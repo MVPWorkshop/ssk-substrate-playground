@@ -18,9 +18,13 @@ size = 5078
 updated = "1729175503"
 
 [runtime]
-additional_runtime_lib_code = [
-    "use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};",
-]
+additional_pallet_impl_code = """
+
+parameter_types! {
+    pub FeeMultiplier: Multiplier = Multiplier::one();
+}
+
+"""
 
 [runtime.construct_runtime]
 runtime = ["TransactionPayment", "pallet_transaction_payment"]
@@ -31,11 +35,11 @@ WeightToFee = "IdentityFee<Balance>"
 RuntimeEvent = "RuntimeEvent"
 OperationalFeeMultiplier = "ConstU8<5>"
 LengthToFee = "IdentityFee<Balance>"
-FeeMultiplierUpdate = "ConstFeeMultiplier<Multiplier::one()>"
+FeeMultiplierUpdate = "ConstFeeMultiplier<FeeMultiplier>"
 
 [dependencies.pallet]
 package = "pallet-transaction-payment"
-alias = "pallet-transaction-payment"
+alias = "pallet transaction payment"
 default_features = false
 git_repo = "https://github.com/paritytech/polkadot-sdk.git"
 tag = "polkadot-v1.14.0"

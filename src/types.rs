@@ -29,17 +29,10 @@ pub struct PalletTraitsConfig {
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
-pub struct PalletGenesisConfig {
-    pub config_struct_name: String,
-    pub struct_fields: HashMap<String, String>,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PalletRuntimeConfig {
     pub construct_runtime: PalletConstructRuntimeConfig,
     pub pallet_traits: HashMap<String, String>,
     pub additional_pallet_impl_code: Option<String>,
-    pub genesis_config: Option<PalletGenesisConfig>,
     pub additional_chain_spec_code: Option<Vec<String>>,
     pub additional_runtime_lib_code: Option<Vec<String>>,
     pub runtime_api_code: Option<String>,
@@ -134,15 +127,6 @@ mod tests {
     #[ignore]
     async fn build_all_pallets() {
         let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
-        let total_pallets_len = pallets.len();
-        let pallets = pallets
-            .into_iter()
-            .filter(|pallet_config| !pallet_config.metadata.is_essential)
-            .collect::<Vec<_>>();
-        assert!(
-            pallets.len() == total_pallets_len - 6,
-            "6 essential pallets are not filtered out",
-        );
         let _ = generate_project(&"test_project".to_string(), pallets).await;
     }
 }
