@@ -1,8 +1,8 @@
-name = "Pallet bounties"
+name = "Pallet Bounties"
 
 [metadata]
 description = "The Bounties pallet facilitates the management and payout of rewards for completing specific tasks or objectives, with a curator overseeing the process, and the ability to create child bounties for splitting larger tasks. It works closely with the Treasury pallet."
-short_description = "FRAME bounties pallet"
+short_description = "FRAME Bounties pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

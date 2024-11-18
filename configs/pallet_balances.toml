@@ -39,7 +39,7 @@ balances = "endowed_accounts.iter().cloned().map(|k| (k, 1u64 << 60)).collect::<
 
 [dependencies.pallet]
 package = "pallet-balances"
-alias = "pallet-balances"
+alias = "pallet balances"
 default_features = false
 git_repo = "https://github.com/paritytech/polkadot-sdk.git"
 tag = "polkadot-v1.14.0"

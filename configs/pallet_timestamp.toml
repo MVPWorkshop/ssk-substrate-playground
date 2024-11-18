@@ -25,7 +25,7 @@ WeightInfo = "()"
 
 [dependencies.pallet]
 package = "pallet-timestamp"
-alias = "pallet-timestamp"
+alias = "pallet timestamp"
 default_features = false
 git_repo = "https://github.com/paritytech/polkadot-sdk.git"
 tag = "polkadot-v1.14.0"

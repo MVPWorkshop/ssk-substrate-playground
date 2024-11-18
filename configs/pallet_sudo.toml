@@ -1,4 +1,4 @@
-name = "pallet_sudo"
+name = "Pallet Sudo" #"pallet_sudo"
 
 [metadata]
 description = "A pallet to provide a way to execute privileged runtime calls using a specified sudo (“superuser do”) account."
@@ -27,7 +27,7 @@ key = "Some(root_key)"
 
 [dependencies.pallet]
 package = "pallet-sudo"
-alias = "pallet-sudo"
+alias = "pallet sudo"
 default_features = false
 git_repo = "https://github.com/paritytech/polkadot-sdk.git"
 tag = "polkadot-v1.14.0"

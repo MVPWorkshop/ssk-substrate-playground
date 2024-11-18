@@ -1,8 +1,8 @@
-name = "Pallet uniques"
+name = "Pallet Uniques"
 
 [metadata]
 description = "A module for managing non-fungible tokens (NFTs) and collections, providing a secure and flexible framework."
-short_description = "FRAME uniques pallet"
+short_description = "FRAME Uniques pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
