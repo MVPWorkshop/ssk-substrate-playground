@@ -2,7 +2,7 @@ name = "Pallet Transaction Storage"
 
 [metadata]
 description = """Indexes transactions and manages storage proofs. Allows storing arbitrary data on the chain. Data is automatically removed after StoragePeriod blocks, unless the storage is renewed. Validators must submit proof of storing a random chunk of data for block N - StoragePeriod when producing block N."""
-short_description = "FRAME transaction storage pallet"
+short_description = "FRAME Transaction Storage pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

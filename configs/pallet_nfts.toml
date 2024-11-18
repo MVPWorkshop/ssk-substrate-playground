@@ -1,10 +1,10 @@
-name = "Pallet nfts"
+name = "Pallet Nfts"
 
 [metadata]
 description = """
 A pallet for dealing with non-fungible assets.
 The NFTs pallet provides functionality for non-fungible tokens' management, including:Collection Creation, NFT Minting, NFT Transfers and Atomic Swaps, NFT Trading methods, Attributes Management, NFT Burning"""
-short_description = "FRAME nfts pallet"
+short_description = "FRAME Nfts pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

@@ -1,4 +1,4 @@
-name = "Pallet assets"
+name = "Pallet Assets"
 
 [metadata]
 description = "A simple, secure module for dealing with sets of assets implementing fungible traits."

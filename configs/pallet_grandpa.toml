@@ -34,7 +34,7 @@ authorities = "initial_authorities.iter().map(|x| (x.1.clone(), 1)).collect::<Ve
 
 [dependencies.pallet]
 package = "pallet-grandpa"
-alias = "pallet-grandpa"
+alias = "pallet grandpa"
 default_features = false
 git_repo = "https://github.com/paritytech/polkadot-sdk.git"
 tag = "polkadot-v1.14.0"

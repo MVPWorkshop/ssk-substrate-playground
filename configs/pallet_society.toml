@@ -1,8 +1,8 @@
-name = "Pallet society"
+name = "Pallet Society"
 
 [metadata]
 description = "The Society module is an economic game which incentivizes users to participate and maintain a membership society."
-short_description = "FRAME society pallet"
+short_description = "FRAME Society pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
