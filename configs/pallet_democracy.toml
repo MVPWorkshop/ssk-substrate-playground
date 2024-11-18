@@ -7,7 +7,7 @@ is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Runtime"]
+categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
