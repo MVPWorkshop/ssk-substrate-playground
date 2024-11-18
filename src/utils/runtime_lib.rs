@@ -35,7 +35,7 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
             };
             construct_runtime.push(format!(
                 "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {};",
-                index + 9,
+                index + 3,
                 pallet.runtime.construct_runtime.runtime.0,
                 pallet.runtime.construct_runtime.runtime.1,
             ));

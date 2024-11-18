@@ -232,10 +232,10 @@ mod runtime {
     pub type System = frame_system;
 
     // Include the custom logic from the pallet-template in the runtime.
-    #[runtime::pallet_index(7)]
+    #[runtime::pallet_index(1)]
     pub type TemplateModule = pallet_template;
 
-    #[runtime::pallet_index(8)]
+    #[runtime::pallet_index(2)]
     pub type RandomnessCollectiveFlip = pallet_insecure_randomness_collective_flip::Pallet<Runtime>;
     {{#each construct_runtime}}
     
