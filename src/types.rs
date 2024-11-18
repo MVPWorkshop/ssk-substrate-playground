@@ -23,7 +23,7 @@ pub struct PalletRuntimeConfig {
     pub additional_chain_spec_code: Option<Vec<String>>,
     pub additional_runtime_lib_code: Option<Vec<String>>,
     pub runtime_api_code: Option<String>,
-    pub optional_parameter_types: Option<Vec<ParameterType>>,
+    pub optional_parameter_types: Option<HashMap<String, ParameterType>>,
 }
 #[derive(EnumString, Display, Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Enum)]
 #[serde(rename_all = "snake_case")]
@@ -43,6 +43,8 @@ pub struct ParameterTypeExpression {
     pub format: String,
     pub possible_units: Vec<String>,
     pub multiplier_configurable: bool,
+    pub configured_multiplier: Option<i64>,
+    pub configured_unit: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
@@ -134,6 +136,8 @@ pub struct PalletConfig {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use crate::{
         code_generator::{generate_project, get_all_pallet_configs_from_dir},
         types::{ParameterType, ParameterTypeExpression, ParameterTypePrefix},
@@ -147,7 +151,13 @@ mod tests {
         let total_pallets_len = pallets.len();
         let pallets = pallets
             .into_iter()
-            .filter(|pallet_config| !pallet_config.metadata.is_essential)
+            .filter_map(|(_, pallet)| {
+                if pallet.metadata.is_essential {
+                    None
+                } else {
+                    Some(pallet)
+                }
+            })
             .collect::<Vec<_>>();
         assert!(
             pallets.len() == total_pallets_len - 6,
@@ -158,11 +168,8 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn build_optional_parameter_types() {
-        let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
-        let mut bounties = pallets
-            .into_iter()
-            .find(|pallet_config| pallet_config.name == "Pallet bounties")
-            .unwrap();
+        let mut pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
+        let bounties = pallets.get_mut("Pallet bounties").unwrap();
         let opt = ParameterType {
             name: "BountyDepositBase".to_string(),
             description: "The base amount of deposit for a bounty".to_string(),
@@ -178,9 +185,12 @@ mod tests {
                     "MILLICENTS".to_string(),
                 ],
                 multiplier_configurable: true,
+                configured_multiplier: None,
+                configured_unit: None,
             },
         };
-        bounties.runtime.optional_parameter_types = Some(vec![opt]);
+        bounties.runtime.optional_parameter_types =
+            Some(HashMap::from_iter(vec![(opt.name.clone(), opt)]));
         println!("{}", toml::to_string_pretty(&bounties).unwrap());
     }
 

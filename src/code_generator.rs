@@ -5,6 +5,7 @@ use crate::utils::runtime_lib::generate_runtime_lib_file;
 use super::types::PalletConfig;
 
 use log::{error, info};
+use std::collections::HashMap;
 use std::fmt;
 use std::path::Path;
 
@@ -69,7 +70,7 @@ impl fmt::Display for PalletConfigLoadError {
 
 pub async fn get_all_pallet_configs_from_dir(
     dir: &str,
-) -> Result<Vec<PalletConfig>, PalletConfigLoadError> {
+) -> Result<HashMap<String, PalletConfig>, PalletConfigLoadError> {
     // Read directory entries
     let mut read_dir = tokio::fs::read_dir(dir)
         .await
@@ -110,16 +111,15 @@ pub async fn get_all_pallet_configs_from_dir(
                 })?;
         toml_strings_no_updated.push(string);
     }
-
-    // Parse TOML strings into PalletConfigNoUpdated
     let pallet_configs = toml_strings_no_updated
         .into_iter()
-        .map(|x| {
-            toml::from_str(x.as_str()).map_err(|e| PalletConfigLoadError {
-                message: format!("convert to toml error:{:?}", e),
-            })
+        .map(|x| match toml::from_str::<PalletConfig>(x.as_str()) {
+            Ok(pallet_config) => Ok((pallet_config.name.clone(), pallet_config)),
+            Err(e) => Err(PalletConfigLoadError {
+                message: format!("Failed to parse toml: {:?}", e),
+            }),
         })
-        .collect::<Result<Vec<PalletConfig>, PalletConfigLoadError>>()?;
+        .collect::<Result<HashMap<String, PalletConfig>, PalletConfigLoadError>>()?;
     Ok(pallet_configs)
 }
 

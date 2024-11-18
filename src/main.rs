@@ -5,7 +5,7 @@ use poem::{listener::TcpListener, Route, Server};
 use poem_openapi::OpenApiService;
 
 use substrate_runtime_builder::{
-    code_generator::get_all_pallet_configs_from_dir, route::Api, CONFIG_DIR,
+    api::Api, code_generator::get_all_pallet_configs_from_dir, CONFIG_DIR,
 };
 
 const PORT: &str = "3000";
@@ -23,7 +23,7 @@ async fn main() -> Result<(), std::io::Error> {
             .map_err(|err| std::io::Error::new(ErrorKind::Other, err.to_string()))?,
     );
 
-    let api_service = OpenApiService::new(Api::new(data), "Hello World", "1.0")
+    let api_service = OpenApiService::new(Api::new(data), "Substrate Runtime Builder", "1.0")
         .server(format!("http://127.0.0.1:{PORT}"));
     let ui = api_service.swagger_ui();
 

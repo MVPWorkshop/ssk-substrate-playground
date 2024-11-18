@@ -65,19 +65,24 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 pallet.runtime.optional_parameter_types.clone()
             {
                 let mut temp = vec![];
-                for pt in optional_parameter_types {
-                    let v = match pt.expression.default_multiiplier {
+                for (_, pt) in optional_parameter_types {
+                    let m = match pt.expression.configured_multiplier {
                         Some(v) => v.to_string(),
-                        None => "".to_string(),
+                        None => match pt.expression.default_multiiplier {
+                            Some(v) => v.to_string(),
+                            None => "".to_string(),
+                        },
+                    };
+                    let u = match pt.expression.configured_unit {
+                        Some(u) => u,
+                        None => pt.expression.default_unit,
                     };
                     let s = format!(
                         "    pub{}{}: {} = {};",
                         pt.prefix,
                         pt.name,
                         pt.p_type,
-                        pt.expression
-                            .format
-                            .format(&[pt.expression.default_unit, v])
+                        pt.expression.format.format(&[u, m])
                     );
                     temp.push(s);
                 }

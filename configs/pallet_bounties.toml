@@ -23,39 +23,39 @@ parameter_types! {
     pub const BountyDataDepositPerByte: Balance = CENTS;
 }
 """
-[[runtime.optional_parameter_types]]
+[runtime.optional_parameter_types.BountyDepositBase]
 name = "BountyDepositBase"
 description = "The base deposit required to propose a bounty. This ensures proposers have a minimum stake in the process."
 prefix = "const"
 p_type = "Balance"
 
-[runtime.optional_parameter_types.expression]
+[runtime.optional_parameter_types.BountyDepositBase.expression]
 default_unit = "DOLLARS"
 default_multiiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
 
-[[runtime.optional_parameter_types]]
+[runtime.optional_parameter_types.BountyMaximumReasonLength]
 name = "BountyMaximumReasonLength"
 description = "The maximum length for the reason field in bounty proposals."
 prefix = "const"
 p_type = "u32"
 
-[runtime.optional_parameter_types.expression]
+[runtime.optional_parameter_types.BountyMaximumReasonLength.expression]
 default_unit = ""
 default_multiiplier = 16384
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
 
-[[runtime.optional_parameter_types]]
+[runtime.optional_parameter_types.CuratorDepositMultiplier]
 name = "CuratorDepositMultiplier"
 description = "The proportion of the curator's deposit that is rewarded upon completion of the bounty."
 prefix = "const"
 p_type = "Permill"
 
-[runtime.optional_parameter_types.expression]
+[runtime.optional_parameter_types.CuratorDepositMultiplier.expression]
 default_unit = ""
 default_multiiplier = 50
 format = "{}Permill::from_percent({})"
