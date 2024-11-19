@@ -1,18 +1,23 @@
 use std::{collections::HashMap, sync::Arc};
 
+use crate::{code_generator::PalletConfigLoadError, types::PalletConfig};
 use poem_openapi::{param::Path, payload::Json, OpenApi};
-
-use crate::types::PalletConfig;
+use scc::HashMap as ConcurrentHashMap;
+use uuid::Uuid;
 
 pub mod handlers;
 
 pub struct Api {
     pub pallet_configs: Arc<HashMap<String, PalletConfig>>,
+    pub task_handles: Arc<ConcurrentHashMap<Uuid, Option<Result<(), PalletConfigLoadError>>>>,
 }
 #[OpenApi]
 impl Api {
     pub fn new(pallet_configs: Arc<HashMap<String, PalletConfig>>) -> Self {
-        Self { pallet_configs }
+        Self {
+            pallet_configs,
+            task_handles: Arc::new(ConcurrentHashMap::new()),
+        }
     }
     #[oai(path = "/list-supported-pallets", method = "get")]
     pub async fn list_supported_pallets(
@@ -30,6 +35,7 @@ impl Api {
     ) -> handlers::generate_project_handler::GenerateProjectResponse {
         handlers::generate_project_handler::generate_a_project_handler(
             &self.pallet_configs,
+            self.task_handles.clone(),
             project,
         )
         .await
@@ -52,5 +58,12 @@ impl Api {
             pallets,
         )
         .await
+    }
+    #[oai(path = "/get-status/:task_id", method = "get")]
+    pub async fn get_status(
+        &self,
+        task_id: Path<Uuid>,
+    ) -> handlers::get_status_handler::GetStatusResponse {
+        handlers::get_status_handler::get_status_handler(self.task_handles.clone(), task_id).await
     }
 }

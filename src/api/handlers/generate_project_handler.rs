@@ -1,13 +1,17 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use poem_openapi::{
     payload::{Json, PlainText},
     types::Example,
     ApiResponse, Object,
 };
+use scc::HashMap as ConcurrentHashMap;
 use uuid::Uuid;
 
-use crate::{code_generator::generate_project, types::PalletConfig};
+use crate::{
+    code_generator::{generate_project, PalletConfigLoadError},
+    types::PalletConfig,
+};
 
 #[derive(Object, Clone)]
 pub struct ParameterConfiguration {
@@ -51,7 +55,7 @@ impl Example for NewProject {
 pub enum GenerateProjectResponse {
     /// Returns when the user is successfully updated.
     #[oai(status = 200)]
-    Ok(PlainText<String>),
+    Ok(Json<Uuid>),
     #[oai(status = 404)]
     PalletNotFound(PlainText<String>),
     #[oai(status = 500)]
@@ -60,6 +64,7 @@ pub enum GenerateProjectResponse {
 
 pub async fn generate_a_project_handler(
     config_pallets: &HashMap<String, PalletConfig>,
+    task_status_map: Arc<ConcurrentHashMap<Uuid, Option<Result<(), PalletConfigLoadError>>>>,
     project: Json<NewProject>,
 ) -> GenerateProjectResponse {
     let mut project_name = project.name.clone();
@@ -129,10 +134,10 @@ pub async fn generate_a_project_handler(
     // Append uuid to project name
     project_name = format!("{}_{}", project_name, Uuid::new_v4());
     let pallets = filtered_configs.values().cloned().collect::<Vec<_>>();
-    match generate_project(&project_name, pallets).await {
-        Ok(_) => {
-            GenerateProjectResponse::Ok(PlainText(format!("Project {} created", project_name)))
-        }
-        Err(err) => GenerateProjectResponse::InternalServerError(PlainText(err.to_string())),
-    }
+    let status_id = Uuid::new_v4();
+    let _ = task_status_map.insert_async(status_id, None).await;
+    tokio::spawn(async move {
+        generate_project(&project_name, pallets, status_id, task_status_map).await
+    });
+    GenerateProjectResponse::Ok(Json(status_id))
 }
