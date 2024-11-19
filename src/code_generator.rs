@@ -129,11 +129,8 @@ pub async fn generate_project(
 ) -> Result<(), PalletConfigLoadError> {
     // Create a new project directory and copy the template.
     create_new_project_async(project_name).await;
-
     println!("Created project: {}", project_name);
 
-    // ! Add essential pallets -> filter is_essential=true from all
-    // ! Then in pallets check if have every one of them already, if it has, keep it that way, if it doesnt, add it
     // Add the pallets to the new project.
     let x = project_name.clone();
     tokio::task::spawn_blocking(move || add_pallets(&x, pallets))
