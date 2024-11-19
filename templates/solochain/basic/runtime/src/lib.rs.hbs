@@ -328,7 +328,12 @@ mod runtime {
 }
 {{#each impl_blocks}}
 {{{this.additional_pallet_impl_code}}}
-
+{{#if this.configurable_parameter_types}}
+parameter_types! {
+{{#each this.configurable_parameter_types}}{{{this}}}
+{{/each}}
+}
+{{/if}}
 {{#if this.pallet_traits}}impl {{this.pallet_name}}::Config for Runtime {
 {{#each this.pallet_traits}}{{{this}}}{{/each}}
 }{{/if}}
