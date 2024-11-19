@@ -158,7 +158,7 @@ BountyDepositBase = "BountyDepositBase"
 CuratorDepositMin = "CuratorDepositMin"
 
 [dependencies]
-required_pallets = ["Pallet assets", "Pallet treasury"]
+required_pallets = ["Pallet Assets", "Pallet Treasury"]
 [dependencies.pallet]
 package = "pallet-bounties"
 alias = "pallet bounties"
