@@ -136,11 +136,9 @@ pub struct PalletConfig {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
 
     use crate::{
         code_generator::{generate_project, get_all_pallet_configs_from_dir},
-        types::{ParameterType, ParameterTypeExpression, ParameterTypePrefix},
         CONFIG_DIR,
     };
 

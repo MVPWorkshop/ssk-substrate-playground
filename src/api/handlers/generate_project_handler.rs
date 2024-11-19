@@ -7,11 +7,7 @@ use poem_openapi::{
 };
 use uuid::Uuid;
 
-use crate::{
-    code_generator::{generate_project, get_all_pallet_configs_from_dir},
-    types::PalletConfig,
-    CONFIG_DIR,
-};
+use crate::{code_generator::generate_project, types::PalletConfig};
 
 #[derive(Object, Clone)]
 pub struct ParameterConfiguration {
@@ -78,14 +74,6 @@ pub async fn generate_a_project_handler(
         }
     }
 
-    let essential: Vec<String> = get_all_pallet_configs_from_dir(CONFIG_DIR)
-        .await
-        .unwrap()
-        .into_iter()
-        .filter(|pallet| pallet.1.metadata.is_essential)
-        .map(|pallet| pallet.0)
-        .collect();
-
     // Get the required pallets for the pallets in the list
     let mut filtered: Vec<String> = config_pallets
         .iter()
@@ -101,6 +89,11 @@ pub async fn generate_a_project_handler(
         })
         .collect::<Vec<String>>();
 
+    let essential = config_pallets
+        .iter()
+        .filter(|pallet| pallet.1.metadata.is_essential)
+        .map(|pallet| pallet.0.clone())
+        .collect::<Vec<_>>();
     filtered.extend(essential);
 
     // create local coppy of the pallets
