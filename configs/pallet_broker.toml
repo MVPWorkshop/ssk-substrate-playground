@@ -1,4 +1,4 @@
-name = "Pallet Atomic"
+name = "Pallet Broker"
 
 [metadata]
 description = """Brokerage tool for managing Polkadot Core scheduling.

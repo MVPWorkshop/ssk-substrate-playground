@@ -1,10 +1,10 @@
-name = "Pallet child bounties"
+name = "Pallet Child Bounties"
 
 [metadata]
 description = """
 A pallet for managing child bounties within the governance system.
 The Child Bounties pallet allows for the creation and management of child bounties tied to a parent bounty, including: child bounty creation, value management, and payout distribution."""
-short_description = "FRAME child bounties pallet"
+short_description = "FRAME Child Bounties pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

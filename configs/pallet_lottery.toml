@@ -2,7 +2,7 @@ name = "Pallet Lottery"
 
 [metadata]
 description = "The lottery pallet in Polkadot FRAME enables the creation and management of lotteries where users can purchase tickets and participate in prize draws in a transparent and fair manner."
-short_description = "FRAME lottery pallet"
+short_description = "FRAME Lottery pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

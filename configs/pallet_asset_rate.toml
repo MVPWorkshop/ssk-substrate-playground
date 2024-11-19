@@ -2,7 +2,7 @@ name = "Pallet Asset Rate"
 
 [metadata]
 description = "The Asset Rate pallet facilitates the management of conversion rates between different types of assets within the Substrate ecosystem. It allows for the creation, updating, and removal of conversion rates, providing flexibility for economic models that require dynamic adjustment of asset values. This pallet is particularly useful in contexts like treasury, markets, or other modules that need precise tracking of asset valuations."
-short_description = "FRAME Asset rate pallet"
+short_description = "FRAME Asset Rate pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
@@ -16,13 +16,13 @@ updated = "1729175503"
 runtime = ["AssetRate", "pallet_asset_rate::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
-    WeightInfo = "pallet_asset_rate::weights::SubstrateWeight<Runtime>"
-    RuntimeEvent =" RuntimeEvent "
-	CreateOrigin = "EnsureRoot<AccountId> "
-    RemoveOrigin = "EnsureRoot<AccountId> "
-	UpdateOrigin = "EnsureRoot<AccountId> "
-	Currency = "Balances "
-	AssetKind = "<Runtime as pallet_treasury::Config>::AssetKind "
+WeightInfo = "pallet_asset_rate::weights::SubstrateWeight<Runtime>"
+RuntimeEvent = " RuntimeEvent "
+CreateOrigin = "EnsureRoot<AccountId> "
+RemoveOrigin = "EnsureRoot<AccountId> "
+UpdateOrigin = "EnsureRoot<AccountId> "
+Currency = "Balances "
+AssetKind = "<Runtime as pallet_treasury::Config>::AssetKind "
 
 
 [dependencies.pallet]

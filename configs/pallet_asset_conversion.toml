@@ -41,13 +41,13 @@ pub type NativeAndAssets =
 
 """
 additional_runtime_lib_code = [
-    "use frame_support::traits::fungible::NativeOrWithId;",
-    "use frame_support::traits::fungible::UnionOf;",
-    "use frame_support::traits::fungible::NativeFromLeft;",
-    "use pallet_asset_conversion::Chain;",
-    "use pallet_asset_conversion::WithFirstAsset;",
-    "use pallet_asset_conversion::AccountIdConverter;",
-    "use pallet_asset_conversion::Ascending;",
+	"use frame_support::traits::fungible::NativeOrWithId;",
+	"use frame_support::traits::fungible::UnionOf;",
+	"use frame_support::traits::fungible::NativeFromLeft;",
+	"use pallet_asset_conversion::Chain;",
+	"use pallet_asset_conversion::WithFirstAsset;",
+	"use pallet_asset_conversion::AccountIdConverter;",
+	"use pallet_asset_conversion::Ascending;",
 ]
 
 [runtime.construct_runtime]
@@ -88,7 +88,7 @@ PalletId = "AssetConversionPalletId"
 WeightInfo = "pallet_asset_conversion::weights::SubstrateWeight<Runtime>"
 
 [dependencies]
-required_pallets = ["Pallet assets"]
+required_pallets = ["Pallet Assets"]
 
 [dependencies.pallet]
 package = "pallet-asset-conversion"

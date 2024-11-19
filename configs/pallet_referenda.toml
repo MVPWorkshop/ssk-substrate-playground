@@ -2,7 +2,7 @@ name = "Pallet Referenda"
 
 [metadata]
 description = """The pallet_referenda enables governance mechanisms, allowing stakeholders to propose and vote on referenda. It provides essential configurations such as tallying systems, tracks, and submission deposit handling."""
-short_description = "FRAME referenda pallet"
+short_description = "FRAME Referenda pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
@@ -90,7 +90,12 @@ WeightInfo = "pallet_referenda::weights::SubstrateWeight<Runtime>"
 
 
 [dependencies]
-required_pallets = ["Pallet Conviction Voting","Pallet treasury","Pallet Scheduler","Pallet Preimage"]
+required_pallets = [
+	"Pallet Conviction Voting",
+	"Pallet Treasury",
+	"Pallet Scheduler",
+	"Pallet Preimage",
+]
 
 [dependencies.pallet]
 package = "pallet-referenda"

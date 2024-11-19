@@ -1,8 +1,8 @@
-name = "Pallet proxy"
+name = "Pallet Proxy"
 
 [metadata]
 description = "A pallet allowing accounts to give permission to other accounts to dispatch types of calls from their signed origin."
-short_description = "FRAME proxy pallet"
+short_description = "FRAME Proxy pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

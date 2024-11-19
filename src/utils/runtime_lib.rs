@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use dyn_fmt::AsStrFormatExt;
 use serde::Serialize;
 
 use crate::types::PalletConfig;
@@ -11,6 +12,7 @@ pub struct RuntimeImplBlocks {
     pub additional_pallet_impl_code: Option<String>,
     pub pallet_name: String,
     pub pallet_traits: Option<Vec<String>>,
+    pub configurable_parameter_types: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize)]
@@ -36,8 +38,8 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
             construct_runtime.push(format!(
                 "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {};",
                 index + 2,
-                pallet.runtime.construct_runtime.runtime.0,
-                pallet.runtime.construct_runtime.runtime.1,
+                pallet.runtime.construct_runtime.runtime[0],
+                pallet.runtime.construct_runtime.runtime[1],
             ));
             let additional_pallet_impl_code = pallet.runtime.additional_pallet_impl_code.clone();
             let pallet_name = pallet
@@ -58,10 +60,41 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
             } else {
                 Some(pallet_traits)
             };
+
+            let configurable_parameter_types = if let Some(optional_parameter_types) =
+                pallet.runtime.optional_parameter_types.clone()
+            {
+                let mut temp = vec![];
+                for (_, pt) in optional_parameter_types {
+                    let m = match pt.expression.configured_multiplier {
+                        Some(v) => v.to_string(),
+                        None => match pt.expression.default_multiiplier {
+                            Some(v) => v.to_string(),
+                            None => "".to_string(),
+                        },
+                    };
+                    let u = match pt.expression.configured_unit {
+                        Some(u) => u,
+                        None => pt.expression.default_unit,
+                    };
+                    let s = format!(
+                        "    pub{}{}: {} = {};",
+                        pt.prefix,
+                        pt.name,
+                        pt.p_type,
+                        pt.expression.format.format(&[u, m])
+                    );
+                    temp.push(s);
+                }
+                Some(temp)
+            } else {
+                None
+            };
             impl_blocks.push(RuntimeImplBlocks {
                 additional_pallet_impl_code,
                 pallet_name,
                 pallet_traits,
+                configurable_parameter_types,
             });
         }
         RuntimeLibAggregate {

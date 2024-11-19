@@ -1,4 +1,4 @@
-name = "pallet_sudo"
+name = "Pallet Sudo" #"pallet_sudo"
 
 [metadata]
 description = "A pallet to provide a way to execute privileged runtime calls using a specified sudo (“superuser do”) account."

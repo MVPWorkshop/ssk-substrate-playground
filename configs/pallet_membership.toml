@@ -1,8 +1,8 @@
-name = "Pallet membership"
+name = "Pallet Membership"
 
 [metadata]
 description = "Allows control of membership of a set of AccountIds, useful for managing membership of a collective. A prime member may be set."
-short_description = "FRAME membership pallet"
+short_description = "FRAME Membership pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"

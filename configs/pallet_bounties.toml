@@ -1,8 +1,8 @@
-name = "Pallet bounties"
+name = "Pallet Bounties"
 
 [metadata]
 description = "The Bounties pallet facilitates the management and payout of rewards for completing specific tasks or objectives, with a curator overseeing the process, and the ability to create child bounties for splitting larger tasks. It works closely with the Treasury pallet."
-short_description = "FRAME bounties pallet"
+short_description = "FRAME Bounties pallet"
 is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
@@ -15,17 +15,52 @@ updated = "1729175503"
 additional_pallet_impl_code = """
 
 parameter_types! {
-\tpub const BountyDepositBase: Balance = DOLLARS;
     pub const BountyDepositPayoutDelay: BlockNumber = DAYS;
     pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
     pub const BountyValueMinimum: Balance = 5 * DOLLARS;
-    pub const CuratorDepositMultiplier: Permill = Permill::from_percent(50);
     pub const CuratorDepositMin: Balance = DOLLARS;
     pub const CuratorDepositMax: Balance = 100 * DOLLARS;
     pub const BountyDataDepositPerByte: Balance = CENTS;
-    pub const BountyMaximumReasonLength: u32 = 16384;
 }
 """
+[runtime.optional_parameter_types.BountyDepositBase]
+name = "BountyDepositBase"
+description = "The base deposit required to propose a bounty. This ensures proposers have a minimum stake in the process."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.BountyDepositBase.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+[runtime.optional_parameter_types.BountyMaximumReasonLength]
+name = "BountyMaximumReasonLength"
+description = "The maximum length for the reason field in bounty proposals."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.BountyMaximumReasonLength.expression]
+default_unit = ""
+default_multiiplier = 16384
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+[runtime.optional_parameter_types.CuratorDepositMultiplier]
+name = "CuratorDepositMultiplier"
+description = "The proportion of the curator's deposit that is rewarded upon completion of the bounty."
+prefix = "const"
+p_type = "Permill"
+
+[runtime.optional_parameter_types.CuratorDepositMultiplier.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}Permill::from_percent({})"
+possible_units = []
+multiplier_configurable = true
 
 [runtime.construct_runtime]
 runtime = ["Bounties", "pallet_bounties::Pallet<Runtime>"]
