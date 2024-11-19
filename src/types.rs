@@ -136,17 +136,27 @@ pub struct PalletConfig {
 
 #[cfg(test)]
 mod tests {
-
     use crate::{
         code_generator::{generate_project, get_all_pallet_configs_from_dir},
         CONFIG_DIR,
     };
+    use scc::HashMap as ConcurrentHashMap;
+    use std::sync::Arc;
 
     #[tokio::test]
     #[ignore]
     async fn build_all_pallets() {
         let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
-        let pallets = pallets.into_iter().map(|tup| tup.1).collect::<Vec<_>>();
-        let _ = generate_project(&"test_project".to_string(), pallets).await;
+        let pallets = pallets
+            .into_iter()
+            .map(|(_, config)| config)
+            .collect::<Vec<_>>();
+        let _ = generate_project(
+            &"test_project".to_string(),
+            pallets,
+            uuid::Uuid::new_v4(),
+            Arc::new(ConcurrentHashMap::new()),
+        )
+        .await;
     }
 }

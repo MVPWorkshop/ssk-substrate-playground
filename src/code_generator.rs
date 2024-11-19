@@ -5,9 +5,12 @@ use crate::utils::runtime_lib::generate_runtime_lib_file;
 use super::types::PalletConfig;
 
 use log::{error, info};
+use scc::HashMap as ConcurrentHashMap;
 use std::collections::HashMap;
 use std::fmt;
 use std::path::Path;
+use std::sync::Arc;
+use uuid::Uuid;
 
 pub async fn create_new_project_async(project_name: &String) {
     // Base path for generated projects.
@@ -126,18 +129,25 @@ pub async fn get_all_pallet_configs_from_dir(
 pub async fn generate_project(
     project_name: &String,
     pallets: Vec<PalletConfig>,
-) -> Result<(), PalletConfigLoadError> {
+    task_id: Uuid,
+    task_status_map: Arc<ConcurrentHashMap<Uuid, Option<Result<(), PalletConfigLoadError>>>>,
+) {
     // Create a new project directory and copy the template.
     create_new_project_async(project_name).await;
     println!("Created project: {}", project_name);
 
     // Add the pallets to the new project.
     let x = project_name.clone();
-    tokio::task::spawn_blocking(move || add_pallets(&x, pallets))
+    let result = tokio::task::spawn_blocking(move || add_pallets(&x, pallets))
         .await
         .map_err(|e| PalletConfigLoadError {
             message: format!("Error adding pallets: {:?}", e),
-        })?;
+        });
+    let _ = task_status_map
+        .update_async(&task_id, |_, v| {
+            *v = Some(result);
+            v.clone()
+        })
+        .await;
     println!("Added pallets to the project: {}", project_name);
-    Ok(())
 }
