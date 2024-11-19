@@ -11,12 +11,6 @@ categories = ["Consensus"]
 size = 5078
 updated = "1729175503"
 
-[runtime]
-additional_chain_spec_code = ["use node_template_runtime::AuraId;"]
-additional_runtime_lib_code = [
-    "use sp_consensus_aura::sr25519::AuthorityId as AuraId;",
-]
-
 [runtime.construct_runtime]
 runtime = ["Aura", "pallet_aura"]
 
@@ -26,12 +20,6 @@ SlotDuration = "pallet_aura::MinimumPeriodTimesTwo<Runtime>"
 DisabledValidators = "()"
 AllowMultipleBlocksPerSlot = "ConstBool<false>"
 MaxAuthorities = "ConstU32<32>"
-
-[runtime.genesis_config]
-config_struct_name = "aura"
-
-[runtime.genesis_config.struct_fields]
-authorities = "initial_authorities.iter().map(|x| (x.0.clone())).collect::<Vec<_>>(),"
 
 [dependencies.pallet]
 package = "pallet-aura"

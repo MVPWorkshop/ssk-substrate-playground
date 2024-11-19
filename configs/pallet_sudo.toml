@@ -19,12 +19,6 @@ RuntimeCall = "RuntimeCall"
 RuntimeEvent = "RuntimeEvent"
 WeightInfo = "pallet_sudo::weights::SubstrateWeight<Runtime>"
 
-[runtime.genesis_config]
-config_struct_name = "sudo"
-
-[runtime.genesis_config.struct_fields]
-key = "Some(root_key)"
-
 [dependencies.pallet]
 package = "pallet-sudo"
 alias = "pallet sudo"

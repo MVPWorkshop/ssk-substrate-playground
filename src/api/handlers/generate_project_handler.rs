@@ -75,19 +75,26 @@ pub async fn generate_a_project_handler(
     }
 
     // Get the required pallets for the pallets in the list
-    let filtered = config_pallets
+    let mut filtered: Vec<String> = config_pallets
         .iter()
         // Get the pallets that are in the list of pallet names
         .filter(|(name, _)| project.0.pallets.contains_key(*name))
         // Get the required pallets for each pallet
         .flat_map(|(pallet_name, pallet)| {
-            let mut palet_with_reqs = vec![pallet_name.clone()];
+            let mut pallet_with_reqs = vec![pallet_name.clone()];
             if let Some(required_pallets) = pallet.dependencies.required_pallets.clone() {
-                palet_with_reqs.extend(required_pallets);
+                pallet_with_reqs.extend(required_pallets);
             }
-            palet_with_reqs
+            pallet_with_reqs
         })
+        .collect::<Vec<String>>();
+
+    let essential = config_pallets
+        .iter()
+        .filter(|pallet| pallet.1.metadata.is_essential)
+        .map(|pallet| pallet.0.clone())
         .collect::<Vec<_>>();
+    filtered.extend(essential);
 
     // create local coppy of the pallets
     let config_pallets = config_pallets

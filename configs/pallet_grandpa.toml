@@ -11,9 +11,6 @@ categories = ["Consensus"]
 size = 5078
 updated = "1729175503"
 
-[runtime]
-additional_runtime_lib_code = ["use pallet_grandpa::AuthorityId as GrandpaId;"]
-
 [runtime.construct_runtime]
 runtime = ["Grandpa", "pallet_grandpa"]
 
@@ -25,12 +22,6 @@ KeyOwnerProof = "sp_core::Void"
 MaxAuthorities = "ConstU32<32>"
 MaxNominators = "ConstU32<0>"
 EquivocationReportSystem = "()"
-
-[runtime.genesis_config]
-config_struct_name = "grandpa"
-
-[runtime.genesis_config.struct_fields]
-authorities = "initial_authorities.iter().map(|x| (x.1.clone(), 1)).collect::<Vec<_>>(),"
 
 [dependencies.pallet]
 package = "pallet-grandpa"

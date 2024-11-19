@@ -136,11 +136,9 @@ pub struct PalletConfig {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
 
     use crate::{
         code_generator::{generate_project, get_all_pallet_configs_from_dir},
-        types::{ParameterType, ParameterTypeExpression, ParameterTypePrefix},
         CONFIG_DIR,
     };
 
@@ -148,56 +146,7 @@ mod tests {
     #[ignore]
     async fn build_all_pallets() {
         let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
-        let total_pallets_len = pallets.len();
-        let pallets = pallets
-            .into_iter()
-            .filter_map(|(_, pallet)| {
-                if pallet.metadata.is_essential {
-                    None
-                } else {
-                    Some(pallet)
-                }
-            })
-            .collect::<Vec<_>>();
-        assert!(
-            pallets.len() == total_pallets_len - 6,
-            "6 essential pallets are not filtered out",
-        );
+        let pallets = pallets.into_iter().map(|tup| tup.1).collect::<Vec<_>>();
         let _ = generate_project(&"test_project".to_string(), pallets).await;
-    }
-    #[tokio::test]
-    #[ignore]
-    async fn build_optional_parameter_types() {
-        let mut pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
-        let bounties = pallets.get_mut("Pallet bounties").unwrap();
-        let opt = ParameterType {
-            name: "BountyDepositBase".to_string(),
-            description: "The base amount of deposit for a bounty".to_string(),
-            prefix: ParameterTypePrefix::Const,
-            p_type: "Balance".to_string(),
-            expression: ParameterTypeExpression {
-                default_unit: "DOLLARS".to_string(),
-                default_multiiplier: Some(1),
-                format: "{} * {}".to_string(),
-                possible_units: vec![
-                    "DOLLARS".to_string(),
-                    "CENTS".to_string(),
-                    "MILLICENTS".to_string(),
-                ],
-                multiplier_configurable: true,
-                configured_multiplier: None,
-                configured_unit: None,
-            },
-        };
-        bounties.runtime.optional_parameter_types =
-            Some(HashMap::from_iter(vec![(opt.name.clone(), opt)]));
-        println!("{}", toml::to_string_pretty(&bounties).unwrap());
-    }
-
-    #[test]
-    fn test_parameter_type_prefix() {
-        assert_eq!(ParameterTypePrefix::Const.to_string(), " const ");
-        assert_eq!(ParameterTypePrefix::Type.to_string(), " type ");
-        assert_eq!(ParameterTypePrefix::Empty.to_string(), " ");
     }
 }

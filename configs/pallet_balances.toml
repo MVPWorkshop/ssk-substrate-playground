@@ -16,6 +16,14 @@ updated = "1729175503"
 [runtime.construct_runtime]
 runtime = ["Balances", "pallet_balances"]
 
+[runtime]
+additional_pallet_impl_code = """
+
+/// Existential deposit.
+pub const EXISTENTIAL_DEPOSIT: u128 = 500;
+
+"""
+
 [runtime.pallet_traits]
 MaxFreezes = "VariantCountOf<RuntimeFreezeReason>"
 WeightInfo = "pallet_balances::weights::SubstrateWeight<Runtime>"
@@ -30,12 +38,6 @@ RuntimeFreezeReason = "RuntimeHoldReason"
 AccountStore = "System"
 ExistentialDeposit = "ConstU128<500>"
 FreezeIdentifier = "RuntimeFreezeReason"
-
-[runtime.genesis_config]
-config_struct_name = "balances"
-
-[runtime.genesis_config.struct_fields]
-balances = "endowed_accounts.iter().cloned().map(|k| (k, 1u64 << 60)).collect::<Vec<_>>(),"
 
 [dependencies.pallet]
 package = "pallet-balances"

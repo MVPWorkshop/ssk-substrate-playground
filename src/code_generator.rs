@@ -129,7 +129,6 @@ pub async fn generate_project(
 ) -> Result<(), PalletConfigLoadError> {
     // Create a new project directory and copy the template.
     create_new_project_async(project_name).await;
-
     println!("Created project: {}", project_name);
 
     // Add the pallets to the new project.
