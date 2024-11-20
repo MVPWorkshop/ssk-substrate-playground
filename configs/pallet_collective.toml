@@ -11,32 +11,73 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
 
-parameter_types! {
-\tpub const CouncilMotionDuration: BlockNumber = 3 * MINUTES;
-\tpub const CouncilMaxProposals: u32 = 100;
-\tpub const CouncilMaxMembers: u32 = 100;
-\t
-\t// From system config trait impl.
-\tpub MaxCollectivesProposalWeight: Weight = Perbill::from_percent(50) * BlockWeights::get().max_block;
-}
-"""
+# pub const CouncilMotionDuration: BlockNumber = 3 * MINUTES;
+[runtime.optional_parameter_types.CouncilMotionDuration]
+name = "CouncilMotionDuration"
+description = "The duration of council motions, defined in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.CouncilMotionDuration.expression]
+default_unit = "MINUTES"
+default_multiiplier = 3
+format = "{} * {}"
+possible_units = ["MINUTES", "HOURS", "DAYS"]
+multiplier_configurable = true
+
+# pub const CouncilMaxProposals: u32 = 100;
+[runtime.optional_parameter_types.CouncilMaxProposals]
+name = "CouncilMaxProposals"
+description = "The maximum number of proposals allowed in the council."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.CouncilMaxProposals.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const CouncilMaxMembers: u32 = 100;
+[runtime.optional_parameter_types.CouncilMaxMembers]
+name = "CouncilMaxMembers"
+description = "The maximum number of members allowed in the council."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.CouncilMaxMembers.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub MaxCollectivesProposalWeight: Weight = Perbill::from_percent(50) * BlockWeights::get().max_block;
+[runtime.optional_parameter_types.MaxCollectivesProposalWeight]
+name = "MaxCollectivesProposalWeight"
+description = "The maximum weight of proposals for collectives, calculated as 50% of the maximum block weight."
+prefix = "empty"
+p_type = "Weight"
+[runtime.optional_parameter_types.MaxCollectivesProposalWeight.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Collective", "pallet_collective::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 MaxProposals = "CouncilMaxProposals"
-SetMembersOrigin = "EnsureRoot<Self::AccountId>"
 MaxProposalWeight = "MaxCollectivesProposalWeight"
+MotionDuration = "CouncilMotionDuration"
+MaxMembers = "CouncilMaxMembers"
+SetMembersOrigin = "EnsureRoot<Self::AccountId>"
 RuntimeEvent = "RuntimeEvent"
 WeightInfo = "pallet_collective::weights::SubstrateWeight<Runtime>"
 RuntimeOrigin = "RuntimeOrigin"
-MotionDuration = "CouncilMotionDuration"
 DefaultVote = "pallet_collective::PrimeDefaultVote"
-MaxMembers = "CouncilMaxMembers"
 Proposal = "RuntimeCall"
 
 [dependencies.pallet]
