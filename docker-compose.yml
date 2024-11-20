@@ -11,4 +11,16 @@ services:
       - ./generated_code:/app/generated_code
     restart: unless-stopped
     env_file:
-      - .env
+      - .env.dev
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    env_file:
+      - .env.dev
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./init-scripts:/etc/localstack/init/ready.d/"

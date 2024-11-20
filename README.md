@@ -33,11 +33,19 @@ cargo build
 
 This will download all necessary dependencies, including actix-web, serde, and substrate-runtime-builder.
 
-### 3. Run the Application
+### 3. Install cargo-dotenv to run with enviroment files
+```bash
+cargo install cargo-dotenv
+```
+### 4. Run the Application
 To start the server, run:
 
 ```bash
-cargo run
+cargo dotenv -e .env.local run
+```
+### 5. Run the docker-compose
+```bash
+docker-compose up -d
 ```
 
 The server will start at http://127.0.0.1:8080. You should see the following message in the console:
