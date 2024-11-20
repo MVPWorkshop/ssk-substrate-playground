@@ -35,24 +35,45 @@ impl ConvertBack<u128, u64> for SimpleBalanceConverter {
 }
 
 parameter_types! {
-   
-
-
-    pub TimeslicePeriod: u32 = 20;
-    pub MaxBroker: u32 = 100;
     pub const BrokerPalletId: PalletId = PalletId(*b"py/broke");
-
 }
 
-
-
 """
+
+# pub TimeslicePeriod: u32 = 20;
+[runtime.optional_parameter_types.TimeslicePeriod]
+name = "TimeslicePeriod"
+description = "The period for processing timeslices."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.TimeslicePeriod.expression]
+default_unit = ""
+default_multiiplier = 20
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub MaxBroker: u32 = 100;
+[runtime.optional_parameter_types.MaxBroker]
+name = "MaxBroker"
+description = "The maximum number of brokers allowed in the system."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxBroker.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
 
 [runtime.construct_runtime]
 runtime = ["Broker", "pallet_broker::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+TimeslicePeriod = "TimeslicePeriod"
+MaxLeasedCores = "MaxBroker"
+MaxReservedCores = "MaxBroker"
 RuntimeEvent = "RuntimeEvent"
 WeightInfo = "pallet_broker::weights::SubstrateWeight<Runtime>"
 Currency = "Balances"
@@ -62,9 +83,6 @@ Coretime = "()"                                                 #"CoretimeInterf
 PriceAdapter = "pallet_broker::CenterTargetPrice<Balance>"
 ConvertBalance = "SimpleBalanceConverter"                       # "sp_runtime::traits::Identity"
 PalletId = "BrokerPalletId"
-TimeslicePeriod = "TimeslicePeriod"
-MaxLeasedCores = "MaxBroker"
-MaxReservedCores = "MaxBroker"
 
 
 [dependencies.pallet]
