@@ -11,25 +11,43 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
+# pub const VoteLockingPeriod: BlockNumber = 1 * DAYS;
+[runtime.optional_parameter_types.VoteLockingPeriod]
+name = "VoteLockingPeriod"
+description = "The duration for which votes are locked, expressed in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.VoteLockingPeriod.expression]
+default_unit = "DAYS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
 
-parameter_types! {
-	pub const VoteLockingPeriod: BlockNumber = 1 * DAYS;
-}
-"""
+# pub const MaxVotesConvictionVoting: u32 = 512;
+[runtime.optional_parameter_types.MaxVotesConvictionVoting]
+name = "MaxVotesConvictionVoting"
+description = "The maximum number of votes allowed in conviction voting."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxVotesConvictionVoting.expression]
+default_unit = ""
+default_multiiplier = 512
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
 [runtime.construct_runtime]
 runtime = ["ConvictionVoting", "pallet_conviction_voting::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+MaxVotes = "MaxVotesConvictionVoting"
+VoteLockingPeriod = "VoteLockingPeriod"
 WeightInfo = "pallet_conviction_voting::weights::SubstrateWeight<Runtime>"
 RuntimeEvent = "RuntimeEvent"
 Currency = "Balances"
 Polls = "Referenda"
 MaxTurnout = "frame_support::traits::ActiveIssuanceOf<Balances, Self::AccountId>"
-MaxVotes = "ConstU32<512>"
-VoteLockingPeriod = "VoteLockingPeriod"
 
 
 [dependencies]
