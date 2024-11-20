@@ -16,6 +16,7 @@ updated = "1729175503"
 [runtime.construct_runtime]
 runtime = ["Balances", "pallet_balances"]
 
+# ! Leaving EXISTENTIAL_DEPOSIT as it is, because it is required to be imported in node/src/command.rs:10:41
 [runtime]
 additional_pallet_impl_code = """
 
@@ -24,19 +25,33 @@ pub const EXISTENTIAL_DEPOSIT: u128 = 500;
 
 """
 
+# pub const MaxLocks: u32 = 50;
+[runtime.optional_parameter_types.MaxLocks]
+name = "MaxLocks"
+description = "The maximum number of locks a single account can have."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.MaxLocks.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
 [runtime.pallet_traits]
+MaxLocks = "MaxLocks"
+ExistentialDeposit = "ConstU128<500>"
 MaxFreezes = "VariantCountOf<RuntimeFreezeReason>"
 WeightInfo = "pallet_balances::weights::SubstrateWeight<Runtime>"
 Balance = "Balance"
 MaxReserves = "()"
-MaxLocks = "ConstU32<50>"
 ReserveIdentifier = "[u8; 8]"
 RuntimeEvent = "RuntimeEvent"
 DustRemoval = "()"
 RuntimeHoldReason = "RuntimeHoldReason"
 RuntimeFreezeReason = "RuntimeHoldReason"
 AccountStore = "System"
-ExistentialDeposit = "ConstU128<500>"
 FreezeIdentifier = "RuntimeFreezeReason"
 
 [dependencies.pallet]
