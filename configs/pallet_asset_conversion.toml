@@ -26,13 +26,8 @@ updated = "1729175503"
 additional_pallet_impl_code = """
 
 parameter_types! {
-
 	pub const AssetConversionPalletId: PalletId = PalletId(*b"py/ascon");
-    pub const PoolSetupFee: Balance = 1 * DOLLARS; // should be more or equal to the existential deposit
-	pub const MintMinLiquidity: Balance = 100;  // 100 is good enough when the main currency has 10-12 decimals.
-	pub const LiquidityWithdrawalFee: Permill = Permill::from_percent(0);
 	pub const Native: NativeOrWithId<u32> = NativeOrWithId::Native;
-
 }
 
 
@@ -40,6 +35,7 @@ pub type NativeAndAssets =
 	UnionOf<Balances, Assets, NativeFromLeft, NativeOrWithId<u32>, AccountId>;
 
 """
+
 additional_runtime_lib_code = [
 	"use frame_support::traits::fungible::NativeOrWithId;",
 	"use frame_support::traits::fungible::UnionOf;",
@@ -49,6 +45,78 @@ additional_runtime_lib_code = [
 	"use pallet_asset_conversion::AccountIdConverter;",
 	"use pallet_asset_conversion::Ascending;",
 ]
+
+
+# ! PoolSetupFee
+[runtime.optional_parameter_types.PoolSetupFee]
+name = "PoolSetupFee"
+description = "The fee required to create a new liquidity pool. Must be greater than or equal to the existential deposit."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.PoolSetupFee.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# ! MintMinLiquidity
+[runtime.optional_parameter_types.MintMinLiquidity]
+name = "MintMinLiquidity"
+description = "The minimum liquidity required when minting a new liquidity pool."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.MintMinLiquidity.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = false
+
+# ! LiquidityithdrawalFee
+[runtime.optional_parameter_types.LiquidityWithdrawalFee]
+name = "LiquidityWithdrawalFee"
+description = "The fee applied when withdrawing liquidity from a pool, as a proportion of the withdrawn amount."
+prefix = "const"
+p_type = "Permill"
+
+[runtime.optional_parameter_types.LiquidityWithdrawalFee.expression]
+default_unit = ""
+default_multiiplier = 0
+format = "{}Permill::from_percent({})"
+possible_units = []
+multiplier_configurable = true
+
+# ! LPFee 
+[runtime.optional_parameter_types.LPFee]
+name = "LPFee"
+description = "The fee charged on liquidity pool transactions, represented as a percentage."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.LPFee.expression]
+default_unit = ""
+default_multiiplier = 3
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# ! MaxSwapPathLength 
+[runtime.optional_parameter_types.MaxSwapPathLength]
+name = "MaxSwapPathLength"
+description = "The maximum number of assets in the swap path for a single transaction."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.MaxSwapPathLength.expression]
+default_unit = ""
+default_multiiplier = 4
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["AssetConversion", "pallet_asset_conversion::Pallet<Runtime>"]
@@ -77,13 +145,13 @@ PoolAssetId = "u32" # "<Self as pallet_assets::Config<Instance2>>::AssetId"
 #should be instance2
 PoolAssets = "Assets"
 # means 0.3%
-LPFee = "ConstU32<3> "
+LPFee = "LPFee"
+MaxSwapPathLength = "MaxSwapPathLength"
 PoolSetupFee = "PoolSetupFee"
 PoolSetupFeeAsset = "Native"
 PoolSetupFeeTarget = "()"                                                 #"ResolveAssetTo<AssetConversionOrigin, Self::Assets>"
 LiquidityWithdrawalFee = "LiquidityWithdrawalFee"
 MintMinLiquidity = "MintMinLiquidity"
-MaxSwapPathLength = "ConstU32<4>"
 PalletId = "AssetConversionPalletId"
 WeightInfo = "pallet_asset_conversion::weights::SubstrateWeight<Runtime>"
 
