@@ -77,16 +77,16 @@ pub async fn get_all_pallet_configs_from_dir(
     // Read directory entries
     let mut read_dir = tokio::fs::read_dir(dir)
         .await
-        .map_err(|_| PalletConfigLoadError {
-            message: "read dir error.".to_string(),
+        .map_err(|e| PalletConfigLoadError {
+            message: format!("Failed to read directory: {:?}", e),
         })?;
 
     let mut dir_entries = vec![];
     while let Some(entry) = read_dir
         .next_entry()
         .await
-        .map_err(|_| PalletConfigLoadError {
-            message: "Failed to read directory entry.".to_string(),
+        .map_err(|e| PalletConfigLoadError {
+            message: format!("Failed to read directory: {:?}", e),
         })?
     {
         dir_entries.push(entry);
