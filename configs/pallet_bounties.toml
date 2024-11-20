@@ -11,18 +11,7 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
-
-parameter_types! {
-    pub const BountyDepositPayoutDelay: BlockNumber = DAYS;
-    pub const BountyUpdatePeriod: BlockNumber = 14 * DAYS;
-    pub const BountyValueMinimum: Balance = 5 * DOLLARS;
-    pub const CuratorDepositMin: Balance = DOLLARS;
-    pub const CuratorDepositMax: Balance = 100 * DOLLARS;
-    pub const BountyDataDepositPerByte: Balance = CENTS;
-}
-"""
+# ! BountyDepositBase
 [runtime.optional_parameter_types.BountyDepositBase]
 name = "BountyDepositBase"
 description = "The base deposit required to propose a bounty. This ensures proposers have a minimum stake in the process."
@@ -36,6 +25,7 @@ format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
 
+# ! BountyMaximumReasonLenght
 [runtime.optional_parameter_types.BountyMaximumReasonLength]
 name = "BountyMaximumReasonLength"
 description = "The maximum length for the reason field in bounty proposals."
@@ -49,6 +39,7 @@ format = "{}{}"
 possible_units = []
 multiplier_configurable = true
 
+# ! CuratorDepositMultiplier
 [runtime.optional_parameter_types.CuratorDepositMultiplier]
 name = "CuratorDepositMultiplier"
 description = "The proportion of the curator's deposit that is rewarded upon completion of the bounty."
@@ -61,6 +52,92 @@ default_multiiplier = 50
 format = "{}Permill::from_percent({})"
 possible_units = []
 multiplier_configurable = true
+
+# ! BountyDepositPayoutDelay
+[runtime.optional_parameter_types.BountyDepositPayoutDelay]
+name = "BountyDepositPayoutDelay"
+description = "The delay in blocks before a bounty deposit is paid out."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.BountyDepositPayoutDelay.expression]
+default_unit = "DAYS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# ! BountyUpdatePeriod
+[runtime.optional_parameter_types.BountyUpdatePeriod]
+name = "BountyUpdatePeriod"
+description = "The number of blocks during which a bounty can be updated."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.BountyUpdatePeriod.expression]
+default_unit = "DAYS"
+default_multiiplier = 14
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# ! BountyValueMinimum
+[runtime.optional_parameter_types.BountyValueMinimum]
+name = "BountyValueMinimum"
+description = "The minimum value required to fund a bounty."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.BountyValueMinimum.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 5
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS"]
+multiplier_configurable = true
+
+# ! CuratorDepositMin
+[runtime.optional_parameter_types.CuratorDepositMin]
+name = "CuratorDepositMin"
+description = "The minimum deposit required from a curator."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.CuratorDepositMin.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+
+# ! CuratorDepositMax
+[runtime.optional_parameter_types.CuratorDepositMax]
+name = "CuratorDepositMax"
+description = "The maximum deposit required from a curator."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.CuratorDepositMax.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 100
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# ! BountyDataDepositPerByte
+[runtime.optional_parameter_types.BountyDataDepositPerByte]
+name = "BountyDataDepositPerByte"
+description = "The deposit required per byte of bounty description data."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.BountyDataDepositPerByte.expression]
+default_unit = "CENTS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Bounties", "pallet_bounties::Pallet<Runtime>"]
@@ -78,10 +155,10 @@ MaximumReasonLength = "BountyMaximumReasonLength"
 WeightInfo = "pallet_bounties::weights::SubstrateWeight<Runtime>"
 CuratorDepositMax = "CuratorDepositMax"
 BountyDepositBase = "BountyDepositBase"
-CuratorDepositMin = "CuratorDepositMax"
+CuratorDepositMin = "CuratorDepositMin"
 
 [dependencies]
-required_pallets = ["Pallet assets", "Pallet treasury"]
+required_pallets = ["Pallet Assets", "Pallet Treasury"]
 [dependencies.pallet]
 package = "pallet-bounties"
 alias = "pallet bounties"
