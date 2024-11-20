@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  ssk-substrate-playground:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./generated_code:/app/generated_code
+    restart: unless-stopped
+    env_file:
+      - .env
