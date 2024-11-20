@@ -16,6 +16,7 @@ async fn main() -> Result<(), std::io::Error> {
         std::env::set_var("RUST_LOG", "poem=debug");
     }
     tracing_subscriber::fmt::init();
+    println!("Initializing Substrate Runtime Builder API server...");
 
     let data = Arc::new(
         get_all_pallet_configs_from_dir(CONFIG_DIR)
