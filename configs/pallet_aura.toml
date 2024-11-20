@@ -14,12 +14,40 @@ updated = "1729175503"
 [runtime.construct_runtime]
 runtime = ["Aura", "pallet_aura"]
 
+[runtime]
+# pub const AllowMultipleBlocksPerSlot: bool = false;
+[runtime.optional_parameter_types.AllowMultipleBlocksPerSlot]
+name = "AllowMultipleBlocksPerSlot"
+description = "A boolean flag to allow or disallow multiple blocks to be produced in the same slot."
+prefix = "const"
+p_type = "bool"
+[runtime.optional_parameter_types.AllowMultipleBlocksPerSlot.expression]
+default_unit = "false"
+default_multiiplier = 1
+format = "{}"
+possible_units = ["true", "false"]
+multiplier_configurable = false
+
+# pub const MaxAuthorities: u32 = 32;
+[runtime.optional_parameter_types.MaxAuthoritiesAura]
+name = "MaxAuthoritiesAura"
+description = "The maximum number of authorities allowed in the consensus mechanism."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxAuthoritiesAura.expression]
+default_unit = ""
+default_multiiplier = 32
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
 AuthorityId = "AuraId"
 SlotDuration = "pallet_aura::MinimumPeriodTimesTwo<Runtime>"
 DisabledValidators = "()"
-AllowMultipleBlocksPerSlot = "ConstBool<false>"
-MaxAuthorities = "ConstU32<32>"
+AllowMultipleBlocksPerSlot = "AllowMultipleBlocksPerSlot"
+MaxAuthorities = "MaxAuthoritiesAura"
 
 [dependencies.pallet]
 package = "pallet-aura"
