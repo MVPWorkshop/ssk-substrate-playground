@@ -13,23 +13,42 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
 
-parameter_types! {
-\tpub const MaxActiveChildBountyCount:u32=100;
-    pub const ChildBountyValueMinimum: Balance=BountyValueMinimum::get()/10;
-}
-"""
+# pub const MaxActiveChildBountyCount: u32 = 100;
+[runtime.optional_parameter_types.MaxActiveChildBountyCount]
+name = "MaxActiveChildBountyCount"
+description = "The maximum number of active child bounties allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxActiveChildBountyCount.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const ChildBountyValueMinimum: Balance = BountyValueMinimum::get() / 10;
+[runtime.optional_parameter_types.ChildBountyValueMinimum]
+name = "ChildBountyValueMinimum"
+description = "The minimum value required to fund a child bounty, calculated as one-tenth of the parent bounty value."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.ChildBountyValueMinimum.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "BountyValueMinimum::get() / {}{}"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["ChildBounties", "pallet_child_bounties::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+MaxActiveChildBountyCount = "MaxActiveChildBountyCount"
 ChildBountyValueMinimum = "ChildBountyValueMinimum"
 WeightInfo = "pallet_child_bounties::weights::SubstrateWeight<Runtime>"
 RuntimeEvent = "RuntimeEvent"
-MaxActiveChildBountyCount = "MaxActiveChildBountyCount"
 
 [dependencies]
 required_pallets = ["Pallet bounties"]
