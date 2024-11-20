@@ -33,8 +33,8 @@ impl frame_support::traits::FindAuthor<AccountId> for AuraAccountAdapter {
 runtime = ["Authorship", "pallet_authorship::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
-    FindAuthor = "AuraAccountAdapter"
-    EventHandler = "()"
+FindAuthor = "AuraAccountAdapter"
+EventHandler = "()"
 
 
 [dependencies.pallet]
