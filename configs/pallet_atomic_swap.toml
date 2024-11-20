@@ -11,14 +11,18 @@ categories = ["Assets"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
-
-
-parameter_types! {
-	pub ProofLimit: u32 = 1024;
-}
-"""
+# pub ProofLimit: u32 = 1024;
+[runtime.optional_parameter_types.ProofLimit]
+name = "ProofLimit"
+description = "The maximum size of a proof in bytes."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.ProofLimit.expression]
+default_unit = ""
+default_multiiplier = 1024
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
 [runtime.construct_runtime]
 runtime = ["AtomicSwap", "pallet_atomic_swap::Pallet<Runtime>"]
