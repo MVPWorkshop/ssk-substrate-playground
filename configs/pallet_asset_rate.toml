@@ -17,12 +17,15 @@ runtime = ["AssetRate", "pallet_asset_rate::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 WeightInfo = "pallet_asset_rate::weights::SubstrateWeight<Runtime>"
-RuntimeEvent = " RuntimeEvent "
-CreateOrigin = "EnsureRoot<AccountId> "
-RemoveOrigin = "EnsureRoot<AccountId> "
-UpdateOrigin = "EnsureRoot<AccountId> "
-Currency = "Balances "
-AssetKind = "<Runtime as pallet_treasury::Config>::AssetKind "
+RuntimeEvent = "RuntimeEvent"
+CreateOrigin = "EnsureRoot<AccountId>"
+RemoveOrigin = "EnsureRoot<AccountId>"
+UpdateOrigin = "EnsureRoot<AccountId>"
+Currency = "Balances"
+AssetKind = "<Runtime as pallet_treasury::Config>::AssetKind"
+
+[dependencies]
+required_pallets = ["Pallet Treasury"]
 
 
 [dependencies.pallet]
