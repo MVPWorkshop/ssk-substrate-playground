@@ -12,42 +12,124 @@ size = 10500
 updated = "1729175503"
 
 [runtime]
-additional_pallet_impl_code = """
-
-parameter_types! {
-\tpub const AssetDeposit: Balance = 100 * DOLLARS;
-\tpub const ApprovalDeposit: Balance = 1 * DOLLARS;
-\tpub const StringLimit: u32 = 50;
-\tpub const MetadataDepositBase: Balance = 10 * DOLLARS;
-\tpub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
-}
-"""
 additional_runtime_lib_code = [
     "use frame_support::traits::AsEnsureOriginWithArg;",
 ]
+
+# pub const AssetDeposit: Balance = 100 * DOLLARS;
+[runtime.optional_parameter_types.AssetDeposit]
+name = "AssetDeposit"
+description = "The deposit required to create a new asset."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.AssetDeposit.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 100
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const ApprovalDeposit: Balance = 1 * DOLLARS;
+[runtime.optional_parameter_types.ApprovalDeposit]
+name = "ApprovalDeposit"
+description = "The deposit required for asset approval requests."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.ApprovalDeposit.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const StringLimit: u32 = 50;
+[runtime.optional_parameter_types.StringLimit]
+name = "StringLimit"
+description = "The maximum length for string fields, such as asset names or symbols."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.StringLimit.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MetadataDepositBase: Balance = 10 * DOLLARS;
+[runtime.optional_parameter_types.MetadataDepositBase]
+name = "MetadataDepositBase"
+description = "The base deposit required for asset metadata storage."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.MetadataDepositBase.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 10
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const MetadataDepositPerByte: Balance = 1 * DOLLARS;
+[runtime.optional_parameter_types.MetadataDepositPerByte]
+name = "MetadataDepositPerByte"
+description = "The deposit required per byte of asset metadata."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.MetadataDepositPerByte.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const RemoveItemsLimit: u32 = 1000;
+[runtime.optional_parameter_types.RemoveItemsLimit]
+name = "RemoveItemsLimit"
+description = "The maximum number of items that can be removed in a single operation."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.RemoveItemsLimit.expression]
+default_unit = ""
+default_multiiplier = 1000
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const AssetAccountDeposit: Balance = DOLLARS;
+[runtime.optional_parameter_types.AssetAccountDeposit]
+name = "AssetAccountDeposit"
+description = "The deposit required to create an account for a specific asset."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.AssetAccountDeposit.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Assets", "pallet_assets::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 ApprovalDeposit = "ApprovalDeposit"
+AssetDeposit = "AssetDeposit"
+AssetAccountDeposit = "AssetAccountDeposit"
 MetadataDepositPerByte = "MetadataDepositPerByte"
-RemoveItemsLimit = "ConstU32<1000>"
+MetadataDepositBase = "MetadataDepositBase"
+RemoveItemsLimit = "RemoveItemsLimit"
+StringLimit = "StringLimit"
 CreateOrigin = "AsEnsureOriginWithArg<EnsureSigned<AccountId>>"
 AssetIdParameter = "codec::Compact<u32>"
 WeightInfo = "pallet_assets::weights::SubstrateWeight<Runtime>"
-Extra = "()"
-AssetDeposit = "AssetDeposit"
-MetadataDepositBase = "MetadataDepositBase"
 ForceOrigin = "EnsureRoot<AccountId>"
 RuntimeEvent = "RuntimeEvent"
 AssetId = "u32"
-AssetAccountDeposit = "ConstU128<DOLLARS>"
-Freezer = "()"
-CallbackHandle = "()"
-StringLimit = "StringLimit"
 Balance = "u128"
 Currency = "Balances"
+Extra = "()"
+Freezer = "()"
+CallbackHandle = "()"
 
 [dependencies.pallet]
 package = "pallet-assets"
