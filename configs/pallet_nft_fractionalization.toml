@@ -19,10 +19,23 @@ parameter_types! {
 	pub const NftFractionalizationPalletId: PalletId = PalletId(*b"fraction");
 	pub NewAssetSymbol: BoundedVec<u8, AssetsStringLimit> = (*b"FRAC").to_vec().try_into().unwrap();
 	pub NewAssetName: BoundedVec<u8, AssetsStringLimit> = (*b"Frac").to_vec().try_into().unwrap();
-	pub const AssetsStringLimit: u32 = 50;
 }
 """
 additional_runtime_lib_code = ["use frame_support::BoundedVec;"]
+
+
+# pub const AssetsStringLimit: u32 = 50;
+[runtime.optional_parameter_types.AssetsStringLimit]
+name = "AssetsStringLimit"
+description = "The maximum length of the asset string."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.AssetsStringLimit.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
 [runtime.construct_runtime]
 runtime = [
@@ -31,21 +44,21 @@ runtime = [
 ]
 
 [runtime.pallet_traits]
-RuntimeEvent = "RuntimeEvent "
-Deposit = "AssetDeposit "
-Currency = "Balances "
-NewAssetSymbol = "NewAssetSymbol "
-NewAssetName = "NewAssetName "
-StringLimit = "AssetsStringLimit "
-NftCollectionId = "<Self as pallet_nfts::Config>::CollectionId "
-NftId = "<Self as pallet_nfts::Config>::ItemId "
-AssetBalance = "<Self as pallet_balances::Config>::Balance "
-AssetId = "<Self as pallet_assets::Config>::AssetId "
-Assets = "Assets "
-Nfts = "Nfts "
-PalletId = "NftFractionalizationPalletId "
+StringLimit = "AssetsStringLimit"
+RuntimeEvent = "RuntimeEvent"
+Deposit = "AssetDeposit"
+Currency = "Balances"
+NewAssetSymbol = "NewAssetSymbol"
+NewAssetName = "NewAssetName"
+NftCollectionId = "<Self as pallet_nfts::Config>::CollectionId"
+NftId = "<Self as pallet_nfts::Config>::ItemId"
+AssetBalance = "<Self as pallet_balances::Config>::Balance"
+AssetId = "<Self as pallet_assets::Config>::AssetId"
+Assets = "Assets"
+Nfts = "Nfts"
+PalletId = "NftFractionalizationPalletId"
 WeightInfo = "pallet_nft_fractionalization::weights::SubstrateWeight<Runtime>"
-RuntimeHoldReason = "RuntimeHoldReason "
+RuntimeHoldReason = "RuntimeHoldReason"
 
 
 [dependencies]
