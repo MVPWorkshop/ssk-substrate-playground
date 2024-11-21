@@ -16,11 +16,6 @@ additional_pallet_impl_code = """
 
 
 parameter_types! {
-	pub const NisBasePeriod: BlockNumber = 30 * DAYS;
-	pub const MinBid: Balance = 100;
-	pub MinReceipt: Perquintill = Perquintill::from_rational(1u64, 10_000_000u64);
-	pub const IntakePeriod: BlockNumber = 5 * MINUTES;
-	pub MaxIntakeWeight: Weight = Weight::from_parts(10_000, u64::MAX);
 	pub const ThawThrottle: (Perquintill, BlockNumber) = (Perquintill::from_percent(25), 5);
 	pub storage NisTarget: Perquintill = Perquintill::zero();
 	pub const NisPalletId: PalletId = PalletId(*b"py/nis  ");
@@ -32,10 +27,127 @@ additional_runtime_lib_code = [
 	"use pallet_nis::WithMaximumOf;",
 ]
 
+
+# pub const NisBasePeriod: BlockNumber = 30 * DAYS;
+[runtime.optional_parameter_types.NisBasePeriod]
+name = "NisBasePeriod"
+description = "The base period for Nis, in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.NisBasePeriod.expression]
+default_unit = "DAYS"
+default_multiiplier = 30
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const MinBid: Balance = 100;
+[runtime.optional_parameter_types.MinBid]
+name = "MinBid"
+description = "The minimum bid value, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.MinBid.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MinReceipt: Perquintill = Perquintill::from_rational(1u64, 10_000_000u64);
+[runtime.optional_parameter_types.MinReceipt]
+name = "MinReceipt"
+description = "The minimum receipt value, expressed as a Perquintill."
+prefix = "empty"
+p_type = "Perquintill"
+[runtime.optional_parameter_types.MinReceipt.expression]
+default_unit = ""
+default_multiiplier = 10_000_000
+format = "{}Perquintill::from_rational(1u64, {}u64)"
+possible_units = []
+multiplier_configurable = true
+
+# pub const IntakePeriod: BlockNumber = 5 * MINUTES;
+[runtime.optional_parameter_types.IntakePeriod]
+name = "IntakePeriod"
+description = "The intake period duration, in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.IntakePeriod.expression]
+default_unit = "MINUTES"
+default_multiiplier = 5
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const MaxIntakeWeight: Weight = Weight::from_parts(10_000, u64::MAX);
+[runtime.optional_parameter_types.MaxIntakeWeight]
+name = "MaxIntakeWeight"
+description = "The maximum intake weight, represented by the weight in blocks and the maximum possible value."
+prefix = "const"
+p_type = "Weight"
+[runtime.optional_parameter_types.MaxIntakeWeight.expression]
+default_unit = ""
+default_multiiplier = 10_000
+format = "{}Weight::from_parts({}, u64::MAX)"
+possible_units = []
+multiplier_configurable = true
+
+
+# pub const QueueCount: u32 = 300;
+[runtime.optional_parameter_types.QueueCount]
+name = "QueueCount"
+description = "The maximum number of items in the queue."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.QueueCount.expression]
+default_unit = ""
+default_multiiplier = 300
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxQueueLen: u32 = 1000;
+[runtime.optional_parameter_types.MaxQueueLen]
+name = "MaxQueueLen"
+description = "The maximum length of the queue."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxQueueLen.expression]
+default_unit = ""
+default_multiiplier = 1000
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const FifoQueueLen: u32 = 250;
+[runtime.optional_parameter_types.FifoQueueLen]
+name = "FifoQueueLen"
+description = "The length of the FIFO queue."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.FifoQueueLen.expression]
+default_unit = ""
+default_multiiplier = 250
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.construct_runtime]
 runtime = ["Nis", "pallet_nis::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+QueueCount = "QueueCount"
+MaxQueueLen = "MaxQueueLen"
+FifoQueueLen = "FifoQueueLen"
+Target = "NisTarget"
+BasePeriod = "NisBasePeriod"
+MinBid = "MinBid"
+MinReceipt = "MinReceipt"
+IntakePeriod = "IntakePeriod"
+MaxIntakeWeight = "MaxIntakeWeight"
+ThawThrottle = "ThawThrottle"
 WeightInfo = "pallet_nis::weights::SubstrateWeight<Runtime>"
 RuntimeEvent = "RuntimeEvent"
 Currency = "Balances"
@@ -45,17 +157,7 @@ Counterpart = "Balances"                                                       #
 CounterpartAmount = "WithMaximumOf<ConstU128<21_000_000_000_000_000_000u128>>"
 Deficit = "()"
 IgnoredIssuance = "()"
-Target = "NisTarget"
 PalletId = "NisPalletId"
-QueueCount = "ConstU32<300>"
-MaxQueueLen = "ConstU32<1000>"
-FifoQueueLen = "ConstU32<250>"
-BasePeriod = "NisBasePeriod"
-MinBid = "MinBid"
-MinReceipt = "MinReceipt"
-IntakePeriod = "IntakePeriod"
-MaxIntakeWeight = "MaxIntakeWeight"
-ThawThrottle = "ThawThrottle"
 RuntimeHoldReason = "RuntimeHoldReason"
 
 [dependencies.pallet]
