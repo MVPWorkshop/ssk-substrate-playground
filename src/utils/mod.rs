@@ -44,3 +44,15 @@ where
     std::fs::remove_file(template_path)?;
     Ok(())
 }
+
+pub fn render_handlebars_template_to_bytes<T>(
+    template_path: &str,
+    data: &T,
+) -> Result<Vec<u8>, TemplateRenderError>
+where
+    T: Serialize,
+{
+    let mut handlebars = handlebars::Handlebars::new();
+    handlebars.register_template_file(TEMPLATE, template_path)?;
+    Ok(handlebars.render(TEMPLATE, data)?.into_bytes())
+}

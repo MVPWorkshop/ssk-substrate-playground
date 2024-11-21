@@ -1,6 +1,7 @@
+use crate::services::template_archiver::{TemplateArchiverError, TemplateArchiverService};
 use crate::utils::file_manager::{copy_dir_recursive, create_new_folder};
-use crate::utils::manifest::generate_manifest_file;
-use crate::utils::runtime_lib::generate_runtime_lib_file;
+use crate::utils::manifest::{generate_manifest_file, generate_manifest_file_to_bytes};
+use crate::utils::runtime_lib::{generate_runtime_lib_file, generate_runtime_lib_file_bytes};
 
 use super::types::PalletConfig;
 
@@ -57,6 +58,39 @@ pub fn add_pallets(project_name: &String, pallet_configs: Vec<PalletConfig>) {
         &pallet_configs,
     )
     .unwrap();
+}
+
+pub async fn add_pallets_to_archive<ZB, TAS>(
+    template_archive_service: &TAS,
+    zipper_buffer: ZB,
+    pallet_configs: Vec<PalletConfig>,
+) -> Result<ZB, TemplateArchiverError>
+where
+    TAS: TemplateArchiverService<ZippedBuffer = ZB>,
+{
+    let manifest_file_path = "templates/solochain/basic/runtime/Cargo.toml.hbs";
+    let manifest_file_content =
+        generate_manifest_file_to_bytes(manifest_file_path, &pallet_configs).unwrap();
+    let zipper_buffer = template_archive_service
+        .add_content_to_archive(
+            zipper_buffer,
+            &manifest_file_content,
+            Path::new("runtime/Cargo.toml"),
+        )
+        .await?;
+
+    let runtime_lib_file_path = "templates/solochain/basic/runtime/src/lib.rs.hbs";
+    let runtime_lib_file_content =
+        generate_runtime_lib_file_bytes(runtime_lib_file_path, &pallet_configs).unwrap();
+    let zipper_buffer = template_archive_service
+        .add_content_to_archive(
+            zipper_buffer,
+            &runtime_lib_file_content,
+            Path::new("runtime/src/lib.rs"),
+        )
+        .await?;
+
+    Ok(zipper_buffer)
 }
 
 // TODO: Make proper Errors, with thiserror
@@ -150,4 +184,34 @@ pub async fn generate_project(
         })
         .await;
     println!("Added pallets to the project: {}", project_name);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        services::template_archiver::async_zip::AsyncZipTemplateArchiverService, CONFIG_DIR,
+    };
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_add_archived_pallets() {
+        let pallets = get_all_pallet_configs_from_dir(CONFIG_DIR).await.unwrap();
+        let pallets = pallets
+            .into_iter()
+            .map(|(_, config)| config)
+            .collect::<Vec<_>>();
+        let archiver = AsyncZipTemplateArchiverService;
+        let zipper_buffer = archiver
+            .archive_template(Path::new("templates/solochain/basic"), "hbs")
+            .await;
+        let zipper_buffer =
+            add_pallets_to_archive(&archiver, zipper_buffer.unwrap(), pallets).await;
+        // save zipper_buffer to file test.zip in root directory
+        let bytes = archiver
+            .close_archive(zipper_buffer.unwrap())
+            .await
+            .unwrap();
+        tokio::fs::write("test.zip", bytes).await.unwrap();
+    }
 }

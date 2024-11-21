@@ -5,7 +5,7 @@ use serde::Serialize;
 
 use crate::types::PalletConfig;
 
-use super::{render_handlebars_template, TemplateRenderError};
+use super::{render_handlebars_template, render_handlebars_template_to_bytes, TemplateRenderError};
 
 #[derive(Debug, Serialize)]
 pub struct RuntimeImplBlocks {
@@ -111,4 +111,12 @@ pub fn generate_runtime_lib_file(
 ) -> Result<(), TemplateRenderError> {
     let runtime_lib_aggregate: RuntimeLibAggregate = pallet_configs.to_vec().into();
     render_handlebars_template(runtime_lib_file_path, &runtime_lib_aggregate)
+}
+
+pub fn generate_runtime_lib_file_bytes(
+    runtime_lib_file_path: &str,
+    pallet_configs: &[PalletConfig],
+) -> Result<Vec<u8>, TemplateRenderError> {
+    let runtime_lib_aggregate: RuntimeLibAggregate = pallet_configs.to_vec().into();
+    render_handlebars_template_to_bytes(runtime_lib_file_path, &runtime_lib_aggregate)
 }
