@@ -24,7 +24,7 @@ parameter_types! {
 }
 """
 
-# pub const CodeHashLockupDepositPercent: Perbill = Perbill::from_percent(20);
+# ! pub const CodeHashLockupDepositPercent: Perbill = Perbill::from_percent(20);
 [runtime.optional_parameter_types.CodeHashLockupDepositPercent]
 name = "CodeHashLockupDepositPercent"
 description = "The percentage of deposit locked up for code hash, expressed as a Perbill."
@@ -89,7 +89,7 @@ format = "{}*{}"
 possible_units = ["1024 * 1024"]
 multiplier_configurable = true
 
-# pub const UnsafeUnstableInterface: bool = true;
+# ! pub const UnsafeUnstableInterface: bool = true;
 [runtime.optional_parameter_types.UnsafeUnstableInterface]
 name = "UnsafeUnstableInterface"
 description = "A flag indicating whether the unsafe unstable interface is enabled."
@@ -99,7 +99,7 @@ p_type = "bool"
 default_unit = "true"
 default_multiiplier = 1
 format = "{}"
-possible_units = []
+possible_units = ["true", "false"]
 multiplier_configurable = false
 
 
