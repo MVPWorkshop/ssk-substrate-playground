@@ -15,33 +15,136 @@ updated = "1729175503"
 additional_pallet_impl_code = '''
 
 parameter_types! {
-    pub const GraceStrikes: u32 = 10;
-    pub const SocietyVotingPeriod: BlockNumber = 80 * HOURS;
-    pub const ClaimPeriod: BlockNumber = 80 * HOURS;
-    pub const PeriodSpend: Balance = 500 * DOLLARS;
-    pub const MaxLockDuration: BlockNumber = 36 * 30 * DAYS;
-    pub const ChallengePeriod: BlockNumber = 7 * DAYS;
-    pub const MaxPayouts: u32 = 10;
-    pub const MaxBids: u32 = 10;
     pub const SocietyPalletId: PalletId = PalletId(*b"py/socie");
 }
 '''
+# pub const SocietyMaxLockDuration: BlockNumber = 1080 * DAYS;
+[runtime.optional_parameter_types.SocietyMaxLockDuration]
+name = "SocietyMaxLockDuration"
+description = "The maximum duration in blocks for which funds can be locked in the society."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.SocietyMaxLockDuration.expression]
+default_unit = "DAYS"
+default_multiiplier = 1080
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const SocietyChallengePeriod: BlockNumber = 7 * DAYS;
+[runtime.optional_parameter_types.SocietyChallengePeriod]
+name = "SocietyChallengePeriod"
+description = "The period in blocks during which challenges can be raised."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.SocietyChallengePeriod.expression]
+default_unit = "DAYS"
+default_multiiplier = 7
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const SocietyPeriodSpend: Balance = 500 * DOLLARS;
+[runtime.optional_parameter_types.SocietyPeriodSpend]
+name = "SocietyPeriodSpend"
+description = "The amount of balance spent per period by the society."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.SocietyPeriodSpend.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 500
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS"]
+multiplier_configurable = true
+
+# pub const SocietyClaimPeriod: BlockNumber = 80 * HOURS;
+[runtime.optional_parameter_types.SocietyClaimPeriod]
+name = "SocietyClaimPeriod"
+description = "The period in blocks within which society claims must be made."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.SocietyClaimPeriod.expression]
+default_unit = "HOURS"
+default_multiiplier = 80
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const SocietyGraceStrikes: u32 = 10;
+[runtime.optional_parameter_types.SocietyGraceStrikes]
+name = "SocietyGraceStrikes"
+description = "The number of grace strikes allowed before expulsion from the society."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.SocietyGraceStrikes.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const SocietyVotingPeriod: BlockNumber = 80 * HOURS;
+[runtime.optional_parameter_types.SocietyVotingPeriod]
+name = "SocietyVotingPeriod"
+description = "The voting period in blocks for society proposals."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.SocietyVotingPeriod.expression]
+default_unit = "HOURS"
+default_multiiplier = 80
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const SocietyMaxPayouts: u32 = 10;
+[runtime.optional_parameter_types.SocietyMaxPayouts]
+name = "SocietyMaxPayouts"
+description = "The maximum number of payouts allowed per cycle for the society."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.SocietyMaxPayouts.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+# pub const SocietyMaxBids: u32 = 10;
+[runtime.optional_parameter_types.SocietyMaxBids]
+name = "SocietyMaxBids"
+description = "The maximum number of bids allowed at any time for the society."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.SocietyMaxBids.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Society", "pallet_society::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
-GraceStrikes = "GraceStrikes"
-MaxLockDuration = "MaxLockDuration"
+GraceStrikes = "SocietyGraceStrikes"
+MaxLockDuration = "SocietyMaxLockDuration"
 Currency = "Balances"
-PeriodSpend = "PeriodSpend"
+PeriodSpend = "SocietyPeriodSpend"
 Randomness = "RandomnessCollectiveFlip"
-ChallengePeriod = "ChallengePeriod"
+ChallengePeriod = "SocietyChallengePeriod"
 VotingPeriod = "SocietyVotingPeriod"
-MaxPayouts = "MaxPayouts"
-MaxBids = "MaxBids"
+MaxPayouts = "SocietyMaxPayouts"
+MaxBids = "SocietyMaxBids"
 WeightInfo = "pallet_society::weights::SubstrateWeight<Runtime>"
-ClaimPeriod = "ClaimPeriod"
+ClaimPeriod = "SocietyClaimPeriod"
 FounderSetOrigin = "EnsureRoot<Self::AccountId>"
 PalletId = "SocietyPalletId"
 RuntimeEvent = "RuntimeEvent"
