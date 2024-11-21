@@ -17,26 +17,55 @@ additional_pallet_impl_code = """
 
 parameter_types! {
     pub const LotteryPalletId: PalletId = PalletId(*b"py/lotto");
-    pub const MaxCalls: u32 = 10;
-    pub const MaxGenerateRandom: u32 = 10;
 }
 """
 additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
+
+
+# pub const MaxCalls: u32 = 10;
+[runtime.optional_parameter_types.MaxCalls]
+name = "MaxCalls"
+description = "The maximum number of calls allowed in a batch."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxCalls.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxGenerateRandom: u32 = 10;
+[runtime.optional_parameter_types.MaxGenerateRandom]
+name = "MaxGenerateRandom"
+description = "The maximum number of random values that can be generated in a single operation."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxGenerateRandom.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Lottery", "pallet_lottery::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+MaxCalls = "MaxCalls"
+MaxGenerateRandom = "MaxGenerateRandom"
 PalletId = "LotteryPalletId"
 RuntimeCall = "RuntimeCall"
 Currency = "Balances"
 Randomness = "RandomnessCollectiveFlip"
 RuntimeEvent = "RuntimeEvent"
 ManagerOrigin = "EitherOfDiverse<EnsureRoot<AccountId>,pallet_collective::EnsureProportionMoreThan<AccountId,(), 1, 2>,>"
-MaxCalls = "MaxCalls"
 ValidateCall = "Lottery"
-MaxGenerateRandom = "MaxGenerateRandom"
 WeightInfo = "pallet_lottery::weights::SubstrateWeight<Runtime>"
+
+
+# ! Depends on RandomnessCollectiveFlip -> right now it is hard-coded in temlpate
 
 [dependencies.pallet]
 package = "pallet-lottery"
