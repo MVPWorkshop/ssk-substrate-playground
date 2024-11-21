@@ -11,29 +11,71 @@ categories = ["Accounts"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code ="""
-parameter_types! {
-	pub const ConfigDepositBase: Balance = 5 *  DOLLARS;
-	pub const FriendDepositFactor: Balance = 50 * CENTS;
-	pub const MaxFriends: u16 = 9;
-	pub const RecoveryDeposit: Balance = 5 *  DOLLARS;
-}
-"""
+# pub const ConfigDepositBase: Balance = 5 * DOLLARS;
+[runtime.optional_parameter_types.ConfigDepositBase]
+name = "ConfigDepositBase"
+description = "The base deposit required for configuration."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.ConfigDepositBase.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 5
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const FriendDepositFactor: Balance = 50 * CENTS;
+[runtime.optional_parameter_types.FriendDepositFactor]
+name = "FriendDepositFactor"
+description = "The deposit factor for each friend."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.FriendDepositFactor.expression]
+default_unit = "CENTS"
+default_multiiplier = 50
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const MaxFriends: u16 = 9;
+[runtime.optional_parameter_types.MaxFriends]
+name = "MaxFriends"
+description = "The maximum number of friends allowed."
+prefix = "const"
+p_type = "u16"
+[runtime.optional_parameter_types.MaxFriends.expression]
+default_unit = ""
+default_multiiplier = 9
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const RecoveryDeposit: Balance = 5 * DOLLARS;
+[runtime.optional_parameter_types.RecoveryDeposit]
+name = "RecoveryDeposit"
+description = "The deposit required for account recovery."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.RecoveryDeposit.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 5
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
 
 
 [runtime.construct_runtime]
 runtime = ["Recovery", "pallet_recovery::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
-RuntimeEvent = "RuntimeEvent"
-WeightInfo = "pallet_recovery::weights::SubstrateWeight<Runtime>"
-RuntimeCall = "RuntimeCall"
-Currency = "Balances"
 ConfigDepositBase = "ConfigDepositBase"
 FriendDepositFactor = "FriendDepositFactor"
 MaxFriends = "MaxFriends"
 RecoveryDeposit = "RecoveryDeposit"
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_recovery::weights::SubstrateWeight<Runtime>"
+RuntimeCall = "RuntimeCall"
+Currency = "Balances"
 
 
 [dependencies.pallet]
