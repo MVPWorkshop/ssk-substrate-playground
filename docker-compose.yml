@@ -24,3 +24,4 @@ services:
       - DATA_DIR=/tmp/localstack/data
     volumes:
       - "./init-scripts:/etc/localstack/init/ready.d/"
+      - "./templates:/etc/app/templates/"
