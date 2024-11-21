@@ -76,7 +76,7 @@ p_type = "u128"
 default_unit = "1000"
 default_multiiplier = 10
 format = "{}*{}"
-possible_units = []
+possible_units = ["1000"]
 multiplier_configurable = true
 
 # pub const UniquesItemDeposit: u128 = 1*1000;
@@ -87,9 +87,9 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.UniquesItemDeposit.expression]
 default_unit = "1000"
-default_multiiplier = 10
+default_multiiplier = 1
 format = "{}*{}"
-possible_units = []
+possible_units = ["1000"]
 multiplier_configurable = true
 
 # pub const UniquesKeyLimit: u32 = 64;
@@ -115,7 +115,7 @@ p_type = "u128"
 default_unit = "1000"
 default_multiiplier = 1
 format = "{}*{}"
-possible_units = []
+possible_units = ["1000"]
 multiplier_configurable = true
 
 
