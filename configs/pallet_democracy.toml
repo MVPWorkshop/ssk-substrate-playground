@@ -11,50 +11,131 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
 
-    parameter_types! { 
-            pub const MinimumDeposit: u128 = 100 * 1_000_000_000_000;
-            pub const Period: u32 = 5 * MINUTES;
-            pub const FastTrackVotingPeriod: u32 = MINUTES / 2;
-            pub const CooloffPeriod: u32 = 2 * MINUTES;
-            pub const MaxAll: u32 = 128;
-        }
-    """
+# pub const MinimumDeposit: u128 = 100 * 1_000_000_000_000;
+[runtime.optional_parameter_types.MinimumDeposit]
+name = "MinimumDeposit"
+description = "The minimum deposit required, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.MinimumDeposit.expression]
+default_unit = "1_000_000_000_000"
+default_multiiplier = 100
+format = "{}*{}"
+possible_units = ["1_000_000_000_000"]
+multiplier_configurable = true
+
+# pub const Period: u32 = 5 * MINUTES;
+[runtime.optional_parameter_types.Period]
+name = "Period"
+description = "The regular period in blocks, expressed as a multiple of minutes."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.Period.expression]
+default_unit = "MINUTES"
+default_multiiplier = 5
+format = "{} * {}"
+possible_units = ["MINUTES", "HOURS", "DAYS"]
+multiplier_configurable = true
+
+# pub const FastTrackVotingPeriod: u32 = MINUTES / 2;
+[runtime.optional_parameter_types.FastTrackVotingPeriod]
+name = "FastTrackVotingPeriod"
+description = "The duration of the fast-track voting period, expressed in blocks."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.FastTrackVotingPeriod.expression]
+default_unit = "MINUTES"
+default_multiiplier = 2
+format = "{} / {}"
+possible_units = ["MINUTES", "HOURS", "DAYS"]
+multiplier_configurable = true
+
+# pub const CooloffPeriod: u32 = 2 * MINUTES;
+[runtime.optional_parameter_types.CooloffPeriod]
+name = "CooloffPeriod"
+description = "The cool-off period after an action, expressed in blocks."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.CooloffPeriod.expression]
+default_unit = "MINUTES"
+default_multiiplier = 2
+format = "{} * {}"
+possible_units = ["MINUTES", "HOURS", "DAYS"]
+multiplier_configurable = true
+
+# pub const MaxAll: u32 = 128;
+[runtime.optional_parameter_types.MaxAll]
+name = "MaxAll"
+description = "The maximum value allowed for this configuration."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxAll.expression]
+default_unit = ""
+default_multiiplier = 128
+format = "{}{}"
+possible_units = []
+multiplier_configurable = false
+
+# pub const InstantAllowed: bool = true;
+[runtime.optional_parameter_types.InstantAllowed]
+name = "InstantAllowed"
+description = "A flag indicating whether instant actions are allowed."
+prefix = "const"
+p_type = "bool"
+[runtime.optional_parameter_types.InstantAllowed.expression]
+default_unit = "true"
+default_multiiplier = 1
+format = "{}"
+possible_units = ["true", "false"]
+multiplier_configurable = false
+
+# pub const VoteLockingPeriod: u32 = 2 * MINUTES;
+[runtime.optional_parameter_types.VoteLockingPeriod]
+name = "VoteLockingPeriodDemocracy"
+description = "The duration for which votes are locked, expressed in blocks."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.VoteLockingPeriod.expression]
+default_unit = "MINUTES"
+default_multiiplier = 2
+format = "{} * {}"
+possible_units = ["MINUTES", "HOURS", "DAYS"]
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Democracy", "pallet_democracy::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+EnactmentPeriod = "Period"
+LaunchPeriod = "Period"
+VotingPeriod = "Period"
 MaxBlacklisted = "MaxAll"
+MaxVotes = "MaxAll"
+MaxProposals = "MaxAll"
+MaxDeposits = "MaxAll"
+CooloffPeriod = "CooloffPeriod"
+MinimumDeposit = "MinimumDeposit"
+FastTrackVotingPeriod = "FastTrackVotingPeriod"
+InstantAllowed = "InstantAllowed"
+VoteLockingPeriod = "VoteLockingPeriodDemocracy"
 WeightInfo = "pallet_democracy::weights::SubstrateWeight<Runtime>"
 Preimages = "Preimage"
 SubmitOrigin = "EnsureSigned<AccountId>"
 PalletsOrigin = "OriginCaller"
-MaxVotes = "MaxAll"
 FastTrackOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 2, 3>"
 ExternalDefaultOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>"
-EnactmentPeriod = "Period"
 Slash = "()"
-LaunchPeriod = "Period"
-VotingPeriod = "Period"
 ExternalOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 2>"
-MaxProposals = "MaxAll"
 InstantOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>"
-MaxDeposits = "MaxAll"
 VetoOrigin = "pallet_collective::EnsureMember<AccountId, ()>"
 CancellationOrigin = "EitherOfDiverse<EnsureRoot<AccountId>, pallet_collective::EnsureProportionAtLeast<AccountId, (), 2, 3>>"
 Currency = "Balances"
-InstantAllowed = "ConstBool<true>"
 Scheduler = "Scheduler"
-CooloffPeriod = "CooloffPeriod"
-FastTrackVotingPeriod = "FastTrackVotingPeriod"
 CancelProposalOrigin = "EitherOfDiverse<EnsureRoot<AccountId>, pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 1>>"
 ExternalMajorityOrigin = "pallet_collective::EnsureProportionAtLeast<AccountId, (), 1, 2>"
-VoteLockingPeriod = "ConstU32<{ 2 * MINUTES }>"
 BlacklistOrigin = "EnsureRoot<AccountId>"
-MinimumDeposit = "MinimumDeposit"
 RuntimeEvent = "RuntimeEvent"
 
 [dependencies]
