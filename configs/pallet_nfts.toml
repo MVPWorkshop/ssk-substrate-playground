@@ -25,31 +25,201 @@ additional_runtime_lib_code = ["use pallet_nfts::PalletFeatures;"]
 [runtime.construct_runtime]
 runtime = ["Nfts", "pallet_nfts::Pallet<Runtime>"]
 
+# pub const ItemDeposit: u128 = 1 * 1000;
+[runtime.optional_parameter_types.ItemDepositNfts]
+name = "ItemDepositNfts"
+description = "The deposit required for an item, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.ItemDepositNfts.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const MaxDeadlineDuration: u32 = 1000;
+[runtime.optional_parameter_types.MaxDeadlineDurationNfts]
+name = "MaxDeadlineDurationNfts"
+description = "The maximum duration allowed for a deadline, in blocks."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxDeadlineDurationNfts.expression]
+default_unit = ""
+default_multiiplier = 1000
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxAttributesPerCall: u32 = 5;
+[runtime.optional_parameter_types.MaxAttributesPerCallNfts]
+name = "MaxAttributesPerCallNfts"
+description = "The maximum number of attributes allowed per call."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxAttributesPerCallNfts.expression]
+default_unit = ""
+default_multiiplier = 5
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const KeyLimit: u32 = 64;
+[runtime.optional_parameter_types.KeyLimitNfts]
+name = "KeyLimitNfts"
+description = "The maximum number of keys allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.KeyLimitNfts.expression]
+default_unit = ""
+default_multiiplier = 64
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const StringLimit: u32 = 256;
+[runtime.optional_parameter_types.StringLimitNfts]
+name = "StringLimitNfts"
+description = "The maximum length of a string, in characters."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.StringLimitNfts.expression]
+default_unit = ""
+default_multiiplier = 256
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxTips: u32 = 10;
+[runtime.optional_parameter_types.MaxTipsNfts]
+name = "MaxTipsNfts"
+description = "The maximum number of tips allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxTipsNfts.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MetadataDepositBase: u128 = 1 * 1000;
+[runtime.optional_parameter_types.MetadataDepositBaseNfts]
+name = "MetadataDepositBaseNfts"
+description = "The base deposit required for metadata, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.MetadataDepositBaseNfts.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const ValueLimit: u32 = 256;
+[runtime.optional_parameter_types.ValueLimitNfts]
+name = "ValueLimitNfts"
+description = "The maximum value limit."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.ValueLimitNfts.expression]
+default_unit = ""
+default_multiiplier = 256
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const CollectionDeposit: u128 = 10 * 1000;
+[runtime.optional_parameter_types.CollectionDepositNfts]
+name = "CollectionDepositNfts"
+description = "The deposit required for a collection, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.CollectionDepositNfts.expression]
+default_unit = "1000"
+default_multiiplier = 10
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const DepositPerByte: u128 = 10;
+[runtime.optional_parameter_types.DepositPerByteNfts]
+name = "DepositPerByteNfts"
+description = "The deposit required per byte of data, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.DepositPerByteNfts.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const AttributeDepositBase: u128 = 1 * 1000;
+[runtime.optional_parameter_types.AttributeDepositBaseNfts]
+name = "AttributeDepositBaseNfts"
+description = "The base deposit required for attributes, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.AttributeDepositBaseNfts.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const ApprovalsLimit: u32 = 100;
+[runtime.optional_parameter_types.ApprovalsLimitNfts]
+name = "ApprovalsLimitNfts"
+description = "The maximum number of approvals allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.ApprovalsLimitNfts.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const ItemAttributesApprovalsLimit: u32 = 100;
+[runtime.optional_parameter_types.ItemAttributesApprovalsLimitNfts]
+name = "ItemAttributesApprovalsLimitNfts"
+description = "The maximum number of item attribute approvals allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.ItemAttributesApprovalsLimitNfts.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
-ItemDeposit = "ConstU128<{ 1 * 1000 }>"
-MaxDeadlineDuration = "ConstU32<1000>"
-MaxAttributesPerCall = "ConstU32<5>"
+ItemDeposit = "ItemDepositNfts"
+MaxDeadlineDuration = "MaxDeadlineDurationNfts"
+MaxAttributesPerCall = "MaxAttributesPerCallNfts"
+KeyLimit = "KeyLimitNfts"
+StringLimit = "StringLimitNfts"
+MaxTips = "MaxTipsNfts"
+MetadataDepositBase = "MetadataDepositBaseNfts"
+ValueLimit = "ValueLimitNfts"
+CollectionDeposit = "CollectionDepositNfts"
+DepositPerByte = "DepositPerByteNfts"
+AttributeDepositBase = "AttributeDepositBaseNfts"
+ApprovalsLimit = "ApprovalsLimitNfts"
+ItemAttributesApprovalsLimit = "ItemAttributesApprovalsLimitNfts"
 Features = "NftsPalletFeatures"
 WeightInfo = "pallet_nfts::weights::SubstrateWeight<Runtime>"
 Locker = "()"
 OffchainPublic = "<Signature as sp_runtime::traits::Verify>::Signer"
-KeyLimit = "ConstU32<64>"
-StringLimit = "ConstU32<256>"
 OffchainSignature = "Signature"
 CollectionId = "u32"
-MaxTips = "ConstU32<10>"
-MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
-ValueLimit = "ConstU32<256>"
-CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
 Currency = "Balances"
 CreateOrigin = "EnsureSigned<Self::AccountId>"
-DepositPerByte = "ConstU128<10>"
 RuntimeEvent = "RuntimeEvent"
-AttributeDepositBase = "ConstU128<{ 1 * 1000 }>"
 ItemId = "u32"
 ForceOrigin = "EnsureRoot<Self::AccountId>"
-ApprovalsLimit = "ConstU32<100>"
-ItemAttributesApprovalsLimit = "ConstU32<100>"
 
 [dependencies.pallet]
 package = "pallet-nfts"
