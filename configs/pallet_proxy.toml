@@ -68,17 +68,44 @@ additional_runtime_lib_code = [
 [runtime.construct_runtime]
 runtime = ["Proxy", "pallet_proxy::Pallet<Runtime>"]
 
+# pub const MaxPending: u32 = 32;
+[runtime.optional_parameter_types.MaxPending]
+name = "MaxPending"
+description = "The maximum number of pending items."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxPending.expression]
+default_unit = ""
+default_multiiplier = 32
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxProxies: u32 = 32;
+[runtime.optional_parameter_types.MaxProxies]
+name = "MaxProxies"
+description = "The maximum number of proxies allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxProxies.expression]
+default_unit = ""
+default_multiiplier = 32
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
+MaxPending = "MaxPending"
+MaxProxies = "MaxProxies"
 CallHasher = "BlakeTwo256"
 AnnouncementDepositBase = "AnnouncementDepositBase"
-MaxPending = "ConstU32<32>"
 ProxyType = "ProxyType"
 RuntimeCall = "RuntimeCall"
 RuntimeEvent = "RuntimeEvent"
 Currency = "Balances"
 ProxyDepositBase = "ProxyDepositBase"
 ProxyDepositFactor = "ProxyDepositFactor"
-MaxProxies = "ConstU32<32>"
 AnnouncementDepositFactor = "AnnouncementDepositFactor"
 WeightInfo = "pallet_proxy::weights::SubstrateWeight<Runtime>"
 
