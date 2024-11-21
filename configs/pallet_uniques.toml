@@ -50,7 +50,7 @@ p_type = "u128"
 default_unit = "1000"
 default_multiiplier = 10
 format = "{}*{}"
-possible_units = []
+possible_units = ["1000"]
 multiplier_configurable = true
 
 # pub const UniquesValueLimit: u32 = 256;
