@@ -30,6 +30,20 @@ additional_runtime_lib_code = [
     "use frame_support::traits::Contains;",
 ]
 
+# pub const TxPauseMaxNameLen: u32 = 256;
+[runtime.optional_parameter_types.TxPauseMaxNameLen]
+name = "TxPauseMaxNameLen"
+description = "Maximum length allowed for transaction pause names."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.TxPauseMaxNameLen.expression]
+default_unit = ""
+default_multiiplier = 256
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.construct_runtime]
 runtime = ["TxPause", "pallet_tx_pause::Pallet<Runtime>"]
 
@@ -39,7 +53,7 @@ RuntimeCall = "RuntimeCall"
 PauseOrigin = "EnsureRoot<AccountId>"
 UnpauseOrigin = "EnsureRoot<AccountId>"
 WhitelistedCalls = "TxPauseWhitelistedCalls"
-MaxNameLen = "ConstU32<256>"
+MaxNameLen = "TxPauseMaxNameLen"
 WeightInfo = "pallet_tx_pause::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
