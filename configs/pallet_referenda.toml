@@ -11,13 +11,63 @@ categories = ["Governance"]
 size = 12000
 updated = "1729175503"
 
+
+# pub const MaxQueued: u32 = 100;
+[runtime.optional_parameter_types.MaxQueued]
+name = "MaxQueued"
+description = "The maximum number of queued items."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxQueued.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+# pub const AlarmInterval: BlockNumber = 1;
+[runtime.optional_parameter_types.AlarmInterval]
+name = "AlarmInterval"
+description = "The interval for alarm, in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.AlarmInterval.expression]
+default_unit = ""
+default_multiiplier = 1
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const SubmissionDeposit: Balance = 100 * DOLLARS;
+[runtime.optional_parameter_types.SubmissionDeposit]
+name = "SubmissionDeposit"
+description = "The deposit required for submission, expressed in DOLLARS."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.SubmissionDeposit.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 100
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
+
+# pub const UndecidingTimeout: BlockNumber = 28 * DAYS;
+[runtime.optional_parameter_types.UndecidingTimeout]
+name = "UndecidingTimeout"
+description = "The timeout period for undeciding, in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.UndecidingTimeout.expression]
+default_unit = "DAYS"
+default_multiiplier = 28
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+
 [runtime]
 additional_pallet_impl_code = """
-parameter_types! {
-	pub const AlarmInterval: BlockNumber = 1;
-	pub const SubmissionDeposit: Balance = 100 * DOLLARS;
-	pub const UndecidingTimeout: BlockNumber = 28 * DAYS;
-}
 
 pub struct TracksInfo;
 impl pallet_referenda::TracksInfo<Balance, BlockNumber> for TracksInfo {
@@ -70,21 +120,21 @@ pallet_referenda::impl_tracksinfo_get!(TracksInfo, Balance, BlockNumber);
 runtime = ["Referenda", "pallet_referenda::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+MaxQueued = "ConstU32<100>"
 AlarmInterval = "AlarmInterval"
+SubmissionDeposit = "SubmissionDeposit"
+UndecidingTimeout = "UndecidingTimeout"
 CancelOrigin = "EnsureRoot<AccountId>"
 Currency = "Balances"
 KillOrigin = "EnsureRoot<AccountId>"
-MaxQueued = "ConstU32<100>"
 Preimages = "Preimage"
 RuntimeCall = "RuntimeCall"
 RuntimeEvent = "RuntimeEvent"
 Scheduler = "Scheduler"
 Slash = "Treasury"
-SubmissionDeposit = "SubmissionDeposit"
 SubmitOrigin = "EnsureSigned<AccountId>"
 Tally = "pallet_conviction_voting::TallyOf<Runtime>"
 Tracks = "TracksInfo"
-UndecidingTimeout = "UndecidingTimeout"
 Votes = "pallet_conviction_voting::VotesOf<Runtime>"
 WeightInfo = "pallet_referenda::weights::SubstrateWeight<Runtime>"
 
