@@ -14,13 +14,53 @@ updated = "1729175503"
 [runtime.construct_runtime]
 runtime = ["Grandpa", "pallet_grandpa"]
 
+# pub const MaxSetIdSessionEntries: u64 = 0;
+[runtime.optional_parameter_types.MaxSetIdSessionEntries]
+name = "MaxSetIdSessionEntries"
+description = "The maximum number of session entries for a set ID."
+prefix = "const"
+p_type = "u64"
+[runtime.optional_parameter_types.MaxSetIdSessionEntries.expression]
+default_unit = ""
+default_multiiplier = 0
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxAuthorities: u32 = 32;
+[runtime.optional_parameter_types.MaxAuthorities]
+name = "MaxAuthorities"
+description = "The maximum number of authorities allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxAuthorities.expression]
+default_unit = ""
+default_multiiplier = 32
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxNominators: u32 = 0;
+[runtime.optional_parameter_types.MaxNominators]
+name = "MaxNominators"
+description = "The maximum number of nominators allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxNominators.expression]
+default_unit = ""
+default_multiiplier = 0
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
-MaxSetIdSessionEntries = "ConstU64<0>"
+MaxSetIdSessionEntries = "MaxSetIdSessionEntries"
+MaxAuthorities = "MaxAuthorities"
+MaxNominators = "MaxNominators"
 RuntimeEvent = "RuntimeEvent"
 WeightInfo = "()"
 KeyOwnerProof = "sp_core::Void"
-MaxAuthorities = "ConstU32<32>"
-MaxNominators = "ConstU32<0>"
 EquivocationReportSystem = "()"
 
 [dependencies.pallet]
