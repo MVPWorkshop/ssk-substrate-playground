@@ -17,17 +17,9 @@ updated = "1729175503"
 additional_pallet_impl_code = '''
 
 parameter_types! {
-	pub const SpendPeriod: BlockNumber = 1 * DAYS;
-	pub const Burn: Permill = Permill::from_percent(50);
-	pub const TipCountdown: BlockNumber = 1 * DAYS;
-	pub const TipFindersFee: Percent = Percent::from_percent(20);
-	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
-	pub const DataDepositPerByte: Balance = 1 * CENTS;
+	
 	pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
-	pub const MaximumReasonLength: u32 = 300;
-	pub const MaxApprovals: u32 = 100;
 	pub const MaxBalance: Balance = Balance::max_value();
-	pub const SpendPayoutPeriod: BlockNumber = 30 * DAYS;
 	pub TreasuryAccount: AccountId = Treasury::account_id();
 }
 '''
@@ -38,6 +30,64 @@ additional_runtime_lib_code = [
 	"use frame_support::traits::tokens::UnityAssetBalanceConversion;",
 ]
 
+# pub const TreasurySpendPayoutPeriod: BlockNumber = 30 * DAYS;
+[runtime.optional_parameter_types.TreasurySpendPayoutPeriod]
+name = "TreasurySpendPayoutPeriod"
+description = "The period in blocks for treasury spend payouts."
+prefix = "const"
+p_type = "BlockNumber"
+
+[runtime.optional_parameter_types.TreasurySpendPayoutPeriod.expression]
+default_unit = "DAYS"
+default_multiiplier = 30
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const TreasuryBurn: Permill = Permill::from_percent(50);
+[runtime.optional_parameter_types.TreasuryBurn]
+name = "TreasuryBurn"
+description = "The proportion of funds burned from the treasury on each expenditure."
+prefix = "const"
+p_type = "Permill"
+
+[runtime.optional_parameter_types.TreasuryBurn.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}Permill::from_percent({})"
+possible_units = []
+multiplier_configurable = true
+
+# 	pub const TreasuryMaxApprovals: u32 = 100;
+[runtime.optional_parameter_types.TreasuryMaxApprovals]
+name = "TreasuryMaxApprovals"
+description = "The maximum number of pending approvals allowed at any time."
+prefix = "const"
+p_type = "u32"
+
+[runtime.optional_parameter_types.TreasuryMaxApprovals.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+#pub const TreasurySpendPeriod: BlockNumber = 1 * DAYS;
+[runtime.optional_parameter_types.TreasurySpendPeriod]
+name = "TreasurySpendPeriod"
+description = "The period in blocks for treasury spending."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.TreasurySpendPeriod.expression]
+default_unit = "DAYS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+
+
+
 [runtime.construct_runtime]
 runtime = ["Treasury", "pallet_treasury::Pallet<Runtime>"]
 
@@ -45,14 +95,14 @@ runtime = ["Treasury", "pallet_treasury::Pallet<Runtime>"]
 RejectOrigin = "EnsureRoot<AccountId>"
 BeneficiaryLookup = "Self::Lookup"
 BalanceConverter = "UnityAssetBalanceConversion"
-MaxApprovals = "MaxApprovals"
-SpendPeriod = "SpendPeriod"
+MaxApprovals = "TreasuryMaxApprovals"
+SpendPeriod = "TreasurySpendPeriod"
 Beneficiary = "AccountId"
-PayoutPeriod = "SpendPayoutPeriod"
+PayoutPeriod = "TreasurySpendPayoutPeriod"
 SpendOrigin = "EnsureWithSuccess<EnsureRoot<AccountId>, AccountId, MaxBalance>"
 PalletId = "TreasuryPalletId"
 RuntimeEvent = "RuntimeEvent"
-Burn = "Burn"
+Burn = "TreasuryBurn"
 BurnDestination = "()"
 AssetKind = "u32"
 Currency = "Balances"
