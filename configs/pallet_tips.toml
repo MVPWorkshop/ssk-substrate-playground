@@ -51,6 +51,10 @@ MaximumReasonLength = "MaximumReasonLength"
 TipFindersFee = "TipFindersFee"
 
 
+
+[dependencies]
+required_pallets = ["Pallet Treasury","Pallet Membership"]
+
 [dependencies.pallet]
 package = "pallet-tips"
 alias = "pallet tips"
