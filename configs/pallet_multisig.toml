@@ -14,13 +14,53 @@ updated = "1729175503"
 [runtime.construct_runtime]
 runtime = ["Multisig", "pallet_multisig::Pallet<Runtime>"]
 
+# pub const DepositBase: u128 = 1 * 1000;
+[runtime.optional_parameter_types.DepositBaseMultisig]
+name = "DepositBaseMultisig"
+description = "The base deposit required, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.DepositBaseMultisig.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const DepositFactor: u128 = 1 * 1000;
+[runtime.optional_parameter_types.DepositFactorMultisig]
+name = "DepositFactorMultisig"
+description = "The additional deposit required per unit of some factor, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.DepositFactorMultisig.expression]
+default_multiiplier = 1
+default_unit = "1000"
+format = "{}* {}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const MaxSignatories: u32 = 20;
+[runtime.optional_parameter_types.MaxSignatoriesMultisig]
+name = "MaxSignatoriesMultisig"
+description = "The maximum number of signatories allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxSignatoriesMultisig.expression]
+default_unit = ""
+default_multiiplier = 20
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
+DepositBase = "DepositBaseMultisig"
+DepositFactor = "DepositFactorMultisig"
+MaxSignatories = "MaxSignatoriesMultisig"
 Currency = "Balances"
 RuntimeCall = "RuntimeCall"
-DepositBase = "ConstU128<{ 1 * 1000 }>"
-DepositFactor = "ConstU128<{ 1 * 1000 }>"
 RuntimeEvent = "RuntimeEvent"
-MaxSignatories = "ConstU32<20>"
 WeightInfo = "pallet_multisig::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
