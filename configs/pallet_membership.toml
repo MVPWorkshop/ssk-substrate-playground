@@ -11,20 +11,26 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
+# pub const TechnicalMaxMembers: u32 = 100;
+[runtime.optional_parameter_types.TechnicalMaxMembers]
+name = "TechnicalMaxMembers"
+description = "The maximum number of members allowed in the technical committee."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.TechnicalMaxMembers.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
-parameter_types! {
-\tpub const TechnicalMaxMembers: u32 = 100;
-}
-"""
 
 [runtime.construct_runtime]
 runtime = ["Membership", "pallet_membership::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
-ResetOrigin = "EnsureRoot<AccountId>"
 MaxMembers = "TechnicalMaxMembers"
+ResetOrigin = "EnsureRoot<AccountId>"
 MembershipChanged = "()"
 WeightInfo = "pallet_membership::weights::SubstrateWeight<Runtime>"
 PrimeOrigin = "EnsureRoot<AccountId>"
