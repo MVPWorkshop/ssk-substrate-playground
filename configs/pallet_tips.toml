@@ -17,22 +17,84 @@ categories = ["Assets"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
+# pub const MaxTipAmount: u128 = 5_000_000 * 1_000_000_000;
+[runtime.optional_parameter_types.MaxTipAmount]
+name = "MaxTipAmount"
+description = "The maximum amount allowed for a tip."
+prefix = "const"
+p_type = "u128"
 
-parameter_types! {
-	pub const MaxTipAmount: u128 = 5_000_000 * 1_000_000_000; 
-	pub const TipFindersFee: Percent = Percent::from_percent(20);
-	pub const TipReportDepositBase: Balance = 1 * DOLLARS;
-	pub const MaximumReasonLength: u32 = 300;
-	pub const DataDepositPerByte: Balance = 1 * CENTS;
-	pub const TipCountdown: BlockNumber = 1 * DAYS;
+[runtime.optional_parameter_types.MaxTipAmount.expression]
+default_unit = "1_000_000_000"
+default_multiiplier = 5_000_000
+format = "{} * {}"
+possible_units = []
+multiplier_configurable = true
+# pub const TipFindersFee: Percent = Percent::from_percent(20);
+[runtime.optional_parameter_types.TipFindersFee]
+name = "TipFindersFee"
+description = "The percentage of the tip given to the finder of the tip."
+prefix = "const"
+p_type = "Percent"
 
+[runtime.optional_parameter_types.TipFindersFee.expression]
+default_unit = ""
+default_multiiplier = 20
+format = "{}Percent::from_percent({})"
+possible_units = []
+multiplier_configurable = true
+# pub const TipReportDepositBase: Balance = 1 * DOLLARS;
+[runtime.optional_parameter_types.TipReportDepositBase]
+name = "TipReportDepositBase"
+description = "The base deposit required to report a tip."
+prefix = "const"
+p_type = "Balance"
 
-}
+[runtime.optional_parameter_types.TipReportDepositBase.expression]
+default_unit = "DOLLARS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS"]
+multiplier_configurable = true
+# pub const MaximumReasonLength: u32 = 300;
+[runtime.optional_parameter_types.MaximumReasonLength]
+name = "MaximumReasonLength"
+description = "The maximum length of the reason field for a tip."
+prefix = "const"
+p_type = "u32"
 
+[runtime.optional_parameter_types.MaximumReasonLength.expression]
+default_unit = ""
+default_multiiplier = 300
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+# pub const TipCountdown: BlockNumber = 1 * DAYS;
+[runtime.optional_parameter_types.TipCountdown]
+name = "TipCountdown"
+description = "The duration in blocks before a tip closes for voting."
+prefix = "const"
+p_type = "BlockNumber"
 
-"""
+[runtime.optional_parameter_types.TipCountdown.expression]
+default_unit = "DAYS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+# pub const TipDataDepositPerByte: Balance = 1 * CENTS;
+[runtime.optional_parameter_types.TipDataDepositPerByte]
+name = "TipDataDepositPerByte"
+description = "The deposit required per byte of tip data."
+prefix = "const"
+p_type = "Balance"
+
+[runtime.optional_parameter_types.TipDataDepositPerByte.expression]
+default_unit = "CENTS"
+default_multiiplier = 1
+format = "{} * {}"
+possible_units = ["CENTS", "DOLLARS"]
+multiplier_configurable = true
 
 
 [runtime.construct_runtime]
@@ -43,7 +105,7 @@ Tippers = "pallet_membership::Pallet<Runtime>"
 TipCountdown = "TipCountdown"
 OnSlash = "()"
 RuntimeEvent = "RuntimeEvent"
-DataDepositPerByte = "DataDepositPerByte"
+DataDepositPerByte = "TipDataDepositPerByte"
 MaxTipAmount = "MaxTipAmount"
 TipReportDepositBase = "TipReportDepositBase"
 WeightInfo = "::pallet_tips::weights::SubstrateWeight<Runtime>"
