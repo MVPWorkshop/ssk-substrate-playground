@@ -12,18 +12,28 @@ size = 10500
 updated = "1729175503"
 
 [runtime]
-additional_pallet_impl_code = """
-
-parameter_types! {
-        pub MaximumSchedulerWeight: Weight = Perbill::from_percent(80) * BlockWeights::get().max_block;
-        }
-"""
 additional_runtime_lib_code = ["use frame_support::traits::EqualPrivilegeOnly;"]
+
+
+# pub const MaximumSchedulerWeight: Weight = Perbill::from_percent(80) * BlockWeights::get().max_block;
+[runtime.optional_parameter_types.MaximumSchedulerWeight]
+name = "MaximumSchedulerWeight"
+description = "The maximum weight for the scheduler, as a percentage of the maximum block weight."
+prefix = "empty"
+p_type = "Weight"
+[runtime.optional_parameter_types.MaximumSchedulerWeight.expression]
+default_unit = ""
+default_multiiplier = 80
+format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["Scheduler", "pallet_scheduler::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+MaximumWeight = "MaximumSchedulerWeight"
 MaxScheduledPerBlock = "()"
 RuntimeOrigin = "RuntimeOrigin"
 PalletsOrigin = "OriginCaller"
@@ -33,7 +43,6 @@ RuntimeCall = "RuntimeCall"
 ScheduleOrigin = "EnsureRoot<AccountId>"
 Preimages = "()"
 RuntimeEvent = "RuntimeEvent"
-MaximumWeight = "MaximumSchedulerWeight"
 
 [dependencies.pallet]
 package = "pallet-scheduler"
