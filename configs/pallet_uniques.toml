@@ -11,25 +11,134 @@ categories = ["NFT"]
 size = 10500
 updated = "1729175503"
 
+
+
+# pub const UniquesStringLimit: u32 = 256;
+[runtime.optional_parameter_types.UniquesStringLimit]
+name = "UniquesStringLimit"
+description = "Maximum length for string values such as metadata or attribute names"
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.UniquesStringLimit.expression]
+default_unit = ""
+default_multiiplier = 256
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const UniquesDepositPerByte: u128 = 10;
+[runtime.optional_parameter_types.UniquesDepositPerByte]
+name = "UniquesDepositPerByte"
+description = " Additional deposit required per byte of data stored in the pallet, such as metadata."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.UniquesDepositPerByte.expression]
+default_unit = ""
+default_multiiplier = 10
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+# pub const UniquesCollectionDeposit: u128 = 10*1000;
+[runtime.optional_parameter_types.UniquesCollectionDeposit]
+name = "UniquesCollectionDeposit"
+description = " Deposit required to create a new collection."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.UniquesCollectionDeposit.expression]
+default_unit = "1000"
+default_multiiplier = 10
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const UniquesValueLimit: u32 = 256;
+[runtime.optional_parameter_types.UniquesValueLimit]
+name = "UniquesValueLimit"
+description = "Maximum size of attribute values in the key-value store."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.UniquesValueLimit.expression]
+default_unit = ""
+default_multiiplier = 256
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const UniquesAttributeDepositBase: u128 = 10*1000;
+[runtime.optional_parameter_types.UniquesAttributeDepositBase]
+name = "UniquesAttributeDepositBase"
+description = " Base deposit required for adding attributes to items or collections."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.UniquesAttributeDepositBase.expression]
+default_unit = "1000"
+default_multiiplier = 10
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const UniquesItemDeposit: u128 = 1*1000;
+[runtime.optional_parameter_types.UniquesItemDeposit]
+name = "UniquesItemDeposit"
+description = "Deposit required to create a new item in a collection."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.UniquesItemDeposit.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const UniquesKeyLimit: u32 = 64;
+[runtime.optional_parameter_types.UniquesKeyLimit]
+name = "UniquesKeyLimit"
+description = "Maximum number of keys allowed per item or collection."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.UniquesKeyLimit.expression]
+default_unit = ""
+default_multiiplier = 64
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const UniquesMetadataDepositBase: u128 = 1*1000;
+[runtime.optional_parameter_types.UniquesMetadataDepositBase]
+name = "UniquesMetadataDepositBase"
+description = "Base deposit required to store metadata for an item or collection."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.UniquesMetadataDepositBase.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+
+
 [runtime.construct_runtime]
 runtime = ["Uniques", "pallet_uniques::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
 Locker = "()"
-StringLimit = "ConstU32<256>"
+StringLimit = "UniquesStringLimit"
 ForceOrigin = "EnsureRoot<Self::AccountId>"
 CreateOrigin = "EnsureSigned<Self::AccountId>"
 Currency = "Balances"
-DepositPerByte = "ConstU128<10>"
-CollectionDeposit = "ConstU128<{ 10 * 1000 }>"
+DepositPerByte = "UniquesDepositPerByte"
+CollectionDeposit = "UniquesCollectionDeposit"
 ItemId = "u32"
-ValueLimit = "ConstU32<256>"
-AttributeDepositBase = "ConstU128<{ 1 * 1000 }>"
-ItemDeposit = "ConstU128<{ 1 * 1000 }>"
+ValueLimit = "UniquesValueLimit"
+AttributeDepositBase = "UniquesAttributeDepositBase"
+ItemDeposit = "UniquesItemDeposit"
 CollectionId = "u32"
-KeyLimit = "ConstU32<64>"
+KeyLimit = "UniquesKeyLimit"
 RuntimeEvent = "RuntimeEvent"
-MetadataDepositBase = "ConstU128<{ 1 * 1000 }>"
+MetadataDepositBase = "UniquesMetadataDepositBase"
 WeightInfo = "pallet_uniques::weights::SubstrateWeight<Runtime>"
 
 [dependencies.pallet]
