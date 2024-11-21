@@ -13,6 +13,32 @@ updated = "1729175503"
 
 [runtime]
 
+# pub const PTSMaxBlockTransactions: u32 = 1000;
+[runtime.optional_parameter_types.PTSMaxBlockTransactions]
+name = "PTSMaxBlockTransactions"
+description = "Maximum number of transactions allowed per block."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.PTSMaxBlockTransactions.expression]
+default_unit = ""
+default_multiiplier = 1000
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const PTSMaxTransactionSize: u32 = 1000;
+[runtime.optional_parameter_types.PTSMaxTransactionSize]
+name = "PTSMaxTransactionSize"
+description = "Maximum size allowed for a single transaction in bytes."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.PTSMaxTransactionSize.expression]
+default_unit = ""
+default_multiiplier = 1000
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
 [runtime.construct_runtime]
 runtime = ["TransactionStorage", "pallet_transaction_storage::Pallet<Runtime>"]
 
@@ -23,8 +49,10 @@ RuntimeEvent = "RuntimeEvent"
 WeightInfo = "pallet_transaction_storage::weights::SubstrateWeight<Runtime>"
 FeeDestination = "()"
 RuntimeHoldReason = "RuntimeHoldReason"
-MaxBlockTransactions = "ConstU32<1000>"
-MaxTransactionSize = "ConstU32<1000>"
+MaxBlockTransactions = "PTSMaxBlockTransactions"
+MaxTransactionSize = "PTSMaxTransactionSize"
+
+
 
 
 [dependencies.pallet]
