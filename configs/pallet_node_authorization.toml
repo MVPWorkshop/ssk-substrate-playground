@@ -12,26 +12,44 @@ size = 10500
 updated = "1729175503"
 
 
-[runtime]
-additional_pallet_impl_code = """
+# pub const MaxWellKnownNodes: u32 = 8;
+[runtime.optional_parameter_types.MaxWellKnownNodes]
+name = "MaxWellKnownNodes"
+description = "The maximum number of well-known nodes."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxWellKnownNodes.expression]
+default_unit = ""
+default_multiiplier = 8
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
-parameter_types! {
-  pub const MaxWellKnownNodes: u32 = 8;
-  pub const MaxPeerIdLength: u32 = 128;
-}
-"""
+# pub const MaxPeerIdLength: u32 = 128;
+[runtime.optional_parameter_types.MaxPeerIdLength]
+name = "MaxPeerIdLength"
+description = "The maximum length for peer ID."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxPeerIdLength.expression]
+default_unit = ""
+default_multiiplier = 128
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
 
 [runtime.construct_runtime]
 runtime = ["NodeAuthorization", "pallet_node_authorization::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
-RuntimeEvent = "RuntimeEvent "
-MaxWellKnownNodes = "MaxWellKnownNodes "
-MaxPeerIdLength = "MaxPeerIdLength "
-AddOrigin = "EnsureRoot<AccountId> " 
-RemoveOrigin = "EnsureRoot<AccountId> "
-SwapOrigin = "EnsureRoot<AccountId> "
-ResetOrigin = "EnsureRoot<AccountId> "
+MaxWellKnownNodes = "MaxWellKnownNodes"
+MaxPeerIdLength = "MaxPeerIdLength"
+RuntimeEvent = "RuntimeEvent"
+AddOrigin = "EnsureRoot<AccountId>"
+RemoveOrigin = "EnsureRoot<AccountId>"
+SwapOrigin = "EnsureRoot<AccountId>"
+ResetOrigin = "EnsureRoot<AccountId>"
 WeightInfo = "()"
 
 
