@@ -14,9 +14,23 @@ updated = "1729175503"
 [runtime.construct_runtime]
 runtime = ["PagedList", "pallet_paged_list::Pallet<Runtime>"]
 
+# pub const ValuesPerNewPage: u32 = 11;
+[runtime.optional_parameter_types.ValuesPerNewPage]
+name = "ValuesPerNewPage"
+description = "The number of values per new page."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.ValuesPerNewPage.expression]
+default_unit = ""
+default_multiiplier = 11
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
 Value = "u32"
-ValuesPerNewPage = "ConstU32<11>"
+ValuesPerNewPage = "ValuesPerNewPage"
 
 [dependencies.pallet]
 package = "pallet-paged-list"
