@@ -11,23 +11,28 @@ categories = ["Other"]
 size = 10500
 updated = "1729175503"
 
-[runtime]
-additional_pallet_impl_code = """
+# pub const IndexDeposit: Balance = 100 * CENTS;
+[runtime.optional_parameter_types.IndexDeposit]
+name = "IndexDeposit"
+description = "The deposit required for registering an index, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "Balance"
+[runtime.optional_parameter_types.IndexDeposit.expression]
+default_unit = "CENTS"
+default_multiiplier = 100
+format = "{} * {}"
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
+multiplier_configurable = true
 
-
-parameter_types! {
-    pub const IndexDeposit: Balance = 100 * CENTS;
-}
-"""
 
 [runtime.construct_runtime]
 runtime = ["Indices", "pallet_indices::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
+Deposit = "IndexDeposit"
 RuntimeEvent = "RuntimeEvent"
 Currency = "Balances"
 WeightInfo = "pallet_indices::weights::SubstrateWeight<Runtime>"
-Deposit = "IndexDeposit"
 AccountIndex = "u32"
 
 [dependencies.pallet]
