@@ -19,23 +19,129 @@ additional_runtime_lib_code = ["use pallet_identity::legacy::IdentityInfo;"]
 [runtime.construct_runtime]
 runtime = ["Identity", "pallet_identity::Pallet<Runtime>"]
 
+
+# pub const MaxUsernameLength: u32 = 32;
+[runtime.optional_parameter_types.MaxUsernameLength]
+name = "MaxUsernameLength"
+description = "The maximum length of a username."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxUsernameLength.expression]
+default_unit = ""
+default_multiiplier = 32
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxRegistrars: u32 = 20;
+[runtime.optional_parameter_types.MaxRegistrars]
+name = "MaxRegistrars"
+description = "The maximum number of registrars allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxRegistrars.expression]
+default_unit = ""
+default_multiiplier = 20
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const MaxSuffixLength: u32 = 7;
+[runtime.optional_parameter_types.MaxSuffixLength]
+name = "MaxSuffixLength"
+description = "The maximum length of a username suffix."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxSuffixLength.expression]
+default_unit = ""
+default_multiiplier = 7
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const PendingUsernameExpiration: u32 = 7 * DAYS;
+[runtime.optional_parameter_types.PendingUsernameExpiration]
+name = "PendingUsernameExpiration"
+description = "The expiration time for pending usernames, expressed in blocks."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.PendingUsernameExpiration.expression]
+default_unit = "DAYS"
+default_multiiplier = 7
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = true
+
+# pub const BasicDeposit: u128 = 1 * 1000;
+[runtime.optional_parameter_types.BasicDeposit]
+name = "BasicDeposit"
+description = "The basic deposit required, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.BasicDeposit.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const SubAccountDeposit: u128 = 100 * 1000;
+[runtime.optional_parameter_types.SubAccountDeposit]
+name = "SubAccountDeposit"
+description = "The deposit required for a sub-account, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.SubAccountDeposit.expression]
+default_unit = "1000"
+default_multiiplier = 100
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const ByteDeposit: u128 = 1 * 1000;
+[runtime.optional_parameter_types.ByteDeposit]
+name = "ByteDeposit"
+description = "The deposit required per byte of storage, expressed in the smallest currency unit."
+prefix = "const"
+p_type = "u128"
+[runtime.optional_parameter_types.ByteDeposit.expression]
+default_unit = "1000"
+default_multiiplier = 1
+format = "{}*{}"
+possible_units = ["1000"]
+multiplier_configurable = true
+
+# pub const MaxSubAccounts: u32 = 100;
+[runtime.optional_parameter_types.MaxSubAccounts]
+name = "MaxSubAccounts"
+description = "The maximum number of sub-accounts allowed."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxSubAccounts.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
 [runtime.pallet_traits]
-MaxUsernameLength = "ConstU32<32>"
+MaxUsernameLength = "MaxUsernameLength"
+MaxRegistrars = "MaxRegistrars"
+MaxSuffixLength = "MaxSuffixLength"
+PendingUsernameExpiration = "PendingUsernameExpiration"
+BasicDeposit = "BasicDeposit"
+SubAccountDeposit = "SubAccountDeposit"
+ByteDeposit = "ByteDeposit"
+MaxSubAccounts = "MaxSubAccounts"
+IdentityInformation = "IdentityInfo<ConstU32<100>>"
 Currency = "Balances"
-MaxRegistrars = "ConstU32<20>"
 RegistrarOrigin = "EnsureRoot<Self::AccountId>"
-MaxSuffixLength = "ConstU32<7>"
 WeightInfo = "pallet_identity::weights::SubstrateWeight<Runtime>"
-PendingUsernameExpiration = "ConstU32<{ 7 * DAYS }>"
 SigningPublicKey = "<Signature as sp_runtime::traits::Verify>::Signer"
 RuntimeEvent = "RuntimeEvent"
-BasicDeposit = "ConstU128<{ 1 * 1000 }>"
-SubAccountDeposit = "ConstU128<{ 100 * 1000 }>"
-ByteDeposit = "ConstU128<{ 1 * 1000 }>"
-IdentityInformation = "IdentityInfo<ConstU32<100>>"
 Slashed = "()"
 OffchainSignature = "Signature"
-MaxSubAccounts = "ConstU32<100>"
 UsernameAuthorityOrigin = "EnsureRoot<Self::AccountId>"
 ForceOrigin = "EnsureRoot<Self::AccountId>"
 
