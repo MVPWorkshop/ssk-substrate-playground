@@ -86,8 +86,6 @@ possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
 
 
-
-
 [runtime.construct_runtime]
 runtime = ["Treasury", "pallet_treasury::Pallet<Runtime>"]
 
@@ -109,6 +107,10 @@ Currency = "Balances"
 Paymaster = "PayAssetFromAccount<Assets, TreasuryAccount>"
 SpendFunds = "()"
 WeightInfo = "pallet_treasury::weights::SubstrateWeight<Runtime>"
+
+[dependencies]
+required_pallets = ["Pallet Assets"]
+
 
 [dependencies.pallet]
 package = "pallet-treasury"
