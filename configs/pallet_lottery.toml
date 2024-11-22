@@ -66,6 +66,8 @@ WeightInfo = "pallet_lottery::weights::SubstrateWeight<Runtime>"
 
 
 # ! Depends on RandomnessCollectiveFlip -> right now it is hard-coded in temlpate
+[dependencies]
+required_pallets = ["Pallet Collective"]
 
 [dependencies.pallet]
 package = "pallet-lottery"
