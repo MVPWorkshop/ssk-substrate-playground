@@ -51,7 +51,14 @@ MaxTurnout = "frame_support::traits::ActiveIssuanceOf<Balances, Self::AccountId>
 
 
 [dependencies]
-required_pallets = ["Pallet Referenda"]
+required_pallets = [
+    "Pallet Referenda",
+    "Pallet Scheduler",
+    "Pallet Preimage",
+    "Pallet Treasury",
+    "Pallet Assets",
+]
+# All are deep dependencies of Referenda
 
 [dependencies.pallet]
 package = "pallet-conviction-voting"
