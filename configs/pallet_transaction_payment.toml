@@ -25,6 +25,19 @@ parameter_types! {
 }
 
 """
+# pub const FTPOperationalFeeMultiplier: u8 = 5;
+[runtime.optional_parameter_types.FTPOperationalFeeMultiplier]
+name = "FTPOperationalFeeMultiplier"
+description = "The multiplier applied to operational fees for transactions."
+prefix = "const"
+p_type = "u8"
+
+[runtime.optional_parameter_types.FTPOperationalFeeMultiplier.expression]
+default_unit = ""
+default_multiiplier = 5
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
 
 [runtime.construct_runtime]
 runtime = ["TransactionPayment", "pallet_transaction_payment"]
@@ -33,7 +46,7 @@ runtime = ["TransactionPayment", "pallet_transaction_payment"]
 OnChargeTransaction = "FungibleAdapter<Balances, ()>"
 WeightToFee = "IdentityFee<Balance>"
 RuntimeEvent = "RuntimeEvent"
-OperationalFeeMultiplier = "ConstU8<5>"
+OperationalFeeMultiplier = "FTPOperationalFeeMultiplier"
 LengthToFee = "IdentityFee<Balance>"
 FeeMultiplierUpdate = "ConstFeeMultiplier<FeeMultiplier>"
 
