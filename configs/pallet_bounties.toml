@@ -92,7 +92,7 @@ p_type = "Balance"
 default_unit = "DOLLARS"
 default_multiiplier = 5
 format = "{} * {}"
-possible_units = ["DOLLARS", "CENTS"]
+possible_units = ["DOLLARS", "CENTS","MILLICENTS"]
 multiplier_configurable = true
 
 # ! CuratorDepositMin

@@ -57,7 +57,7 @@ p_type = "Balance"
 default_unit = "DOLLARS"
 default_multiiplier = 500
 format = "{} * {}"
-possible_units = ["DOLLARS", "CENTS"]
+possible_units = ["DOLLARS", "CENTS","MILLICENTS"]
 multiplier_configurable = true
 
 # pub const SocietyClaimPeriod: BlockNumber = 80 * HOURS;
