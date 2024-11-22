@@ -28,7 +28,7 @@ p_type = "u128"
 default_unit = "1_000_000_000"
 default_multiiplier = 5_000_000
 format = "{} * {}"
-possible_units = []
+possible_units = ["1_000_000_000"]
 multiplier_configurable = true
 # pub const TipFindersFee: Percent = Percent::from_percent(20);
 [runtime.optional_parameter_types.TipFindersFee]
@@ -54,7 +54,7 @@ p_type = "Balance"
 default_unit = "DOLLARS"
 default_multiiplier = 1
 format = "{} * {}"
-possible_units = ["DOLLARS", "CENTS"]
+possible_units = ["DOLLARS", "CENTS","MILLICENTS"]
 multiplier_configurable = true
 # pub const MaximumReasonLength: u32 = 300;
 [runtime.optional_parameter_types.MaximumReasonLength]
@@ -93,7 +93,7 @@ p_type = "Balance"
 default_unit = "CENTS"
 default_multiiplier = 1
 format = "{} * {}"
-possible_units = ["CENTS", "DOLLARS"]
+possible_units = ["CENTS", "DOLLARS","MILLICENTS"]
 multiplier_configurable = true
 
 
