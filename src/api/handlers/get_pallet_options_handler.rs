@@ -61,7 +61,7 @@ pub async fn get_pallet_options_handler(
         }
     }
     // Get the required pallets for the pallets in the list
-    let filtered = pallet_configs
+    let mut filtered = pallet_configs
         .iter()
         // Get the pallets that are in the list of pallet names
         .filter(|(name, _)| pallets.contains(name))
@@ -74,6 +74,13 @@ pub async fn get_pallet_options_handler(
             palet_with_reqs
         })
         .collect::<Vec<_>>();
+
+    let essential = pallet_configs
+        .iter()
+        .filter(|pallet| pallet.1.metadata.is_essential)
+        .map(|pallet| pallet.0.clone())
+        .collect::<Vec<_>>();
+    filtered.extend(essential);
 
     let response_pallets = pallet_configs
         .iter()
