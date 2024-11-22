@@ -1,0 +1,31 @@
+# Dockerfile.test
+
+# Stage 1: Builder
+FROM rust:latest AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the project files
+COPY . .
+
+# Fetch dependencies (this layer is cached unless Cargo.toml or Cargo.lock changes)
+RUN cargo fetch
+
+# Build the project (compiles dependencies and your code)
+RUN cargo build --test test_s3
+
+# Stage 2: Final Image
+FROM rust:latest
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the build artifacts from the builder stage
+COPY --from=builder /app/. .
+
+# Expose necessary ports (if required by your tests)
+EXPOSE 8080
+
+# Set the default command to run tests
+CMD ["cargo", "test", "--test", "test_s3"]

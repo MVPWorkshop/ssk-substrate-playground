@@ -1,7 +1,8 @@
-use crate::types::PalletConfig;
 use serde::Serialize;
 
-use super::{render_handlebars_template, render_handlebars_template_to_bytes, TemplateRenderError};
+use crate::services::code_generator::types::PalletConfig;
+
+use super::{render_handlebars_template_to_bytes, TemplateRenderError};
 
 #[derive(Debug, Serialize)]
 pub struct ManifestConfig {
@@ -20,15 +21,6 @@ impl From<&PalletConfig> for ManifestConfig {
             use_default: pallet.dependencies.pallet.default_features,
         }
     }
-}
-
-pub fn generate_manifest_file(
-    mainfest_file_path: &str,
-    pallet_configs: &[PalletConfig],
-) -> Result<(), TemplateRenderError> {
-    let manifest_configs: Vec<ManifestConfig> =
-        pallet_configs.iter().map(|pallet| pallet.into()).collect();
-    render_handlebars_template(mainfest_file_path, &manifest_configs)
 }
 
 pub fn generate_manifest_file_to_bytes(

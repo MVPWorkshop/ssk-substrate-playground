@@ -9,7 +9,7 @@ use scc::HashMap as ConcurrentHashMap;
 use url::Url;
 use uuid::Uuid;
 
-use crate::code_generator::PalletConfigLoadError;
+use crate::services::code_generator::CodeGeneratorServiceError;
 
 #[derive(Enum, Clone)]
 pub enum Status {
@@ -34,7 +34,9 @@ pub enum GetStatusResponse {
 }
 
 pub async fn get_status_handler(
-    task_status_map: Arc<ConcurrentHashMap<Uuid, Option<Result<(), PalletConfigLoadError>>>>,
+    task_status_map: Arc<
+        ConcurrentHashMap<Uuid, Option<Result<String, CodeGeneratorServiceError>>>,
+    >,
     task_id: Path<Uuid>,
 ) -> GetStatusResponse {
     match task_status_map
@@ -45,9 +47,9 @@ pub async fn get_status_handler(
             status: Status::Pending,
             url: None,
         })),
-        Some(Some(Ok(()))) => GetStatusResponse::Ok(Json(StatusResponse {
+        Some(Some(Ok(url))) => GetStatusResponse::Ok(Json(StatusResponse {
             status: Status::Finished,
-            url: Url::parse("http://example.com").ok(),
+            url: Url::parse(url.as_str()).ok(),
         })),
         Some(Some(Err(e))) => GetStatusResponse::InternalServerError(PlainText(format!(
             "Internal Server Error: {}",

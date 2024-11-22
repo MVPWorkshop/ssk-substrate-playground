@@ -1,2 +1,3 @@
+pub mod archiver;
+pub mod code_generator;
 pub mod object_store;
-pub mod template_archiver;

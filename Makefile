@@ -17,4 +17,12 @@ run:
 	cd generated_code/test_project && ./target/release/solochain-template-node --dev
 
 # Generate project with test, build it and run it on server
-all: gen build run 
+all: gen build run
+
+# build test docker-compose
+build_test:
+	docker-compose -f docker-compose.test.yml build
+# run integration tests
+integration_tests:
+	docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+	docker-compose -f docker-compose.test.yml down --remove-orphans

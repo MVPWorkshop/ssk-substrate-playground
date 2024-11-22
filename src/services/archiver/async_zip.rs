@@ -4,9 +4,9 @@ use std::{io::Cursor, path::Path};
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 
-use super::{TemplateArchiverError, TemplateArchiverService};
+use super::{ArchiverError, ArchiverService};
 
-pub struct AsyncZipTemplateArchiverService;
+pub struct AsyncZipArchiverService;
 
 pub fn archive_dir_recursive<'a>(
     src: &'a Path,
@@ -49,14 +49,14 @@ pub fn archive_dir_recursive<'a>(
 }
 
 #[async_trait]
-impl TemplateArchiverService for AsyncZipTemplateArchiverService {
+impl ArchiverService for AsyncZipArchiverService {
     type ZippedBuffer = ZipFileWriter<Cursor<Vec<u8>>>;
 
-    async fn archive_template<'a>(
+    async fn archive_folder<'a>(
         &self,
         template_path: &'a Path,
         template_extension: &str,
-    ) -> Result<Self::ZippedBuffer, TemplateArchiverError> {
+    ) -> Result<Self::ZippedBuffer, ArchiverError> {
         let mut zip_writter = ZipFileWriter::with_tokio(Cursor::new(Vec::new()));
         if let Err(e) = archive_dir_recursive(
             template_path,
@@ -66,18 +66,18 @@ impl TemplateArchiverService for AsyncZipTemplateArchiverService {
         )
         .await
         {
-            return Err(TemplateArchiverError::ArchiveError(format!("{:?}", e)));
+            return Err(ArchiverError::ArchiveError(format!("{:?}", e)));
         }
         Ok(zip_writter)
     }
     async fn close_archive(
         &self,
         zipper_buffer: Self::ZippedBuffer,
-    ) -> Result<Vec<u8>, TemplateArchiverError> {
+    ) -> Result<Vec<u8>, ArchiverError> {
         Ok(zipper_buffer
             .close()
             .await
-            .map_err(|e| TemplateArchiverError::CloseError(format!("{}", e)))?
+            .map_err(|e| ArchiverError::CloseError(format!("{}", e)))?
             .into_inner()
             .into_inner())
     }
@@ -86,7 +86,7 @@ impl TemplateArchiverService for AsyncZipTemplateArchiverService {
         mut zipper_buffer: Self::ZippedBuffer,
         content: &[u8],
         dest_path: &Path,
-    ) -> Result<Self::ZippedBuffer, TemplateArchiverError> {
+    ) -> Result<Self::ZippedBuffer, ArchiverError> {
         let builder = ZipEntryBuilder::new(
             dest_path.to_str().unwrap().into(),
             async_zip::Compression::Deflate,
@@ -94,19 +94,21 @@ impl TemplateArchiverService for AsyncZipTemplateArchiverService {
         zipper_buffer
             .write_entry_whole(builder, content)
             .await
-            .map_err(|_| TemplateArchiverError::ArchiveError("Failed to write entry".into()))?;
+            .map_err(|_| ArchiverError::ArchiveError("Failed to write entry".into()))?;
         Ok(zipper_buffer)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::services::code_generator::utils::handle_templates::HBS_SUFFIX;
+
     use super::*;
     #[tokio::test]
     async fn test_archive_and_close_archive() {
-        let archiver = AsyncZipTemplateArchiverService;
+        let archiver = AsyncZipArchiverService;
         let template_path = Path::new("templates/solochain/basic");
-        let result = archiver.archive_template(template_path, "hbs").await;
+        let result = archiver.archive_folder(template_path, HBS_SUFFIX).await;
         assert!(result.is_ok());
         let zipper_buffer = result.unwrap();
         let zipped_data = archiver.close_archive(zipper_buffer).await;
