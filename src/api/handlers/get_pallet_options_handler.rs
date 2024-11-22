@@ -61,7 +61,7 @@ pub async fn get_pallet_options_handler(
         }
     }
     // Get the required pallets for the pallets in the list
-    let mut filtered = pallet_configs
+    let filtered = pallet_configs
         .iter()
         // Get the pallets that are in the list of pallet names
         .filter(|(name, pallet)| pallets.contains(name) || pallet.metadata.is_essential == true)
