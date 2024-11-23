@@ -1,20 +1,19 @@
 version: '3.8'
 
 services:
-  ssk-substrate-playground:
+  ssk-substrate-playground-test:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.test
     ports:
       - "3000:3000"
-    volumes:
-      - ./generated_code:/app/generated_code
     restart: unless-stopped
     env_file:
       - .env.dev
     depends_on:
       localstack:
         condition: service_healthy
+
   localstack:
     image: localstack/localstack
     ports:

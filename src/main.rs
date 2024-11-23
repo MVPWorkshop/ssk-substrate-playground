@@ -5,7 +5,9 @@ use poem::{listener::TcpListener, Route, Server};
 use poem_openapi::OpenApiService;
 
 use substrate_runtime_builder::{
-    api::Api, code_generator::get_all_pallet_configs_from_dir, CONFIG_DIR,
+    api::Api, services::archiver::async_zip::AsyncZipArchiverService,
+    services::code_generator::service::CodeGeneratorService,
+    services::object_store::s3::S3ObjectStoreService,
 };
 
 const PORT: &str = "3000";
@@ -17,15 +19,31 @@ async fn main() -> Result<(), std::io::Error> {
     }
     tracing_subscriber::fmt::init();
     println!("Initializing Substrate Runtime Builder API server...");
+    let archiver_service = Arc::new(AsyncZipArchiverService);
+    let object_store_service = S3ObjectStoreService::new().await.map_err(|err| {
+        std::io::Error::new(
+            ErrorKind::Other,
+            format!("Error creating object store: {:?}", err),
+        )
+    })?;
+    let code_generator_service = CodeGeneratorService::try_new(archiver_service.clone())
+        .await
+        .map_err(|err| {
+            std::io::Error::new(
+                ErrorKind::Other,
+                format!("Error creating object store: {:?}", err),
+            )
+        })?;
 
-    let data = Arc::new(
-        get_all_pallet_configs_from_dir(CONFIG_DIR)
-            .await
-            .map_err(|err| std::io::Error::new(ErrorKind::Other, err.to_string()))?,
-    );
-
-    let api_service = OpenApiService::new(Api::new(data), "Substrate Runtime Builder", "1.0")
-        .server(format!("http://127.0.0.1:{PORT}"));
+    let api_service = OpenApiService::new(
+        Api::new(
+            Arc::new(object_store_service),
+            Arc::new(code_generator_service),
+        ),
+        "Substrate Runtime Builder",
+        "1.0",
+    )
+    .server(format!("http://127.0.0.1:{PORT}"));
     let ui = api_service.swagger_ui();
 
     Server::new(TcpListener::bind(format!("0.0.0.0:{PORT}")))

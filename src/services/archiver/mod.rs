@@ -5,8 +5,8 @@ use std::path::Path;
 use async_trait::async_trait;
 use thiserror::Error;
 
-#[derive(Error, Debug)]
-pub enum TemplateArchiverError {
+#[derive(Error, Debug, Clone)]
+pub enum ArchiverError {
     #[error("Failed to archive template: {0}")]
     ArchiveError(String),
     #[error("Failed to close archive: {0}")]
@@ -14,21 +14,21 @@ pub enum TemplateArchiverError {
 }
 
 #[async_trait]
-pub trait TemplateArchiverService {
+pub trait ArchiverService: Send + Sync {
     type ZippedBuffer;
-    async fn archive_template<'a>(
+    async fn archive_folder<'a>(
         &self,
         template_path: &'a Path,
         template_extension: &str,
-    ) -> Result<Self::ZippedBuffer, TemplateArchiverError>;
+    ) -> Result<Self::ZippedBuffer, ArchiverError>;
     async fn close_archive(
         &self,
         zipper_buffer: Self::ZippedBuffer,
-    ) -> Result<Vec<u8>, TemplateArchiverError>;
+    ) -> Result<Vec<u8>, ArchiverError>;
     async fn add_content_to_archive(
         &self,
         zipper_buffer: Self::ZippedBuffer,
         content: &[u8],
         dest_path: &Path,
-    ) -> Result<Self::ZippedBuffer, TemplateArchiverError>;
+    ) -> Result<Self::ZippedBuffer, ArchiverError>;
 }

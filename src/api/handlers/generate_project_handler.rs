@@ -8,9 +8,9 @@ use poem_openapi::{
 use scc::HashMap as ConcurrentHashMap;
 use uuid::Uuid;
 
-use crate::{
-    code_generator::{generate_project, PalletConfigLoadError},
-    types::PalletConfig,
+use crate::services::{
+    code_generator::{CodeGenerator, CodeGeneratorServiceError},
+    object_store::ObjectStoreService,
 };
 
 #[derive(Object, Clone)]
@@ -63,81 +63,65 @@ pub enum GenerateProjectResponse {
 }
 
 pub async fn generate_a_project_handler(
-    config_pallets: &HashMap<String, PalletConfig>,
-    task_status_map: Arc<ConcurrentHashMap<Uuid, Option<Result<(), PalletConfigLoadError>>>>,
+    task_status_map: Arc<
+        ConcurrentHashMap<Uuid, Option<Result<String, CodeGeneratorServiceError>>>,
+    >,
+    object_store_service: Arc<dyn ObjectStoreService>,
+    code_generator_service: Arc<dyn CodeGenerator>,
     project: Json<NewProject>,
 ) -> GenerateProjectResponse {
     let mut project_name = project.name.clone();
-
-    // Check if the pallets are supported
-    for pallet_name in project.0.pallets.keys() {
-        if !config_pallets.contains_key(pallet_name) {
-            return GenerateProjectResponse::PalletNotFound(PlainText(format!(
-                "Pallet {} not found",
-                pallet_name
-            )));
-        }
-    }
-
-    // Get the required pallets for the pallets in the list
-    let mut filtered: Vec<String> = config_pallets
-        .iter()
-        // Get the pallets that are in the list of pallet names
-        .filter(|(name, _)| project.0.pallets.contains_key(*name))
-        // Get the required pallets for each pallet
-        .flat_map(|(pallet_name, pallet)| {
-            let mut pallet_with_reqs = vec![pallet_name.clone()];
-            if let Some(required_pallets) = pallet.dependencies.required_pallets.clone() {
-                pallet_with_reqs.extend(required_pallets);
-            }
-            pallet_with_reqs
-        })
-        .collect::<Vec<String>>();
-
-    let essential = config_pallets
-        .iter()
-        .filter(|pallet| pallet.1.metadata.is_essential)
-        .map(|pallet| pallet.0.clone())
-        .collect::<Vec<_>>();
-    filtered.extend(essential);
-
-    // create local coppy of the pallets
-    let config_pallets = config_pallets
-        .iter()
-        .map(|(name, config)| (name.clone(), config.clone()))
-        .collect::<HashMap<_, _>>();
-    // Filter the pallets that are in the list of pallet names
-    let mut filtered_configs = config_pallets
-        .into_iter()
-        .filter(|(pallet_name, _)| filtered.contains(pallet_name))
-        .collect::<HashMap<_, _>>();
-    project
-        .0
-        .pallets
-        .into_iter()
-        .filter_map(|(name, config)| config.map(|config| (name, config)))
-        .for_each(|(name, config)| {
-            let pallet_to_configure = filtered_configs.get_mut(&name).unwrap();
-            for input in config {
-                if let Some(parameter) = pallet_to_configure
-                    .runtime
-                    .optional_parameter_types
-                    .as_mut()
-                    .unwrap()
-                    .get_mut(&input.0)
-                {
-                    parameter.expression.configured_multiplier = input.1.multiplier;
-                    parameter.expression.configured_unit = input.1.unit;
-                }
-            }
-        });
     // Append uuid to project name
     project_name = format!("{}_{}", project_name, Uuid::new_v4());
-    let pallets = filtered_configs.values().cloned().collect::<Vec<_>>();
+    let archive = match code_generator_service
+        .generate_project_archive(
+            &project.pallets,
+            ("solochain".to_string(), "basic".to_string()),
+        )
+        .await
+    {
+        Ok(archive) => archive,
+        Err(CodeGeneratorServiceError::PalletNotFoundError(pallet_name)) => {
+            return GenerateProjectResponse::PalletNotFound(PlainText(format!(
+                "Pallet not found: {}",
+                pallet_name
+            )))
+        }
+        Err(e) => {
+            return GenerateProjectResponse::InternalServerError(PlainText(format!(
+                "Internal Server Error: {}",
+                e
+            )))
+        }
+    };
     let status_id = Uuid::new_v4();
+    // TODO: hadnle result
     let _ = task_status_map.insert_async(status_id, None).await;
     tokio::spawn(async move {
-        generate_project(&project_name, pallets, status_id, task_status_map).await
+        let object_name = format!("{}.zip", project_name);
+        if let Err(e) = object_store_service
+            .upload_content(archive, object_name.as_str())
+            .await
+            .map_err(CodeGeneratorServiceError::OtherError)
+        {
+            let _ = task_status_map
+                .update_async(&status_id, |_, v| {
+                    *v = Some(Err(e));
+                    v.clone()
+                })
+                .await;
+            return;
+        }
+        let result = object_store_service
+            .get_presigned_url(object_name.as_str(), 3600)
+            .await
+            .map_err(CodeGeneratorServiceError::OtherError);
+        let _ = task_status_map
+            .update_async(&status_id, |_, v| {
+                *v = Some(result);
+                v.clone()
+            })
+            .await;
     });
     GenerateProjectResponse::Ok(Json(status_id))
 }

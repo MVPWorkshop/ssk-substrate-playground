@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{PalletConfig, PalletMetadata};
+use crate::services::code_generator::types::{PalletConfig, PalletMetadata};
 use poem_openapi::payload::Json;
 use poem_openapi::ApiResponse;
 

@@ -1,6 +1,9 @@
-use std::{collections::HashMap, sync::Arc};
+use std::sync::Arc;
 
-use crate::{code_generator::PalletConfigLoadError, types::PalletConfig};
+use crate::services::{
+    code_generator::{CodeGenerator, CodeGeneratorServiceError},
+    object_store::ObjectStoreService,
+};
 use poem_openapi::{param::Path, payload::Json, OpenApi};
 use scc::HashMap as ConcurrentHashMap;
 use uuid::Uuid;
@@ -8,15 +11,21 @@ use uuid::Uuid;
 pub mod handlers;
 
 pub struct Api {
-    pub pallet_configs: Arc<HashMap<String, PalletConfig>>,
-    pub task_handles: Arc<ConcurrentHashMap<Uuid, Option<Result<(), PalletConfigLoadError>>>>,
+    pub task_handles:
+        Arc<ConcurrentHashMap<Uuid, Option<Result<String, CodeGeneratorServiceError>>>>,
+    pub object_store_service: Arc<dyn ObjectStoreService>,
+    pub code_generator_service: Arc<dyn CodeGenerator>,
 }
 #[OpenApi]
 impl Api {
-    pub fn new(pallet_configs: Arc<HashMap<String, PalletConfig>>) -> Self {
+    pub fn new(
+        object_store_service: Arc<dyn ObjectStoreService>,
+        code_generator_service: Arc<dyn CodeGenerator>,
+    ) -> Self {
         Self {
-            pallet_configs,
             task_handles: Arc::new(ConcurrentHashMap::new()),
+            object_store_service,
+            code_generator_service,
         }
     }
     #[oai(path = "/list-supported-pallets", method = "get")]
@@ -24,7 +33,7 @@ impl Api {
         &self,
     ) -> handlers::list_supported_pallets_handler::ListSupportedPalletsResponse {
         handlers::list_supported_pallets_handler::list_supported_pallets_handler(
-            &self.pallet_configs,
+            self.code_generator_service.pallet_configs(),
         )
         .await
     }
@@ -34,8 +43,9 @@ impl Api {
         project: Json<handlers::generate_project_handler::NewProject>,
     ) -> handlers::generate_project_handler::GenerateProjectResponse {
         handlers::generate_project_handler::generate_a_project_handler(
-            &self.pallet_configs,
             self.task_handles.clone(),
+            self.object_store_service.clone(),
+            self.code_generator_service.clone(),
             project,
         )
         .await
@@ -45,8 +55,11 @@ impl Api {
         &self,
         template_type: Path<Option<handlers::get_templates_handler::TemplateType>>,
     ) -> handlers::get_templates_handler::GetTemplatesResponse {
-        handlers::get_templates_handler::get_templates_handler(&self.pallet_configs, template_type)
-            .await
+        handlers::get_templates_handler::get_templates_handler(
+            self.code_generator_service.pallet_configs(),
+            template_type,
+        )
+        .await
     }
     #[oai(path = "/get-pallet-options", method = "post")]
     pub async fn get_pallet_options(
@@ -54,7 +67,7 @@ impl Api {
         pallets: Json<Vec<String>>,
     ) -> handlers::get_pallet_options_handler::GetPalletOptionsResponse {
         handlers::get_pallet_options_handler::get_pallet_options_handler(
-            &self.pallet_configs,
+            self.code_generator_service.pallet_configs(),
             pallets,
         )
         .await

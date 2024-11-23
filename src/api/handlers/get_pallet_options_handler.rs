@@ -6,7 +6,7 @@ use poem_openapi::{
     ApiResponse, Object,
 };
 
-use crate::types::{PalletConfig, ParameterType};
+use crate::services::code_generator::types::{PalletConfig, ParameterType};
 
 #[derive(Object)]
 pub struct Parameter {
