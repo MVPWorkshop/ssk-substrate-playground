@@ -11,12 +11,16 @@ jobs:
 
     steps:
         - uses: actions/checkout@v4
+
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v2
   
-        - name: Install Docker using Docker's official script
-          run: |
-            curl -fsSL https://get.docker.com -o get-docker.sh
-            sudo sh get-docker.sh
-          continue-on-error: false
+        - name: Log in to GitHub Container Registry
+          uses: docker/login-action@v2
+          with:
+            registry: ghcr.io
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
         - name: Install Docker Compose
           run: |
               sudo curl -L "https://github.com/docker/compose/releases/download/v2.3.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -25,7 +29,13 @@ jobs:
           continue-on-error: false
         - name: Build and up the test container
           run: |
-            docker-compose -f docker-compose.test.yml up -d --build
+            docker buildx build \
+            --cache-from=type=registry,ref=ghcr.io/mvpworkshop/ssk-substrate-playground:test-latest \
+            --cache-to=type=registry,ref=ghcr.io/mvpworkshop/ssk-substrate-playground:test-latest,mode=max \
+            -f Dockerfile.test \
+            -t ghcr.io/mvpworkshop/ssk-substrate-playground:test \
+            .
+            docker-compose -f docker-compose.test.yml up -d
         - name: Execute tests in the running services
           run: |
             docker-compose -f docker-compose.test.yml exec -T ssk-substrate-playground-test cargo test --test test_s3 -- --nocapture
