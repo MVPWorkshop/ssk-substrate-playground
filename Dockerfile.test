@@ -23,9 +23,10 @@ WORKDIR /app
 
 # Copy the build artifacts from the builder stage
 COPY --from=builder /app/. .
+COPY --from=builder /app/target ./target
 
 # Expose necessary ports (if required by your tests)
 EXPOSE 8080
 
-# Set the default command to run tests
-CMD ["cargo", "test", "--test", "test_s3"]
+# Set the default command to start the container (leave it idle)
+CMD ["sleep", "infinity"]

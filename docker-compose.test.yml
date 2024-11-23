@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile.test
     ports:
       - "3000:3000"
-    volumes:
-      - ./generated_code:/app/generated_code
     restart: unless-stopped
     env_file:
       - .env.dev
