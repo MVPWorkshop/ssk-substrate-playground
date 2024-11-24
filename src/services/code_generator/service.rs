@@ -1,11 +1,11 @@
 use std::path::Path;
 use std::{collections::HashMap, sync::Arc};
 
-use super::utils::handle_templates::manifest::generate_manifest_file_to_bytes;
-use super::utils::handle_templates::runtime_lib::generate_runtime_lib_file_bytes;
-use super::utils::handle_templates::HBS_SUFFIX;
-use super::utils::load_configs::load_configs;
-use super::utils::load_templates::load_templates;
+use super::load_configs::load_configs;
+use super::load_templates::load_templates;
+use super::templating::handle_templates::manifest::generate_manifest_file_to_bytes;
+use super::templating::handle_templates::runtime_lib::generate_runtime_lib_file_bytes;
+use super::templating::handle_templates::HBS_SUFFIX;
 use super::{CodeGeneratorServiceError, Result};
 use crate::api::handlers::generate_project_handler::ParameterConfiguration;
 use crate::services::archiver::ArchiverService;
@@ -180,7 +180,7 @@ mod tests {
     use crate::services::{
         archiver::async_zip::AsyncZipArchiverService,
         code_generator::{
-            service::CodeGeneratorService, utils::handle_templates::HBS_SUFFIX, CodeGenerator,
+            service::CodeGeneratorService, templating::handle_templates::HBS_SUFFIX, CodeGenerator,
         },
     };
     #[tokio::test]

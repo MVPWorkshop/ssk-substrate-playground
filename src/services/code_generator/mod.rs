@@ -1,6 +1,8 @@
+pub mod load_configs;
+pub mod load_templates;
 pub mod service;
+pub mod templating;
 pub mod types;
-pub mod utils;
 
 use std::collections::HashMap;
 
@@ -8,8 +10,8 @@ use async_trait::async_trait;
 use thiserror::Error;
 use types::PalletConfig;
 
-use utils::load_configs::LoadConfigsError;
-use utils::load_templates::LoadTemplatesError;
+use load_configs::LoadConfigsError;
+use load_templates::LoadTemplatesError;
 
 use crate::api::handlers::generate_project_handler::ParameterConfiguration;
 

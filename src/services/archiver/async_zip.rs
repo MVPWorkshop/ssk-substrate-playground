@@ -101,7 +101,7 @@ impl ArchiverService for AsyncZipArchiverService {
 
 #[cfg(test)]
 mod tests {
-    use crate::services::code_generator::utils::handle_templates::HBS_SUFFIX;
+    use crate::services::code_generator::templating::handle_templates::HBS_SUFFIX;
 
     use super::*;
     #[tokio::test]
