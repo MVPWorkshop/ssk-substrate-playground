@@ -1,6 +1,6 @@
 use std::{collections::HashMap, path::PathBuf};
 
-use super::super::types::PalletConfig;
+use super::types::PalletConfig;
 use thiserror::Error;
 
 // Define the LoadConfigsError
