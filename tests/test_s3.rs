@@ -1,23 +1,51 @@
 use substrate_runtime_builder::services::object_store::{s3::*, ObjectStoreService};
 
+fn env_setup() {
+    dotenv::from_filename(".env.local").ok();
+}
+
 #[tokio::test]
 async fn test_s3_object_store_new() {
+    env_setup();
     let s3 = S3ObjectStoreService::new().await;
     assert!(s3.is_ok());
 }
 
 #[tokio::test]
 async fn test_list_files() {
-    dotenv::from_filename(".env.local").ok();
+    env_setup();
     let service = S3ObjectStoreService::new().await;
     assert!(service.is_ok());
     let service = service.unwrap();
     let files = service.list_files().await;
     assert!(files.is_ok());
 }
+
+#[tokio::test]
+async fn test_list_files_and_upload_file() {
+    env_setup();
+    let service = S3ObjectStoreService::new().await;
+    assert!(service.is_ok());
+    let service = service.unwrap();
+    let files = service.list_files().await;
+    assert!(files.is_ok());
+    let files = files.unwrap();
+    let old_files_count = files.len();
+    let file = b"Hello, World!".to_vec();
+    let uuid = uuid::Uuid::new_v4();
+    let file_name = format!("hello-{}.txt", uuid);
+    let result = service.upload_content(file, file_name.as_str()).await;
+    assert!(result.is_ok());
+    let files = service.list_files().await;
+    assert!(files.is_ok());
+    let files = files.unwrap();
+    println!("{:?}", files);
+    assert_eq!(files.len(), old_files_count + 1);
+    assert!(files.contains(&file_name));
+}
 #[tokio::test]
 async fn test_upload_content_and_get_presigned_url() {
-    dotenv::from_filename(".env.local").ok();
+    env_setup();
     let service = S3ObjectStoreService::new().await;
     assert!(service.is_ok());
     let service = service.unwrap();

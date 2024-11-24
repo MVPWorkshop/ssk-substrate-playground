@@ -28,7 +28,8 @@ jobs:
             docker-compose -f docker-compose.test.yml up -d --build
         - name: Execute tests in the running services
           run: |
-            docker-compose -f docker-compose.test.yml exec -T ssk-substrate-playground-test cargo test --test test_s3 -- --nocapture
+            docker-compose -f docker-compose.test.yml exec ssk-substrate-playground-test cargo test --test test_s3 -- --nocapture
+            docker-compose -f docker-compose.test.yml exec ssk-substrate-playground-test cargo test --test test_api -- --nocapture
         - name: Stop and remove the test container
           if: always()
           run: |
