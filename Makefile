@@ -24,5 +24,9 @@ build_test:
 	docker-compose -f docker-compose.test.yml build
 # run integration tests
 integration_tests:
-	docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+	docker-compose -f docker-compose.test.yml exec ssk-substrate-playground-test cargo test --test test_s3 -- --nocapture
+	docker-compose -f docker-compose.test.yml exec ssk-substrate-playground-test cargo test --test test_api -- --nocapture
+down_test:
 	docker-compose -f docker-compose.test.yml down --remove-orphans
+up_test:
+	docker-compose -f docker-compose.test.yml up -d

@@ -6,6 +6,7 @@ use poem_openapi::{
     ApiResponse, Object,
 };
 use scc::HashMap as ConcurrentHashMap;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::services::{
@@ -13,7 +14,7 @@ use crate::services::{
     object_store::ObjectStoreService,
 };
 
-#[derive(Object, Clone)]
+#[derive(Object, Clone, Serialize, Deserialize)]
 pub struct ParameterConfiguration {
     /// The multiplier of the parameter
     pub multiplier: Option<i64>,
@@ -29,7 +30,7 @@ impl Example for ParameterConfiguration {
         }
     }
 }
-#[derive(Object)]
+#[derive(Object, Deserialize)]
 pub struct NewProject {
     /// The name of the project
     name: String,
