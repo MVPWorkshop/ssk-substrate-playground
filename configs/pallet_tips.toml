@@ -54,7 +54,7 @@ p_type = "Balance"
 default_unit = "DOLLARS"
 default_multiiplier = 1
 format = "{} * {}"
-possible_units = ["DOLLARS", "CENTS","MILLICENTS"]
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
 # pub const MaximumReasonLength: u32 = 300;
 [runtime.optional_parameter_types.MaximumReasonLength]
@@ -93,7 +93,7 @@ p_type = "Balance"
 default_unit = "CENTS"
 default_multiiplier = 1
 format = "{} * {}"
-possible_units = ["CENTS", "DOLLARS","MILLICENTS"]
+possible_units = ["CENTS", "DOLLARS", "MILLICENTS"]
 multiplier_configurable = true
 
 
@@ -113,9 +113,9 @@ MaximumReasonLength = "MaximumReasonLength"
 TipFindersFee = "TipFindersFee"
 
 
-
 [dependencies]
-required_pallets = ["Pallet Treasury","Pallet Membership"]
+required_pallets = ["Pallet Treasury", "Pallet Membership", "Pallet Assets"]
+# Assets is deep dependency
 
 [dependencies.pallet]
 package = "pallet-tips"

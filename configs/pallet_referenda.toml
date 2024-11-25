@@ -138,14 +138,15 @@ Tracks = "TracksInfo"
 Votes = "pallet_conviction_voting::VotesOf<Runtime>"
 WeightInfo = "pallet_referenda::weights::SubstrateWeight<Runtime>"
 
-
 [dependencies]
 required_pallets = [
 	"Pallet Conviction Voting",
 	"Pallet Treasury",
 	"Pallet Scheduler",
 	"Pallet Preimage",
+	"Pallet Assets",
 ]
+# ! Assets is deep dependency
 
 [dependencies.pallet]
 package = "pallet-referenda"

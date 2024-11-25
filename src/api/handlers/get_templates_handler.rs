@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use poem_openapi::{param::Path, payload::Json, ApiResponse, Enum, Object};
 
-use crate::types::{PalletCategories, PalletConfig};
+use crate::services::code_generator::types::{PalletCategories, PalletConfig};
 
 // Pallet structure that will be returned as JSON
 #[derive(PartialEq, Eq, Debug, Object)]

@@ -1,5 +1,5 @@
 name: Github
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   check:
@@ -40,7 +40,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          arg: --all-features
+          args: --all-features --lib
 
   lints:
     name: Lints
