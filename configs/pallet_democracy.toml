@@ -14,9 +14,6 @@ updated = "1729175503"
 [runtime]
 additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
 
-[runtime]
-additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
-
 # pub const MinimumDeposit: u128 = 100 * 1_000_000_000_000;
 [runtime.optional_parameter_types.MinimumDeposit]
 name = "MinimumDeposit"
