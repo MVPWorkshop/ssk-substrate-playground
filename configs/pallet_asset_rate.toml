@@ -25,7 +25,7 @@ Currency = "Balances"
 AssetKind = "<Runtime as pallet_treasury::Config>::AssetKind"
 
 [dependencies]
-required_pallets = ["Pallet Treasury"]
+required_pallets = ["Pallet Treasury", "Pallet Assets"]
 
 
 [dependencies.pallet]

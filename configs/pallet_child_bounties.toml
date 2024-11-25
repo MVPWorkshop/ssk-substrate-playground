@@ -51,7 +51,8 @@ WeightInfo = "pallet_child_bounties::weights::SubstrateWeight<Runtime>"
 RuntimeEvent = "RuntimeEvent"
 
 [dependencies]
-required_pallets = ["Pallet bounties"]
+required_pallets = ["Pallet Treasury", "Pallet Bounties", "Pallet Assets"]
+# Assets is deep dependency
 
 [dependencies.pallet]
 package = "pallet-child-bounties"

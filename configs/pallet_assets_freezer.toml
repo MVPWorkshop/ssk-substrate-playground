@@ -1,4 +1,4 @@
-name = "Pallet Assets Conversion"
+name = "Pallet Assets Freezer"
 
 [metadata]
 description = """Provides freezing features to `pallet-assets`"""
@@ -19,6 +19,8 @@ runtime = ["AssetsFreezer", "pallet_assets_freezer::Pallet<Runtime>"]
 RuntimeFreezeReason = "RuntimeHoldReason" #"RuntimeFreezeReason"
 RuntimeEvent = "RuntimeEvent"
 
+[dependencies]
+required_pallets = ["Pallet Assets"]
 
 [dependencies.pallet]
 package = "pallet-assets-freezer"
