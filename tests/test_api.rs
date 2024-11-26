@@ -1,13 +1,13 @@
-use std::{arch::x86_64, collections::HashMap, sync::Arc, time::Duration};
+use std::{collections::HashMap, sync::Arc, time::Duration};
 
-use poem_openapi::{param::Path, payload::Json, ApiResponse};
+use poem_openapi::{param::Path, payload::Json};
 use substrate_runtime_builder::{
     api::{
         handlers::{
             generate_project_handler::{
                 GenerateProjectResponse, NewProject, ParameterConfiguration,
             },
-            get_status_handler::{GetStatusResponse, Status, StatusResponse},
+            get_status_handler::{GetStatusResponse, Status},
             list_supported_pallets_handler::ListSupportedPalletsResponse,
         },
         Api,
@@ -42,13 +42,11 @@ async fn test_api() {
     assert!(api.is_ok());
     let api = api.unwrap();
     let sp = api.list_supported_pallets().await;
-    let sp = match sp {
-        ListSupportedPalletsResponse::Ok(sp) => sp,
-    };
+    let ListSupportedPalletsResponse::Ok(sp) = sp;
     assert!(sp.len() > 0);
     let request_sp =
-        sp.0.iter()
-            .map(|(name, _)| (name.clone(), None))
+        sp.0.keys()
+            .map(|name| (name.clone(), None))
             .collect::<HashMap<String, Option<HashMap<String, ParameterConfiguration>>>>();
     let req_body = "{\"name\": \"test_project\", \"pallets\": ".to_string()
         + &serde_json::to_string(&request_sp).unwrap()
