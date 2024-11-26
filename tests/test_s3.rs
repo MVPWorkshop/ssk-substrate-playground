@@ -22,6 +22,7 @@ async fn test_list_files() {
 }
 
 #[tokio::test]
+#[serial_test::serial]
 async fn test_list_files_and_upload_file() {
     env_setup();
     let service = S3ObjectStoreService::new().await;
@@ -36,6 +37,7 @@ async fn test_list_files_and_upload_file() {
     let file_name = format!("hello-{}.txt", uuid);
     let result = service.upload_content(file, file_name.as_str()).await;
     assert!(result.is_ok());
+
     let files = service.list_files().await;
     assert!(files.is_ok());
     let files = files.unwrap();
@@ -44,6 +46,7 @@ async fn test_list_files_and_upload_file() {
     assert!(files.contains(&file_name));
 }
 #[tokio::test]
+#[serial_test::serial]
 async fn test_upload_content_and_get_presigned_url() {
     env_setup();
     let service = S3ObjectStoreService::new().await;
