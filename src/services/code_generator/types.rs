@@ -153,6 +153,7 @@ pub struct PalletMetadata {
     pub size: usize,
     pub is_essential: Option<Vec<TemplateType>>,
     pub supported_template: Vec<TemplateType>,
+    pub is_instance: Option<bool>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]

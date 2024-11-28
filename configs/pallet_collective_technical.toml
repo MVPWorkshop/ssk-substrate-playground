@@ -1,0 +1,89 @@
+name = "TechnicalCouncil Collective"
+
+[metadata]
+description = "The Collective pallet allows a group of account IDs to make collective decisions through voting on proposals. Voting happens over a defined period, and a  member can influence the default vote. Proposals are executed once the required number of approvals is reached. "
+short_description = "FRAME Collective pallet"
+is_essential = false
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+categories = ["Governance"]
+size = 10500
+updated = "1729175503"
+is_instance = true
+
+
+# pub const TechnicalCouncilMotionDuration: BlockNumber = 3 * MINUTES;
+[runtime.optional_parameter_types.TechnicalCouncilMotionDuration]
+name = "TechnicalCouncilMotionDuration"
+description = "The duration of council motions, defined in blocks."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.TechnicalCouncilMotionDuration.expression]
+default_unit = "MINUTES"
+default_multiiplier = 3
+format = "{} * {}"
+possible_units = ["MINUTES", "HOURS", "DAYS"]
+multiplier_configurable = true
+
+# pub const TechnicalCouncilMaxProposals: u32 = 100;
+[runtime.optional_parameter_types.TechnicalCouncilMaxProposals]
+name = "TechnicalCouncilMaxProposals"
+description = "The maximum number of proposals allowed in the council."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.TechnicalCouncilMaxProposals.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub const TechnicalCouncilMaxMembers: u32 = 100;
+[runtime.optional_parameter_types.TechnicalCouncilMaxMembers]
+name = "TechnicalCouncilMaxMembers"
+description = "The maximum number of members allowed in the council."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.TechnicalCouncilMaxMembers.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+# pub TechnicalMaxCollectivesProposalWeight: Weight = Perbill::from_percent(50) * BlockWeights::get().max_block;
+[runtime.optional_parameter_types.TechnicalMaxCollectivesProposalWeight]
+name = "TechnicalMaxCollectivesProposalWeight"
+description = "The maximum weight of proposals for collectives, calculated as 50% of the maximum block weight."
+prefix = "empty"
+p_type = "Weight"
+[runtime.optional_parameter_types.TechnicalMaxCollectivesProposalWeight.expression]
+default_unit = ""
+default_multiiplier = 50
+format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
+possible_units = []
+multiplier_configurable = true
+
+
+[runtime.construct_runtime]
+runtime = ["Collective", "pallet_collective::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+MaxProposals = "TechnicalCouncilMaxProposals"
+MaxProposalWeight = "TechnicalMaxCollectivesProposalWeight"
+MotionDuration = "TechnicalCouncilMotionDuration"
+MaxMembers = "TechnicalCouncilMaxMembers"
+SetMembersOrigin = "EnsureRoot<Self::AccountId>"
+RuntimeEvent = "RuntimeEvent"
+WeightInfo = "pallet_collective::weights::SubstrateWeight<Runtime>"
+RuntimeOrigin = "RuntimeOrigin"
+DefaultVote = "pallet_collective::PrimeDefaultVote"
+Proposal = "RuntimeCall"
+
+[dependencies.pallet]
+package = "pallet-collective"
+alias = "pallet collective"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

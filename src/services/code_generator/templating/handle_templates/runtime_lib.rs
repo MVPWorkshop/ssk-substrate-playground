@@ -12,6 +12,9 @@ pub struct RuntimeImplBlocks {
     pub pallet_name: String,
     pub pallet_traits: Option<Vec<String>>,
     pub configurable_parameter_types: Option<Vec<String>>,
+    pub is_instance: bool,
+    pub alias_name: String,
+    pub instance_counter: u8,
 }
 
 #[derive(Debug, Serialize)]
@@ -21,12 +24,26 @@ pub struct RuntimeLibAggregate {
     pub construct_runtime: Vec<String>,
 }
 
+fn transform_name(input: &str) -> (String, String, String) {
+    let parts: Vec<&str> = input.split_whitespace().collect();
+
+    if parts.len() == 2 {
+        let part1 = parts[0].to_string(); // "GeneralCouncil"
+        let part2 = format!("pallet_{}", parts[1].to_lowercase()); // "pallet_collective"
+        let combined = format!("{}{}", part1, parts[1]); // "GeneralCouncilCollective"
+        (part1, part2, combined)
+    } else {
+        (String::new(), String::new(), String::new())
+    }
+}
+
 impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
     fn from(pallets: Vec<PalletConfig>) -> Self {
         let mut additional_runtime_lib_code = HashSet::new(); // makes sure that the code is distinct
         let mut impl_blocks = vec![];
         let mut construct_runtime = vec![];
 
+        let mut instance_counter = 0;
         for (index, pallet) in pallets.iter().enumerate() {
             // add the pallet runtime code
             if let Some(code) = pallet.runtime.additional_runtime_lib_code.clone() {
@@ -34,12 +51,26 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                     additional_runtime_lib_code.insert(line);
                 }
             };
-            construct_runtime.push(format!(
-                "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {};",
-                index + 2,
-                pallet.runtime.construct_runtime.runtime[0],
-                pallet.runtime.construct_runtime.runtime[1],
-            ));
+
+            let is_instance = pallet.metadata.is_instance.clone().unwrap_or_default();
+            let (part1, pallet_name, together) = transform_name(&pallet.name);
+            if is_instance {
+                instance_counter = instance_counter + 1;
+                construct_runtime.push(format!(
+                    "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {}<Instance{}>;",
+                    index + 2,
+                    part1,
+                    pallet_name,
+                    instance_counter
+                ));
+            } else {
+                construct_runtime.push(format!(
+                    "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {};",
+                    index + 2,
+                    pallet.runtime.construct_runtime.runtime[0],
+                    pallet.runtime.construct_runtime.runtime[1],
+                ));
+            }
             let additional_pallet_impl_code = pallet.runtime.additional_pallet_impl_code.clone();
             let pallet_name = pallet
                 .dependencies
@@ -90,10 +121,20 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 None
             };
             impl_blocks.push(RuntimeImplBlocks {
+                // param_types!
                 additional_pallet_impl_code,
+                // pallet_name
                 pallet_name,
+                // Lines
                 pallet_traits,
+                // configurable traits
                 configurable_parameter_types,
+                // is_instance
+                is_instance,
+                // type alias_name = pallet_collective::Instance1
+                alias_name: together,
+                // index of pallet
+                instance_counter,
             });
         }
         RuntimeLibAggregate {

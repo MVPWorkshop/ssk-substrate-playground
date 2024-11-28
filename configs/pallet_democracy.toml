@@ -141,7 +141,13 @@ BlacklistOrigin = "EnsureRoot<AccountId>"
 RuntimeEvent = "RuntimeEvent"
 
 [dependencies]
-required_pallets = ["Pallet Scheduler", "Pallet Collective", "Pallet Preimage"]
+required_pallets = [
+    "Pallet Scheduler",
+    "Pallet Collective",
+    "Pallet Preimage",
+    "GeneralCouncil Collective",
+    "TechnicalCouncil Collective",
+]
 
 [dependencies.pallet]
 package = "pallet-democracy"
