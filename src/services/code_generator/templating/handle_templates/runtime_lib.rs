@@ -52,10 +52,10 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 }
             };
 
-            let is_instance = pallet.metadata.is_instance.clone().unwrap_or_default();
+            let is_instance = pallet.metadata.is_instance.unwrap_or_default();
             let (part1, pallet_name, together) = transform_name(&pallet.name);
             if is_instance {
-                instance_counter = instance_counter + 1;
+                instance_counter += 1;
                 construct_runtime.push(format!(
                     "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {}<Instance{}>;",
                     index + 2,

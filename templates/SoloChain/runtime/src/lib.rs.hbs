@@ -235,7 +235,7 @@ parameter_types! {
 {{/each}}
 }
 {{/if}}
-{{!-- ? If is this.is_instance then add it in Config<Alias>. Also add line for alias, and it has to be different than indexing in mod runtime --}}
+
 {{#if this.is_instance}}
 type {{this.alias_name}} = {{this.pallet_name}}::Instance{{this.instance_counter}};
 
