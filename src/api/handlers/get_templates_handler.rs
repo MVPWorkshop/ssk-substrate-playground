@@ -44,43 +44,53 @@ pub async fn get_templates_handler(
     pallet_configs: &HashMap<String, PalletConfig>,
     query_template_type: Path<Option<TemplateType>>,
 ) -> GetTemplatesResponse {
-    let templates: Vec<BlockchainTemplate> = vec![
-        BlockchainTemplate {
-            template_type: TemplateType::SoloChain,
-            essential_pallets: pallet_configs
-                .iter()
-                .filter(|(_, pallet)| pallet.metadata.is_essential)
-                .map(|(name, pallet)| Pallet {
-                    name: name.clone(),
-                    description: pallet.metadata.description.clone(),
-                    category: "Core".to_string(),
-                })
-                .collect::<Vec<_>>(),
-            supported_pallets: pallet_configs
-                .iter()
-                .filter(|(_, pallet)| !pallet.metadata.is_essential)
-                .map(|(name, pallet)| Pallet {
-                    name: name.clone(),
-                    description: pallet.metadata.description.clone(),
-                    category: pallet.metadata.categorie
-                        .as_ref()
-                        .map_or_else(
-                            || "".to_string(),
-                            |cat| cat.to_string(),
-                    ),
-                })
-                .collect::<Vec<_>>(),
-            use_cases: vec![],
-            chain_type: vec![],
-        },
-        BlockchainTemplate {
-            template_type: TemplateType::ParaChain,
-            essential_pallets: vec![],
-            supported_pallets: vec![],
-            use_cases: vec![],
-            chain_type: vec![],
-        },
-    ];
+    // let template_types = vec![
+    //     TemplateType::SoloChain,
+    //     TemplateType::SoloFrontierChain,
+    //     TemplateType::ParaChain,
+    //     TemplateType::Minimal,
+    //     TemplateType::Frontier,
+    // ];
+    let mut template_types: Vec<TemplateType> = pallet_configs
+        .values()
+        .flat_map(|pallet| pallet.metadata.supported_template.clone())
+        .collect();
+    template_types.sort();
+    template_types.dedup();
+
+    let templates: Vec<BlockchainTemplate> = template_types
+    .into_iter()
+    .map(|template_type| BlockchainTemplate {
+        template_type: template_type.clone(),
+        essential_pallets: pallet_configs
+            .iter()
+            .filter(|(_, pallet)| pallet.metadata.is_essential)
+            .map(|(name, pallet)| Pallet {
+                name: name.clone(),
+                description: pallet.metadata.description.clone(),
+                category: "Core".to_string(), 
+            })
+            .collect::<Vec<_>>(),
+        supported_pallets: pallet_configs
+            .iter()
+            .filter(|(_, pallet)| {
+                !pallet.metadata.is_essential
+                    && pallet.metadata.supported_template.contains(&template_type)
+            })
+            .map(|(name, pallet)| Pallet {
+                name: name.clone(),
+                description: pallet.metadata.description.clone(),
+                category: pallet
+                    .metadata
+                    .categorie
+                    .as_ref()
+                    .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()),
+            })
+            .collect::<Vec<_>>(),
+        use_cases: vec![], 
+        chain_type: vec![], 
+    })
+    .collect();
     // Filtering the templates based on the `template_type` query parameter
     let filtered_templates: Vec<BlockchainTemplate> = match &query_template_type.0 {
         Some(template_type) => templates
