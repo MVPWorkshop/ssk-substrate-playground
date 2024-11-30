@@ -110,6 +110,7 @@ pub enum PalletCategorie {
 #[derive(PartialEq, Eq, Debug, Enum,Clone,Deserialize,Serialize)]
 pub enum TemplateType {
      SoloChain,
+     SoloFrontierChain,
      ParaChain,
      Minimal,
      Frontier,

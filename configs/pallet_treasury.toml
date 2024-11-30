@@ -10,6 +10,7 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 categories = ["Assets"]
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 
