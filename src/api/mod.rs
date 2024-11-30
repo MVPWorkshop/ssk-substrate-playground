@@ -53,7 +53,7 @@ impl Api {
     #[oai(path = "/get-templates/:template_type", method = "get")]
     pub async fn get_templates(
         &self,
-        template_type: Path<Option<handlers::get_templates_handler::TemplateType>>,
+        template_type: Path<Option<crate::services::code_generator::types::TemplateType>>,
     ) -> handlers::get_templates_handler::GetTemplatesResponse {
         handlers::get_templates_handler::get_templates_handler(
             self.code_generator_service.pallet_configs(),

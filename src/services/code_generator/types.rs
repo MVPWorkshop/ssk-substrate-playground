@@ -95,7 +95,7 @@ pub enum SubstrateVersion {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display, Enum)]
-pub enum PalletCategories {
+pub enum PalletCategorie {
     Accounts,
     Assets,
     Consensus,
@@ -107,6 +107,13 @@ pub enum PalletCategories {
     Other,
 }
 
+#[derive(PartialEq, Eq, Debug, Enum,Clone,Deserialize,Serialize)]
+pub enum TemplateType {
+     SoloChain,
+     ParaChain,
+     Minimal,
+     Frontier,
+}
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Enum)]
 pub enum CommonAuthors {
     ParityTechnologies,
@@ -121,9 +128,10 @@ pub struct PalletMetadata {
     pub compatibility: SubstrateVersion,
     pub license: Option<String>,
     pub authors: Vec<CommonAuthors>,
-    pub categories: Option<Vec<PalletCategories>>,
+    pub categorie: Option<PalletCategorie>,
     pub size: usize,
     pub is_essential: bool,
+    pub supported_template: Vec<TemplateType>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]

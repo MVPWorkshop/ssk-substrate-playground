@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use poem_openapi::{param::Path, payload::Json, ApiResponse, Enum, Object};
+use poem_openapi::{param::Path, payload::Json, ApiResponse, Object};
 
-use crate::services::code_generator::types::{PalletCategories, PalletConfig};
+use crate::services::code_generator::types::{ PalletConfig,TemplateType};
 
 // Pallet structure that will be returned as JSON
 #[derive(PartialEq, Eq, Debug, Object)]
@@ -20,11 +20,8 @@ pub struct UseCase {
     pallets: Vec<String>,
 }
 
-#[derive(PartialEq, Eq, Debug, Enum)]
-pub enum TemplateType {
-    SoloChain,
-    ParaChain,
-}
+
+
 
 // Blockchain template structure.
 #[derive(PartialEq, Eq, Debug, Object)]
@@ -65,12 +62,12 @@ pub async fn get_templates_handler(
                 .map(|(name, pallet)| Pallet {
                     name: name.clone(),
                     description: pallet.metadata.description.clone(),
-                    category: pallet
-                        .metadata
-                        .categories
+                    category: pallet.metadata.categorie
                         .as_ref()
-                        .unwrap_or(&vec![PalletCategories::Runtime])[0]
-                        .to_string(),
+                        .map_or_else(
+                            || "".to_string(),
+                            |cat| cat.to_string(),
+                    ),
                 })
                 .collect::<Vec<_>>(),
             use_cases: vec![],
