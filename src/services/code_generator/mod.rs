@@ -45,5 +45,6 @@ pub trait CodeGenerator: Send + Sync {
         &self,
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
         template: (String, String),
+        template_type: TemplateType
     ) -> Result<Vec<u8>>;
 }

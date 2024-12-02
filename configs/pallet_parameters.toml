@@ -3,7 +3,6 @@ name = "Pallet Parameters"
 [metadata]
 description = """The `pallet_parameters` is a versatile Substrate module that allows dynamic runtime parameter adjustments through on-chain governance or privileged origins. This pallet enables the configuration of various runtime parameters without requiring a full runtime upgrade, offering flexibility and control over the blockchain's behavior. Administrators or governance bodies can update parameters securely and efficiently, ensuring the network adapts to evolving requirements."""
 short_description = "Dynamic runtime parameters management"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

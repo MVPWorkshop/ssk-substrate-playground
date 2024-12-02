@@ -14,7 +14,6 @@ query for an exchange price via a new runtime call endpoint
 query the size of a liquidity pool.
 """
 short_description = "FRAME Asset Conversion pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

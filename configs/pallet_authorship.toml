@@ -3,7 +3,6 @@ name = "Pallet Authorship"
 [metadata]
 description = "The Authorship pallet manages block authorship, enabling the identification of block authors and supporting reward distribution or block validation in the Substrate ecosystem."
 short_description = "FRAME Authorship pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

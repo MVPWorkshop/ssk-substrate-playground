@@ -3,7 +3,6 @@ name = "Pallet Democracy"
 [metadata]
 description = "The Democracy pallet enables stakeholder voting on referenda, managing proposals from public and external queues, and utilizing time-lock voting with conviction-based vote power scaling."
 short_description = "FRAME Democracy pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

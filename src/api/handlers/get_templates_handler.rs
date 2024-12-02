@@ -67,7 +67,15 @@ pub async fn get_templates_handler(
         template_type: template_type.clone(),
         essential_pallets: pallet_configs
             .iter()
-            .filter(|(_, pallet)| pallet.metadata.is_essential)
+            .filter(|(_, pallet)| {
+                pallet
+                    .metadata
+                    .is_essential
+                    .as_ref()
+                    .map_or(false, |essential_templates| {
+                        essential_templates.contains(template_type)
+                    })
+            })
             .map(|(name, pallet)| Pallet {
                 name: name.clone(),
                 description: pallet.metadata.description.clone(),
@@ -81,8 +89,14 @@ pub async fn get_templates_handler(
         supported_pallets: pallet_configs
             .iter()
             .filter(|(_, pallet)| {
-                !pallet.metadata.is_essential
-                    && pallet.metadata.supported_template.contains(&template_type)
+                !pallet
+                    .metadata
+                    .is_essential
+                    .as_ref()
+                    .map_or(false, |essential_templates| {
+                        essential_templates.contains(template_type)
+                    })
+                    && pallet.metadata.supported_template.contains(template_type)
             })
             .map(|(name, pallet)| Pallet {
                 name: name.clone(),

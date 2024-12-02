@@ -138,7 +138,7 @@ pub struct PalletMetadata {
     pub authors: Vec<CommonAuthors>,
     pub category: Option<PalletCategorie>,
     pub size: usize,
-    pub is_essential: bool,
+    pub is_essential: Option<Vec<TemplateType>>,
     pub supported_template: Vec<TemplateType>,
 }
 

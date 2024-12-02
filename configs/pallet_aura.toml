@@ -3,7 +3,7 @@ name = "Pallet Aura"
 [metadata]
 description = "The Aura module extends Aura consensus by managing offline reporting."
 short_description = "FRAME AURA consensus pallet"
-is_essential = true
+is_essential = ["SoloChain"]
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

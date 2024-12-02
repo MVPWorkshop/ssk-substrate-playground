@@ -77,7 +77,8 @@ pub async fn generate_a_project_handler(
     let archive = match code_generator_service
         .generate_project_archive(
             &project.pallets,
-            ("solochain".to_string(), "basic".to_string()),
+            ("SoloChain".to_string(), "basic".to_string()),
+            crate::services::code_generator::types::TemplateType::SoloChain
         )
         .await
     {

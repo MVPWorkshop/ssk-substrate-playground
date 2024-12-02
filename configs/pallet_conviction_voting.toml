@@ -3,7 +3,6 @@ name = "Pallet Conviction Voting"
 [metadata]
 description = """The pallet_conviction_voting is a module within the Substrate framework designed to manage voting mechanisms in blockchain governance. It enables stakeholders to cast votes on referenda, allowing them to express their support or opposition to proposals. A distinctive feature of this pallet is the incorporation of "conviction," which allows voters to amplify the weight of their votes by committing to lock their tokens for extended periods. This mechanism incentivizes long-term commitment and ensures that those willing to lock their tokens for longer durations have a more significant influence on decision-making processes. """
 short_description = "FRAME Conviction Voting"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

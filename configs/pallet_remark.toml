@@ -3,7 +3,6 @@ name = "Pallet Remark"
 [metadata]
 description = """Remark storage pallet. Indexes remarks and stores them off chain. Allows storing arbitrary data off chain."""
 short_description = "FRAME Remark pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

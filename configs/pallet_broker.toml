@@ -5,7 +5,6 @@ description = """Brokerage tool for managing Polkadot Core scheduling.
 
 Properly described in RFC-0001 Agile Coretime."""
 short_description = "FRAME Broker pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

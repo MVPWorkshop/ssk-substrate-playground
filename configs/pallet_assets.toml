@@ -3,7 +3,6 @@ name = "Pallet Assets"
 [metadata]
 description = "A simple, secure module for dealing with sets of assets implementing fungible traits."
 short_description = "FRAME Assets pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

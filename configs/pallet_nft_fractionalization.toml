@@ -3,7 +3,6 @@ name = "Pallet Nft Fractionalization"
 [metadata]
 description = "The NFT Fractionalization pallet enables the division of a single NFT into multiple fungible token shares, allowing shared ownership and easier liquidity for high-value NFTs. It provides functionalities for creating, managing, and trading fractionalized NFT shares while ensuring transparency and security in ownership distribution."
 short_description = "FRAME Nft Fractionalization pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
