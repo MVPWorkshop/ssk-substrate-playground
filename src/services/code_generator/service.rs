@@ -6,6 +6,7 @@ use super::load_templates::load_templates;
 use super::templating::handle_templates::manifest::generate_manifest_file_to_bytes;
 use super::templating::handle_templates::runtime_lib::generate_runtime_lib_file_bytes;
 use super::templating::handle_templates::HBS_SUFFIX;
+use super::types::TemplateType;
 use super::{CodeGeneratorServiceError, Result};
 use crate::api::handlers::generate_project_handler::ParameterConfiguration;
 use crate::services::archiver::ArchiverService;
@@ -18,7 +19,8 @@ pub struct CodeGeneratorService<ZB: 'static> {
     config_directory: String,
     templates_directory: String,
     pallet_configs: HashMap<String, PalletConfig>,
-    templates: HashMap<String, HashMap<String, String>>,
+    // TODO: change this to Vec<TemplateType>
+    templates:Vec<TemplateType>,
     archiver_service: Arc<dyn ArchiverService<ZippedBuffer = ZB>>,
 }
 
@@ -149,7 +151,7 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
     fn pallet_configs(&self) -> &HashMap<String, PalletConfig> {
         &self.pallet_configs
     }
-    fn templates(&self) -> &HashMap<String, HashMap<String, String>> {
+    fn templates(&self) -> &Vec<TemplateType> {
         &self.templates
     }
 
@@ -161,6 +163,12 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
         let pallets = self.apply_configs(pallets)?;
         let (template_major, template_minor) = template;
         // TODO: add template validation from templates hashmap
+        let template_type = template_major.parse::<TemplateType>().map_err(|_| {
+            CodeGeneratorServiceError::InvalidTemplateType(template_major.clone())
+        })?;
+        if !self.templates.contains(&template_type) {
+            return Err(CodeGeneratorServiceError::InvalidTemplateType(template_major));
+        }
         let template_path = Path::new(&self.templates_directory)
             .join(template_major)
             .join(template_minor);

@@ -38,28 +38,31 @@ pub enum GetTemplatesResponse {
     /// Returns when the user is successfully updated.
     #[oai(status = 200)]
     Ok(Json<Vec<BlockchainTemplate>>),
+
+    // TODO return when query_template_type is not contained in supported templates.
+    #[oai(status = 404)]
+    NotFound(Json<String>),
+
 }
 
 pub async fn get_templates_handler(
     pallet_configs: &HashMap<String, PalletConfig>,
     query_template_type: Path<Option<TemplateType>>,
+    // TODO pass self.templates from API.
+    supported_templates: Vec<TemplateType>
 ) -> GetTemplatesResponse {
-    // let template_types = vec![
-    //     TemplateType::SoloChain,
-    //     TemplateType::SoloFrontierChain,
-    //     TemplateType::ParaChain,
-    //     TemplateType::Minimal,
-    //     TemplateType::Frontier,
-    // ];
-    let mut template_types: Vec<TemplateType> = pallet_configs
-        .values()
-        .flat_map(|pallet| pallet.metadata.supported_template.clone())
-        .collect();
-    template_types.sort();
-    template_types.dedup();
+    
+    if let Some(template_type) = &query_template_type.0 {
+        if !supported_templates.contains(template_type) {
+            return GetTemplatesResponse::NotFound(Json(format!(
+                "Template {:?} is not supported.",
+                template_type
+            )));
+        }
+    }
 
-    let templates: Vec<BlockchainTemplate> = template_types
-    .into_iter()
+    let templates: Vec<BlockchainTemplate> = supported_templates
+    .iter()
     .map(|template_type| BlockchainTemplate {
         template_type: template_type.clone(),
         essential_pallets: pallet_configs
@@ -68,7 +71,11 @@ pub async fn get_templates_handler(
             .map(|(name, pallet)| Pallet {
                 name: name.clone(),
                 description: pallet.metadata.description.clone(),
-                category: "Core".to_string(), 
+                category:  pallet
+                .metadata
+                .category
+                .as_ref()
+                .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()), 
             })
             .collect::<Vec<_>>(),
         supported_pallets: pallet_configs
@@ -91,6 +98,8 @@ pub async fn get_templates_handler(
         chain_type: vec![], 
     })
     .collect();
+   
+
     // Filtering the templates based on the `template_type` query parameter
     let filtered_templates: Vec<BlockchainTemplate> = match &query_template_type.0 {
         Some(template_type) => templates

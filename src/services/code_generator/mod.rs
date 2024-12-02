@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 use async_trait::async_trait;
 use thiserror::Error;
-use types::PalletConfig;
+use types::{PalletConfig, TemplateType};
 
 use load_configs::LoadConfigsError;
 use load_templates::LoadTemplatesError;
@@ -33,12 +33,14 @@ pub enum CodeGeneratorServiceError {
     ArchiveError(#[from] ArchiverError),
     #[error("{0}")]
     OtherError(String),
+    #[error("Invalid template type: {0}")]
+    InvalidTemplateType(String),
 }
 
 #[async_trait]
 pub trait CodeGenerator: Send + Sync {
     fn pallet_configs(&self) -> &HashMap<String, PalletConfig>;
-    fn templates(&self) -> &HashMap<String, HashMap<String, String>>;
+    fn templates(&self) -> &Vec<TemplateType>;
     async fn generate_project_archive(
         &self,
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,

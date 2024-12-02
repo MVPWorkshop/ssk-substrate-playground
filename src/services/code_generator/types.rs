@@ -107,14 +107,21 @@ pub enum PalletCategorie {
     Other,
 }
 
-#[derive(PartialEq, Eq, Debug, Enum,Clone,Deserialize,Serialize,PartialOrd, Ord)]
+#[derive(PartialEq, Eq, Debug, Enum,Clone,Deserialize,Serialize,PartialOrd, Ord,EnumString,Display,Hash)]
+
 pub enum TemplateType {
-     SoloChain,
-     SoloFrontierChain,
-     ParaChain,
-     Minimal,
-     Frontier,
+    #[strum(serialize = "SoloChain")]
+    SoloChain,
+    #[strum(serialize = "SoloFrontierChain")]
+    SoloFrontierChain,
+    #[strum(serialize = "ParaChain")]
+    ParaChain,
+    #[strum(serialize = "Minimal")]
+    Minimal,
+    #[strum(serialize = "Frontier")]
+    Frontier,
 }
+
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Enum)]
 pub enum CommonAuthors {
     ParityTechnologies,

@@ -58,6 +58,7 @@ impl Api {
         handlers::get_templates_handler::get_templates_handler(
             self.code_generator_service.pallet_configs(),
             template_type,
+            self.code_generator_service.templates().clone(),
         )
         .await
     }
