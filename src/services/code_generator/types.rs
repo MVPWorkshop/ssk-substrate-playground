@@ -129,7 +129,7 @@ pub struct PalletMetadata {
     pub compatibility: SubstrateVersion,
     pub license: Option<String>,
     pub authors: Vec<CommonAuthors>,
-    pub categorie: Option<PalletCategorie>,
+    pub category: Option<PalletCategorie>,
     pub size: usize,
     pub is_essential: bool,
     pub supported_template: Vec<TemplateType>,

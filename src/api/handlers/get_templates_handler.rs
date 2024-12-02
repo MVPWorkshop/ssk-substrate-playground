@@ -82,7 +82,7 @@ pub async fn get_templates_handler(
                 description: pallet.metadata.description.clone(),
                 category: pallet
                     .metadata
-                    .categorie
+                    .category
                     .as_ref()
                     .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()),
             })
