@@ -41,7 +41,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             archiver_service,
         })
     }
-    fn filter_configs(&self, filter: Vec<String>,template_type: TemplateType,) -> Result<HashMap<String, PalletConfig>> {
+    fn filter_configs(&self, filter: Vec<String>,) -> Result<HashMap<String, PalletConfig>> {
         // Check if the pallets are supported
         for pallet_name in filter.iter() {
             if !self.pallet_configs.contains_key(pallet_name) {
@@ -52,7 +52,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         }
 
         // Get the required pallets for the pallets in the list
-        let mut filtered: Vec<String> = self
+        let  filtered: Vec<String> = self
             .pallet_configs
             .iter()
             // Get the pallets that are in the list of pallet names
@@ -67,18 +67,18 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             })
             .collect::<Vec<String>>();
 
-            let essential = self
-            .pallet_configs
-            .iter()
-            .filter(|(_, config)| {
-                if let Some(essential_templates) = &config.metadata.is_essential {
-                    essential_templates.contains(&template_type)
-                } else {
-                    false
-                }
-            })
-            .map(|(pallet_name, _)| pallet_name.clone())
-            .collect::<Vec<_>>();
+            // let essential = self
+            // .pallet_configs
+            // .iter()
+            // .filter(|(_, config)| {
+            //     if let Some(essential_templates) = &config.metadata.is_essential {
+            //         essential_templates.contains(&template_type)
+            //     } else {
+            //         false
+            //     }
+            // })
+            // .map(|(pallet_name, _)| pallet_name.clone())
+            // .collect::<Vec<_>>();
         
 
         // create local coppy of the pallets
@@ -126,10 +126,10 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
     }
     fn apply_configs(
         &self,
-        parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,template_type: TemplateType,
+        parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>
     ) -> Result<Vec<PalletConfig>> {
         let mut filtered_configs =
-            self.filter_configs((parameter_configs.keys().cloned().collect()),template_type)?;
+            self.filter_configs((parameter_configs.keys().cloned().collect()))?;
         parameter_configs
             .iter()
             .filter_map(|(name, config)| config.clone().map(|config| (name, config)))
@@ -151,12 +151,12 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         Ok(filtered_configs.values().cloned().collect::<Vec<_>>())
     }
 }
-
 #[async_trait]
 impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
     fn pallet_configs(&self) -> &HashMap<String, PalletConfig> {
         &self.pallet_configs
     }
+
     fn templates(&self) -> &Vec<TemplateType> {
         &self.templates
     }
@@ -164,31 +164,27 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
     async fn generate_project_archive(
         &self,
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
-        template: (String, String),
-        template_type: TemplateType,
-        
+        template_type: TemplateType, 
     ) -> Result<Vec<u8>> {
-        let pallets = self.apply_configs(pallets,template_type)?;
-        let (template_major, template_minor) = template;
-        // TODO: add template validation from templates hashmap
-        let template_type = template_major.parse::<TemplateType>().map_err(|_| {
-            CodeGeneratorServiceError::InvalidTemplateType(template_major.clone())
-        })?;
+        let pallets = self.apply_configs(pallets)?;
+
         if !self.templates.contains(&template_type) {
-            return Err(CodeGeneratorServiceError::InvalidTemplateType(template_major));
+            return Err(CodeGeneratorServiceError::InvalidTemplateType(format!("{:?}", template_type)));
         }
+
         let template_path = Path::new(&self.templates_directory)
-            .join(template_major)
-            .join(template_minor);
+            .join(template_type.to_string());
+        
         let zipped_buffer = self
             .archiver_service
             .archive_folder(template_path.as_path(), HBS_SUFFIX)
             .await?;
+        
         let zipped_buffer = self.add_pallets_to_archive(zipped_buffer, pallets).await?;
         let zipped_data = self.archiver_service.close_archive(zipped_buffer).await?;
         Ok(zipped_data)
     }
- }
+}
 
 // #[cfg(test)]
 // mod tests {
