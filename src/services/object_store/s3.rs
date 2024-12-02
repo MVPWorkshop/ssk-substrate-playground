@@ -38,20 +38,6 @@ impl S3ObjectStoreService {
             .build();
         // make sure bucket exists if it doesnt create it.
         info!("AWS Config: {:?}", config);
-        let client = S3Client::from_conf(config.clone());
-        match client.create_bucket().bucket(&bucket).send().await {
-            Ok(_) => {
-                info!("Bucket {} created", bucket);
-                Ok(())
-            }
-            Err(err) => match err.into_service_error() {
-                CreateBucketError::BucketAlreadyExists { .. } => {
-                    info!("Bucket {} already exists", bucket);
-                    Ok(())
-                }
-                e => Err(format!("{:?}", e)),
-            },
-        }?;
         Ok(Self { config, bucket })
     }
     #[allow(dead_code)]
