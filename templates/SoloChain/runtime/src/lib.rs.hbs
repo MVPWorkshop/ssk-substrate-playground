@@ -1,8 +1,10 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![recursion_limit = "256"]
-
 #[cfg(feature = "std")]
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+{{#each additional_runtime_lib_code}}
+{{this}}
+{{/each}}
 
 #[allow(unused_imports)]
 use frame_system::{EnsureRoot, EnsureSigned};
@@ -39,6 +41,7 @@ pub use frame_support::{
 use frame_support::{
     genesis_builder_helper::{build_state, get_preset},
     traits::VariantCountOf,
+    
 };
 pub use frame_system::Call as SystemCall;
 pub use pallet_balances::Call as BalancesCall;
@@ -51,9 +54,6 @@ pub use sp_runtime::{Perbill, Permill};
 
 #[allow(unused_imports)]
 use frame_support::PalletId;
-
-/// Import the template pallet.
-pub use pallet_template;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -197,81 +197,9 @@ impl frame_system::Config for Runtime {
     type MaxConsumers = frame_support::traits::ConstU32<16>;
 }
 
-impl pallet_aura::Config for Runtime {
-    type AuthorityId = AuraId;
-    type DisabledValidators = ();
-    type MaxAuthorities = ConstU32<32>;
-    type AllowMultipleBlocksPerSlot = ConstBool<false>;
-    type SlotDuration = pallet_aura::MinimumPeriodTimesTwo<Runtime>;
-}
+impl pallet_insecure_randomness_collective_flip::Config for Runtime {} 
 
-impl pallet_grandpa::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
 
-    type WeightInfo = ();
-    type MaxAuthorities = ConstU32<32>;
-    type MaxNominators = ConstU32<0>;
-    type MaxSetIdSessionEntries = ConstU64<0>;
-
-    type KeyOwnerProof = sp_core::Void;
-    type EquivocationReportSystem = ();
-}
-
-impl pallet_timestamp::Config for Runtime {
-    /// A timestamp: milliseconds since the unix epoch.
-    type Moment = u64;
-    type OnTimestampSet = Aura;
-    type MinimumPeriod = ConstU64<{ SLOT_DURATION / 2 }>;
-    type WeightInfo = ();
-}
-
-/// Existential deposit.
-pub const EXISTENTIAL_DEPOSIT: u128 = 500;
-
-impl pallet_balances::Config for Runtime {
-    type MaxLocks = ConstU32<50>;
-    type MaxReserves = ();
-    type ReserveIdentifier = [u8; 8];
-    /// The type for recording an account's balance.
-    type Balance = Balance;
-    /// The ubiquitous event type.
-    type RuntimeEvent = RuntimeEvent;
-    type DustRemoval = ();
-    type ExistentialDeposit = ConstU128<EXISTENTIAL_DEPOSIT>;
-    type AccountStore = System;
-    type WeightInfo = pallet_balances::weights::SubstrateWeight<Runtime>;
-    type FreezeIdentifier = RuntimeFreezeReason;
-    type MaxFreezes = VariantCountOf<RuntimeFreezeReason>;
-    type RuntimeHoldReason = RuntimeHoldReason;
-    type RuntimeFreezeReason = RuntimeHoldReason;
-}
-
-parameter_types! {
-    pub FeeMultiplier: Multiplier = Multiplier::one();
-}
-
-impl pallet_transaction_payment::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type OnChargeTransaction = FungibleAdapter<Balances, ()>;
-    type OperationalFeeMultiplier = ConstU8<5>;
-    type WeightToFee = IdentityFee<Balance>;
-    type LengthToFee = IdentityFee<Balance>;
-    type FeeMultiplierUpdate = ConstFeeMultiplier<FeeMultiplier>;
-}
-
-impl pallet_sudo::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type RuntimeCall = RuntimeCall;
-    type WeightInfo = pallet_sudo::weights::SubstrateWeight<Runtime>;
-}
-
-/// Configure the pallet-template in pallets/template.
-impl pallet_template::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = pallet_template::weights::SubstrateWeight<Runtime>;
-}
-
-impl pallet_insecure_randomness_collective_flip::Config for Runtime {}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
@@ -294,30 +222,23 @@ mod runtime {
     pub type System = frame_system;
 
     #[runtime::pallet_index(1)]
-    pub type Timestamp = pallet_timestamp;
-
-    #[runtime::pallet_index(2)]
-    pub type Aura = pallet_aura;
-
-    #[runtime::pallet_index(3)]
-    pub type Grandpa = pallet_grandpa;
-
-    #[runtime::pallet_index(4)]
-    pub type Balances = pallet_balances;
-
-    #[runtime::pallet_index(5)]
-    pub type TransactionPayment = pallet_transaction_payment;
-
-    #[runtime::pallet_index(6)]
-    pub type Sudo = pallet_sudo;
-
-    // Include the custom logic from the pallet-template in the runtime.
-    #[runtime::pallet_index(7)]
-    pub type TemplateModule = pallet_template;
-
-    #[runtime::pallet_index(8)]
     pub type RandomnessCollectiveFlip = pallet_insecure_randomness_collective_flip::Pallet<Runtime>;
+    {{#each construct_runtime}}
+    
+    {{{this}}}{{/each}}
 }
+{{#each impl_blocks}}
+{{{this.additional_pallet_impl_code}}}
+{{#if this.configurable_parameter_types}}
+parameter_types! {
+{{#each this.configurable_parameter_types}}{{{this}}}
+{{/each}}
+}
+{{/if}}
+{{#if this.pallet_traits}}impl {{this.pallet_name}}::Config for Runtime {
+{{#each this.pallet_traits}}{{{this}}}{{/each}}
+}{{/if}}
+{{/each}}
 
 /// The address format for describing accounts.
 pub type Address = sp_runtime::MultiAddress<AccountId, ()>;
@@ -366,7 +287,6 @@ mod benches {
         [pallet_balances, Balances]
         [pallet_timestamp, Timestamp]
         [pallet_sudo, Sudo]
-        [pallet_template, TemplateModule]
     );
 }
 
