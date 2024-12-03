@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::services::{
-    code_generator::{CodeGenerator, CodeGeneratorServiceError},
+    code_generator::{types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
     object_store::ObjectStoreService,
 };
 
@@ -37,6 +37,8 @@ pub struct NewProject {
     /// The list of pallets to include in the project, where the key is the
     /// pallet name and the value is a optional map of configuration parameters
     pallets: HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
+     /// The template type for the project
+     template: TemplateType,
 }
 
 impl Example for NewProject {
@@ -47,10 +49,12 @@ impl Example for NewProject {
         pallets.insert("Some Pallet".to_string(), Some(pallet_config));
         Self {
             name: "project_name".to_string(),
+            template: TemplateType::SoloChain, 
             pallets,
-        }
+                
+           }
     }
-}
+}  
 
 #[derive(ApiResponse)]
 pub enum GenerateProjectResponse {
@@ -74,10 +78,13 @@ pub async fn generate_a_project_handler(
     let mut project_name = project.name.clone();
     // Append uuid to project name
     project_name = format!("{}_{}", project_name, Uuid::new_v4());
+
+    let template_type = project.template.clone();
+
     let archive = match code_generator_service
         .generate_project_archive(
             &project.pallets,
-            crate::services::code_generator::types::TemplateType::SoloChain
+            template_type
         )
         .await
     {

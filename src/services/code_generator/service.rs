@@ -89,18 +89,21 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             .map(|(name, config)| (name.clone(), config.clone()))
             .collect::<HashMap<_, _>>())
     }
-
     pub async fn add_pallets_to_archive(
         &self,
         zipper_buffer: ZB,
         pallet_configs: Vec<PalletConfig>,
+        template_type: TemplateType, 
     ) -> Result<ZB>
     where
         ZB: 'static + Send,
     {
-        let manifest_file_path = "templates/solochain/basic/runtime/Cargo.toml.hbs";
+        let manifest_file_path = format!(
+            "templates/{}/runtime/Cargo.toml.hbs",
+            template_type
+        );
         let manifest_file_content =
-            generate_manifest_file_to_bytes(manifest_file_path, &pallet_configs).unwrap();
+            generate_manifest_file_to_bytes(&manifest_file_path, &pallet_configs).unwrap();
         let zipper_buffer = self
             .archiver_service
             .add_content_to_archive(
@@ -109,10 +112,13 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
                 Path::new("runtime/Cargo.toml"),
             )
             .await?;
-
-        let runtime_lib_file_path = "templates/solochain/basic/runtime/src/lib.rs.hbs";
+    
+        let runtime_lib_file_path = format!(
+            "templates/{}/runtime/src/lib.rs.hbs",
+            template_type
+        );
         let runtime_lib_file_content =
-            generate_runtime_lib_file_bytes(runtime_lib_file_path, &pallet_configs).unwrap();
+            generate_runtime_lib_file_bytes(&runtime_lib_file_path, &pallet_configs).unwrap();
         let zipper_buffer = self
             .archiver_service
             .add_content_to_archive(
@@ -121,9 +127,10 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
                 Path::new("runtime/src/lib.rs"),
             )
             .await?;
-
+    
         Ok(zipper_buffer)
     }
+    
     fn apply_configs(
         &self,
         parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>
@@ -164,26 +171,32 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
     async fn generate_project_archive(
         &self,
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
-        template_type: TemplateType, 
+        template_type: TemplateType,
     ) -> Result<Vec<u8>> {
         let pallets = self.apply_configs(pallets)?;
-
+    
         if !self.templates.contains(&template_type) {
-            return Err(CodeGeneratorServiceError::InvalidTemplateType(format!("{:?}", template_type)));
+            return Err(CodeGeneratorServiceError::InvalidTemplateType(format!(
+                "{:?}",
+                template_type
+            )));
         }
-
+    
         let template_path = Path::new(&self.templates_directory)
             .join(template_type.to_string());
-        
+    
         let zipped_buffer = self
             .archiver_service
             .archive_folder(template_path.as_path(), HBS_SUFFIX)
             .await?;
-        
-        let zipped_buffer = self.add_pallets_to_archive(zipped_buffer, pallets).await?;
+    
+        let zipped_buffer = self
+            .add_pallets_to_archive(zipped_buffer, pallets, template_type)
+            .await?;
         let zipped_data = self.archiver_service.close_archive(zipped_buffer).await?;
         Ok(zipped_data)
     }
+    
 }
 
 // #[cfg(test)]

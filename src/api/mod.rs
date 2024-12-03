@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::services::{
-    code_generator::{ CodeGenerator, CodeGeneratorServiceError},
+    code_generator::{ types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
     object_store::ObjectStoreService,
 };
 use handlers::get_pallet_options_handler::PalletOptionsRequest;
@@ -54,7 +54,7 @@ impl Api {
     #[oai(path = "/get-templates/:template_type", method = "get")]
     pub async fn get_templates(
         &self,
-        template_type: Path<Option<crate::services::code_generator::types::TemplateType>>,
+        template_type: Path<Option<TemplateType>>,
     ) -> handlers::get_templates_handler::GetTemplatesResponse {
         handlers::get_templates_handler::get_templates_handler(
             self.code_generator_service.pallet_configs(),
