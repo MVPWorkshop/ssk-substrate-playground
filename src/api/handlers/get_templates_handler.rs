@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use poem_openapi::{param::Path, payload::Json, ApiResponse, Object};
 
-use crate::services::code_generator::types::{ PalletConfig,TemplateType};
+use crate::services::code_generator::types::{PalletConfig, TemplateType};
 
 // Pallet structure that will be returned as JSON
 #[derive(PartialEq, Eq, Debug, Object)]
@@ -19,9 +19,6 @@ pub struct UseCase {
     description: String,
     pallets: Vec<String>,
 }
-
-
-
 
 // Blockchain template structure.
 #[derive(PartialEq, Eq, Debug, Object)]
@@ -42,16 +39,14 @@ pub enum GetTemplatesResponse {
     // TODO return when query_template_type is not contained in supported templates.
     #[oai(status = 404)]
     NotFound(Json<String>),
-
 }
 
 pub async fn get_templates_handler(
     pallet_configs: &HashMap<String, PalletConfig>,
     query_template_type: Path<Option<TemplateType>>,
     // TODO pass self.templates from API.
-    supported_templates: Vec<TemplateType>
+    supported_templates: Vec<TemplateType>,
 ) -> GetTemplatesResponse {
-    
     if let Some(template_type) = &query_template_type.0 {
         if !supported_templates.contains(template_type) {
             return GetTemplatesResponse::NotFound(Json(format!(
@@ -62,57 +57,56 @@ pub async fn get_templates_handler(
     }
 
     let templates: Vec<BlockchainTemplate> = supported_templates
-    .iter()
-    .map(|template_type| BlockchainTemplate {
-        template_type: template_type.clone(),
-        essential_pallets: pallet_configs
-            .iter()
-            .filter(|(_, pallet)| {
-                pallet
-                    .metadata
-                    .is_essential
-                    .as_ref()
-                    .map_or(false, |essential_templates| {
-                        essential_templates.contains(template_type)
-                    })
-            })
-            .map(|(name, pallet)| Pallet {
-                name: name.clone(),
-                description: pallet.metadata.description.clone(),
-                category:  pallet
-                .metadata
-                .category
-                .as_ref()
-                .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()), 
-            })
-            .collect::<Vec<_>>(),
-        supported_pallets: pallet_configs
-            .iter()
-            .filter(|(_, pallet)| {
-                !pallet
-                    .metadata
-                    .is_essential
-                    .as_ref()
-                    .map_or(false, |essential_templates| {
-                        essential_templates.contains(template_type)
-                    })
-                    && pallet.metadata.supported_template.contains(template_type)
-            })
-            .map(|(name, pallet)| Pallet {
-                name: name.clone(),
-                description: pallet.metadata.description.clone(),
-                category: pallet
-                    .metadata
-                    .category
-                    .as_ref()
-                    .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()),
-            })
-            .collect::<Vec<_>>(),
-        use_cases: vec![], 
-        chain_type: vec![], 
-    })
-    .collect();
-   
+        .iter()
+        .map(|template_type| BlockchainTemplate {
+            template_type: template_type.clone(),
+            essential_pallets: pallet_configs
+                .iter()
+                .filter(|(_, pallet)| {
+                    pallet
+                        .metadata
+                        .is_essential
+                        .as_ref()
+                        .map_or(false, |essential_templates| {
+                            essential_templates.contains(template_type)
+                        })
+                })
+                .map(|(name, pallet)| Pallet {
+                    name: name.clone(),
+                    description: pallet.metadata.description.clone(),
+                    category: pallet
+                        .metadata
+                        .category
+                        .as_ref()
+                        .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()),
+                })
+                .collect::<Vec<_>>(),
+            supported_pallets: pallet_configs
+                .iter()
+                .filter(|(_, pallet)| {
+                    !pallet
+                        .metadata
+                        .is_essential
+                        .as_ref()
+                        .map_or(false, |essential_templates| {
+                            essential_templates.contains(template_type)
+                        })
+                        && pallet.metadata.supported_template.contains(template_type)
+                })
+                .map(|(name, pallet)| Pallet {
+                    name: name.clone(),
+                    description: pallet.metadata.description.clone(),
+                    category: pallet
+                        .metadata
+                        .category
+                        .as_ref()
+                        .map_or_else(|| "Uncategorized".to_string(), |cat| cat.to_string()),
+                })
+                .collect::<Vec<_>>(),
+            use_cases: vec![],
+            chain_type: vec![],
+        })
+        .collect();
 
     // Filtering the templates based on the `template_type` query parameter
     let filtered_templates: Vec<BlockchainTemplate> = match &query_template_type.0 {

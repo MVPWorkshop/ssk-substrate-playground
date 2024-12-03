@@ -20,7 +20,7 @@ pub struct CodeGeneratorService<ZB: 'static> {
     templates_directory: String,
     pallet_configs: HashMap<String, PalletConfig>,
     // TODO: change this to Vec<TemplateType>
-    templates:Vec<TemplateType>,
+    templates: Vec<TemplateType>,
     archiver_service: Arc<dyn ArchiverService<ZippedBuffer = ZB>>,
 }
 
@@ -41,7 +41,11 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             archiver_service,
         })
     }
-    fn filter_configs(&self, filter: Vec<String>,template_type: &TemplateType) -> Result<HashMap<String, PalletConfig>> {
+    fn filter_configs(
+        &self,
+        filter: Vec<String>,
+        template_type: &TemplateType,
+    ) -> Result<HashMap<String, PalletConfig>> {
         // Check if the pallets are supported
         for pallet_name in filter.iter() {
             if !self.pallet_configs.contains_key(pallet_name) {
@@ -67,7 +71,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             })
             .collect::<Vec<String>>();
 
-            let essential = self
+        let essential = self
             .pallet_configs
             .iter()
             .filter(|(_, config)| {
@@ -81,8 +85,6 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             .collect::<Vec<_>>();
         filtered.extend(essential);
 
-        
-
         // create local coppy of the pallets
         Ok(self
             .pallet_configs
@@ -95,15 +97,12 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         &self,
         zipper_buffer: ZB,
         pallet_configs: Vec<PalletConfig>,
-        template_type: TemplateType, 
+        template_type: TemplateType,
     ) -> Result<ZB>
     where
         ZB: 'static + Send,
     {
-        let manifest_file_path = format!(
-            "templates/{}/runtime/Cargo.toml.hbs",
-            template_type
-        );
+        let manifest_file_path = format!("templates/{}/runtime/Cargo.toml.hbs", template_type);
         let manifest_file_content =
             generate_manifest_file_to_bytes(&manifest_file_path, &pallet_configs).unwrap();
         let zipper_buffer = self
@@ -114,11 +113,8 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
                 Path::new("runtime/Cargo.toml"),
             )
             .await?;
-    
-        let runtime_lib_file_path = format!(
-            "templates/{}/runtime/src/lib.rs.hbs",
-            template_type
-        );
+
+        let runtime_lib_file_path = format!("templates/{}/runtime/src/lib.rs.hbs", template_type);
         let runtime_lib_file_content =
             generate_runtime_lib_file_bytes(&runtime_lib_file_path, &pallet_configs).unwrap();
         let zipper_buffer = self
@@ -129,17 +125,17 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
                 Path::new("runtime/src/lib.rs"),
             )
             .await?;
-    
+
         Ok(zipper_buffer)
     }
-    
+
     fn apply_configs(
         &self,
-        parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>
-        , template_type: &TemplateType,
+        parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
+        template_type: &TemplateType,
     ) -> Result<Vec<PalletConfig>> {
         let mut filtered_configs =
-            self.filter_configs(parameter_configs.keys().cloned().collect(),template_type)?;
+            self.filter_configs(parameter_configs.keys().cloned().collect(), template_type)?;
         parameter_configs
             .iter()
             .filter_map(|(name, config)| config.clone().map(|config| (name, config)))
@@ -176,30 +172,28 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
         template_type: TemplateType,
     ) -> Result<Vec<u8>> {
-        let pallets = self.apply_configs(pallets,&template_type)?;
+        let pallets = self.apply_configs(pallets, &template_type)?;
         if !self.templates.contains(&template_type) {
             return Err(CodeGeneratorServiceError::InvalidTemplateType(format!(
                 "{:?}",
                 template_type
             )));
         }
-    
-        let template_path = Path::new(&self.templates_directory)
-            .join(template_type.to_string());
-    
+
+        let template_path = Path::new(&self.templates_directory).join(template_type.to_string());
+
         let zipped_buffer = self
             .archiver_service
             .archive_folder(template_path.as_path(), HBS_SUFFIX)
             .await?;
-    
+
         let zipped_buffer = self
             .add_pallets_to_archive(zipped_buffer, pallets, template_type)
             .await?;
         let zipped_data = self.archiver_service.close_archive(zipped_buffer).await?;
         Ok(zipped_data)
     }
-    
- }
+}
 
 #[cfg(test)]
 mod tests {
@@ -226,11 +220,7 @@ mod tests {
         assert!(cg.is_ok());
         let cg = cg.unwrap();
         let zipper_buffer = cg
-            .add_pallets_to_archive(
-                zipper_buffer.unwrap(),
-                pallets,
-                TemplateType::SoloChain, 
-            )
+            .add_pallets_to_archive(zipper_buffer.unwrap(), pallets, TemplateType::SoloChain)
             .await;
         // save zipper_buffer to file test.zip in root directory
         let bytes = archiver.close_archive(zipper_buffer.unwrap()).await;
@@ -244,7 +234,10 @@ mod tests {
         let cg = CodeGeneratorService::try_new(archiver.clone()).await;
         assert!(cg.is_ok());
         let cg = cg.unwrap();
-        let filtered = cg.filter_configs(vec!["Pallet Bounties".to_string()], &TemplateType::SoloChain,);
+        let filtered = cg.filter_configs(
+            vec!["Pallet Bounties".to_string()],
+            &TemplateType::SoloChain,
+        );
         assert!(filtered.is_ok());
         let filtered = filtered.unwrap();
         assert_eq!(filtered.len(), 9);

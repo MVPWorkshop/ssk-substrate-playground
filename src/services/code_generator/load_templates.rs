@@ -21,9 +21,7 @@ impl From<std::io::Error> for LoadTemplatesError {
 }
 
 // The async function to take a path and return the desired map
-pub async fn load_templates(
-    path: PathBuf,
-) -> Result<Vec<TemplateType>, LoadTemplatesError> {
+pub async fn load_templates(path: PathBuf) -> Result<Vec<TemplateType>, LoadTemplatesError> {
     let mut implemented_templates = Vec::new();
 
     let mut entries = fs::read_dir(&path).await?;
