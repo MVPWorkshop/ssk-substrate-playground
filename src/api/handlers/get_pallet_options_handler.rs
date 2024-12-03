@@ -6,7 +6,7 @@ use poem_openapi::{
     ApiResponse, Object,
 };
 
-use crate::services::code_generator::types::{PalletConfig, ParameterType};
+use crate::services::code_generator::types::{PalletConfig, ParameterType, TemplateType};
 
 #[derive(Object)]
 pub struct Parameter {
@@ -37,7 +37,11 @@ impl From<&ParameterType> for Parameter {
         }
     }
 }
-
+#[derive(Object)]
+pub struct PalletOptionsRequest {
+    pub template: TemplateType,
+    pub pallets: Vec<String>,  
+}
 #[derive(ApiResponse)]
 pub enum GetPalletOptionsResponse {
     /// Returns when the user is successfully updated.
@@ -49,8 +53,10 @@ pub enum GetPalletOptionsResponse {
 
 pub async fn get_pallet_options_handler(
     pallet_configs: &HashMap<String, PalletConfig>,
-    pallets: Json<Vec<String>>,
+    request: Json<PalletOptionsRequest>, 
 ) -> GetPalletOptionsResponse {
+    let templatecheck = request.template.clone();
+    let pallets = &request.pallets; 
     // Check if the pallets are supported
     for pallet_name in pallets.iter() {
         if !pallet_configs.contains_key(pallet_name) {
@@ -64,7 +70,13 @@ pub async fn get_pallet_options_handler(
     let filtered = pallet_configs
         .iter()
         // Get the pallets that are in the list of pallet names
-        .filter(|(name, pallet)| pallets.contains(name) || pallet.metadata.is_essential.is_some())
+        .filter(|(name, pallet)| {
+            pallets.contains(name)
+                || pallet.metadata.is_essential.as_ref().map_or(false, |essential_templates| {
+                    essential_templates.iter().any(|template| *template == templatecheck)
+                })
+        })
+        
         // Get the required pallets for each pallet
         .flat_map(|(pallet_name, pallet)| {
             let mut palet_with_reqs = vec![pallet_name.clone()];

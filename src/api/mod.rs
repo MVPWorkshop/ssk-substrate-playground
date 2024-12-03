@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
 use crate::services::{
-    code_generator::{CodeGenerator, CodeGeneratorServiceError},
+    code_generator::{ CodeGenerator, CodeGeneratorServiceError},
     object_store::ObjectStoreService,
 };
+use handlers::get_pallet_options_handler::PalletOptionsRequest;
 use poem_openapi::{param::Path, payload::Json, OpenApi};
 use scc::HashMap as ConcurrentHashMap;
 use uuid::Uuid;
@@ -65,11 +66,11 @@ impl Api {
     #[oai(path = "/get-pallet-options", method = "post")]
     pub async fn get_pallet_options(
         &self,
-        pallets: Json<Vec<String>>,
+        request: Json<PalletOptionsRequest>
     ) -> handlers::get_pallet_options_handler::GetPalletOptionsResponse {
         handlers::get_pallet_options_handler::get_pallet_options_handler(
             self.code_generator_service.pallet_configs(),
-            pallets,
+            request
         )
         .await
     }
