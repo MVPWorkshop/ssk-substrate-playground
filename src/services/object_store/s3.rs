@@ -3,7 +3,6 @@ use std::time::Duration;
 use async_trait::async_trait;
 use aws_sdk_s3::{
     config::{Builder as S3ConfigBuilder, Config as S3Config, Region as S3Region},
-    operation::create_bucket::CreateBucketError,
     presigning::PresigningConfig,
     primitives::ByteStream,
     Client as S3Client,

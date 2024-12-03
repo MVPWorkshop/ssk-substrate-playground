@@ -17,6 +17,9 @@ async fn main() -> Result<(), std::io::Error> {
     if std::env::var_os("RUST_LOG").is_none() {
         std::env::set_var("RUST_LOG", "poem=debug");
     }
+    let hosted_url = std::env::var("HOSTED_URL")
+        .map_err(|e| format!("{:?}", e))
+        .unwrap_or(format!("http://127.0.0.1:{PORT}"));
     tracing_subscriber::fmt::init();
     println!("Initializing Substrate Runtime Builder API server...");
     let archiver_service = Arc::new(AsyncZipArchiverService);
@@ -43,7 +46,7 @@ async fn main() -> Result<(), std::io::Error> {
         "Substrate Runtime Builder",
         "1.0",
     )
-    .server(format!("http://127.0.0.1:{PORT}"));
+    .server(hosted_url);
     let ui = api_service.swagger_ui();
 
     Server::new(TcpListener::bind(format!("0.0.0.0:{PORT}")))
