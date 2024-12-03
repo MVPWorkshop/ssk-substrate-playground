@@ -41,7 +41,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             archiver_service,
         })
     }
-    fn filter_configs(&self, filter: Vec<String>,) -> Result<HashMap<String, PalletConfig>> {
+    fn filter_configs(&self, filter: Vec<String>,template_type: &TemplateType) -> Result<HashMap<String, PalletConfig>> {
         // Check if the pallets are supported
         for pallet_name in filter.iter() {
             if !self.pallet_configs.contains_key(pallet_name) {
@@ -52,7 +52,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         }
 
         // Get the required pallets for the pallets in the list
-        let  filtered: Vec<String> = self
+        let mut filtered: Vec<String> = self
             .pallet_configs
             .iter()
             // Get the pallets that are in the list of pallet names
@@ -67,18 +67,20 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
             })
             .collect::<Vec<String>>();
 
-            // let essential = self
-            // .pallet_configs
-            // .iter()
-            // .filter(|(_, config)| {
-            //     if let Some(essential_templates) = &config.metadata.is_essential {
-            //         essential_templates.contains(&template_type)
-            //     } else {
-            //         false
-            //     }
-            // })
-            // .map(|(pallet_name, _)| pallet_name.clone())
-            // .collect::<Vec<_>>();
+            let essential = self
+            .pallet_configs
+            .iter()
+            .filter(|(_, config)| {
+                if let Some(essential_templates) = &config.metadata.is_essential {
+                    essential_templates.contains(template_type)
+                } else {
+                    false
+                }
+            })
+            .map(|(pallet_name, _)| pallet_name.clone())
+            .collect::<Vec<_>>();
+        filtered.extend(essential);
+
         
 
         // create local coppy of the pallets
@@ -134,9 +136,10 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
     fn apply_configs(
         &self,
         parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>
+        , template_type: &TemplateType,
     ) -> Result<Vec<PalletConfig>> {
         let mut filtered_configs =
-            self.filter_configs(parameter_configs.keys().cloned().collect())?;
+            self.filter_configs(parameter_configs.keys().cloned().collect(),template_type)?;
         parameter_configs
             .iter()
             .filter_map(|(name, config)| config.clone().map(|config| (name, config)))
@@ -173,8 +176,7 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
         template_type: TemplateType,
     ) -> Result<Vec<u8>> {
-        let pallets = self.apply_configs(pallets)?;
-    
+        let pallets = self.apply_configs(pallets,&template_type)?;
         if !self.templates.contains(&template_type) {
             return Err(CodeGeneratorServiceError::InvalidTemplateType(format!(
                 "{:?}",
