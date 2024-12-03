@@ -129,7 +129,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         parameter_configs: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>
     ) -> Result<Vec<PalletConfig>> {
         let mut filtered_configs =
-            self.filter_configs((parameter_configs.keys().cloned().collect()))?;
+            self.filter_configs(parameter_configs.keys().cloned().collect())?;
         parameter_configs
             .iter()
             .filter_map(|(name, config)| config.clone().map(|config| (name, config)))
