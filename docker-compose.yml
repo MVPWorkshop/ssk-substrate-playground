@@ -5,13 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: ghcr.io/mvpworkshop/ssk-substrate-playground:latest
     ports:
       - "3000:3000"
     volumes:
       - ./generated_code:/app/generated_code
     restart: unless-stopped
     env_file:
-      - .env.dev
+      - .env.local
     depends_on:
       localstack:
         condition: service_healthy
@@ -30,7 +31,7 @@ services:
       start_period: 10s
       retries: 5
     env_file:
-      - .env.dev
+      - .env.local
     environment:
       - SERVICES=s3
       - DEFAULT_REGION=${AWS_DEFAULT_REGION}
