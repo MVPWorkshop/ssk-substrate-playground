@@ -199,49 +199,54 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
         Ok(zipped_data)
     }
     
-}
+ }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use crate::services::{
-//         archiver::async_zip::AsyncZipArchiverService,
-//         code_generator::{
-//             service::CodeGeneratorService, templating::handle_templates::HBS_SUFFIX, CodeGenerator,
-//         },
-//     };
-//     #[tokio::test]
-//     async fn test_add_archived_pallets() {
-//         dotenv::from_filename(".env.local").ok();
-//         let archiver = Arc::new(AsyncZipArchiverService);
-//         let cg = CodeGeneratorService::try_new(archiver.clone()).await;
-//         assert!(cg.is_ok());
-//         let cg = cg.unwrap();
-//         let pallets = cg.pallet_configs();
-//         let pallets = pallets.iter().map(|(_, v)| v.clone()).collect();
-//         let zipper_buffer = archiver
-//             .archive_folder(Path::new("templates/solochain/basic"), HBS_SUFFIX)
-//             .await;
-//         let cg = CodeGeneratorService::try_new(archiver.clone()).await;
-//         assert!(cg.is_ok());
-//         let cg = cg.unwrap();
-//         let zipper_buffer = cg
-//             .add_pallets_to_archive(zipper_buffer.unwrap(), pallets)
-//             .await;
-//         // save zipper_buffer to file test.zip in root directory
-//         let bytes = archiver.close_archive(zipper_buffer.unwrap()).await;
-//         assert!(bytes.is_ok());
-//     }
-//     #[tokio::test]
-//     async fn test_filter_configs() {
-//         dotenv::from_filename(".env.local").ok();
-//         let archiver = Arc::new(AsyncZipArchiverService);
-//         let cg = CodeGeneratorService::try_new(archiver.clone()).await;
-//         assert!(cg.is_ok());
-//         let cg = cg.unwrap();
-//         let filtered = cg.filter_configs(vec!["Pallet Bounties".to_string()]);
-//         assert!(filtered.is_ok());
-//         let filtered = filtered.unwrap();
-//         assert_eq!(filtered.len(), 9);
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::services::{
+        archiver::async_zip::AsyncZipArchiverService,
+        code_generator::{
+            service::CodeGeneratorService, templating::handle_templates::HBS_SUFFIX, CodeGenerator,
+        },
+    };
+    #[tokio::test]
+    async fn test_add_archived_pallets() {
+        dotenv::from_filename(".env.local").ok();
+        let archiver = Arc::new(AsyncZipArchiverService);
+        let cg = CodeGeneratorService::try_new(archiver.clone()).await;
+        assert!(cg.is_ok());
+        let cg = cg.unwrap();
+        let pallets = cg.pallet_configs();
+        let pallets = pallets.iter().map(|(_, v)| v.clone()).collect();
+        let zipper_buffer = archiver
+            .archive_folder(Path::new("templates/SoloChain"), HBS_SUFFIX)
+            .await;
+        let cg = CodeGeneratorService::try_new(archiver.clone()).await;
+        assert!(cg.is_ok());
+        let cg = cg.unwrap();
+        let zipper_buffer = cg
+            .add_pallets_to_archive(
+                zipper_buffer.unwrap(),
+                pallets,
+                TemplateType::SoloChain, 
+            )
+            .await;
+        // save zipper_buffer to file test.zip in root directory
+        let bytes = archiver.close_archive(zipper_buffer.unwrap()).await;
+        assert!(bytes.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_filter_configs() {
+        dotenv::from_filename(".env.local").ok();
+        let archiver = Arc::new(AsyncZipArchiverService);
+        let cg = CodeGeneratorService::try_new(archiver.clone()).await;
+        assert!(cg.is_ok());
+        let cg = cg.unwrap();
+        let filtered = cg.filter_configs(vec!["Pallet Bounties".to_string()], &TemplateType::SoloChain,);
+        assert!(filtered.is_ok());
+        let filtered = filtered.unwrap();
+        assert_eq!(filtered.len(), 9);
+    }
+}
