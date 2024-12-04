@@ -48,7 +48,8 @@ async fn test_api() {
         sp.0.keys()
             .map(|name| (name.clone(), None))
             .collect::<HashMap<String, Option<HashMap<String, ParameterConfiguration>>>>();
-    let req_body = "{\"name\": \"test_project\", \"template\": \"SoloChain\",\"pallets\": ".to_string()
+    let req_body = "{\"name\": \"test_project\", \"template\": \"SoloChain\",\"pallets\": "
+        .to_string()
         + &serde_json::to_string(&request_sp).unwrap()
         + "}";
     let project = serde_json::from_str::<NewProject>(&req_body);
