@@ -3,11 +3,11 @@ name = "Pallet Scheduler"
 [metadata]
 description = "The Scheduler pallet allows scheduling the execution of specific calls at a designated block or within a specific time period. These scheduled calls can be named or anonymous, with the option to cancel them before execution."
 short_description = "FRAME Scheduler pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Runtime"]
+category= "Runtime"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

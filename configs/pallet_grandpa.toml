@@ -3,11 +3,12 @@ name = "Pallet Grandpa"
 [metadata]
 description = "This manages the GRANDPA authority set ready for the native code. These authorities are only for GRANDPA finality, not for consensus overall."
 short_description = "FRAME Grandpa consensus pallet"
-is_essential = true
+is_essential = ["SoloChain"]
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Consensus"]
+category = "Consensus"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 5078
 updated = "1729175503"
 

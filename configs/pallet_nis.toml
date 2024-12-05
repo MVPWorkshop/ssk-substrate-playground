@@ -3,11 +3,11 @@ name = "Pallet Non-Interactive Staking"
 [metadata]
 description = "A pallet allowing accounts to auction for being frozen and receive open-ended inflation-protection in return. Lock up tokens, for at least as long as you offer, and be free from both inflation and intermediate reward or exchange until the tokens become unlocked."
 short_description = "FRAME NIS pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Assets"]
+category = "Assets"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

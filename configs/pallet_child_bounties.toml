@@ -5,11 +5,11 @@ description = """
 A pallet for managing child bounties within the governance system.
 The Child Bounties pallet allows for the creation and management of child bounties tied to a parent bounty, including: child bounty creation, value management, and payout distribution."""
 short_description = "FRAME Child Bounties pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Governance"]
+category = "Governance"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

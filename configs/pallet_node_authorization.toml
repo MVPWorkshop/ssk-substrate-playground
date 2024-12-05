@@ -3,11 +3,11 @@ name = "Pallet Node Authorization"
 [metadata]
 description = "The Node Authorization pallet allows for managing a whitelist of nodes authorized to produce blocks or participate in the network, ensuring only trusted nodes can operate within a permissioned Substrate network."
 short_description = "FRAME Node Authorization pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Runtime"]
+category = "Runtime"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

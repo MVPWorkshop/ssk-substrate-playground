@@ -3,11 +3,11 @@ name = "Pallet Preimage"
 [metadata]
 description = "The preimage pallet enables efficient on-chain storage and referencing of large data, which is useful for proposals in pallets like democracy and collective decision-making."
 short_description = "FRAME Preimage pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Governance"]
+category = "Governance"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

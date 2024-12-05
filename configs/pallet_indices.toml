@@ -3,11 +3,11 @@ name = "Pallet Indices"
 [metadata]
 description = """An index is a short form of an address. This module handles allocation of indices for a newly created accounts."""
 short_description = "FRAME Indices pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Other"]
+category = "Other"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

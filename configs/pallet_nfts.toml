@@ -5,11 +5,11 @@ description = """
 A pallet for dealing with non-fungible assets.
 The NFTs pallet provides functionality for non-fungible tokens' management, including:Collection Creation, NFT Minting, NFT Transfers and Atomic Swaps, NFT Trading methods, Attributes Management, NFT Burning"""
 short_description = "FRAME Nfts pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["NFT"]
+category = "NFT"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

@@ -107,7 +107,7 @@ mod tests {
     #[tokio::test]
     async fn test_archive_and_close_archive() {
         let archiver = AsyncZipArchiverService;
-        let template_path = Path::new("templates/solochain/basic");
+        let template_path = Path::new("templates/SoloChain");
         let result = archiver.archive_folder(template_path, HBS_SUFFIX).await;
         assert!(result.is_ok());
         let zipper_buffer = result.unwrap();

@@ -9,11 +9,11 @@ A group of Tippers is determined through the config Config. After half of these 
 """
 
 short_description = "FRAME Tips pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Assets"]
+category = "Assets"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

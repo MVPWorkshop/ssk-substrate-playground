@@ -3,11 +3,11 @@ name = "Pallet Proxy"
 [metadata]
 description = "A pallet allowing accounts to give permission to other accounts to dispatch types of calls from their signed origin."
 short_description = "FRAME Proxy pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Runtime"]
+category = "Runtime"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

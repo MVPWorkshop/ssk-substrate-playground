@@ -3,11 +3,11 @@ name = "Pallet Recovery"
 [metadata]
 description = "The Recovery pallet is an M-of-N social recovery tool for users to gain access to their accounts if the private key or other authentication mechanism is lost. Through this pallet, a user is able to make calls on-behalf-of another account which they have recovered. The recovery process is protected by trusted friends whom the original account owner chooses. A threshold (M) out of N friends are needed to give another account access to the recoverable account."
 short_description = "FRAME Recovery pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Accounts"]
+category= "Accounts"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

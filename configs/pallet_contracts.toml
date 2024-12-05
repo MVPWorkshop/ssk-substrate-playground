@@ -3,11 +3,11 @@ name = "Pallet Contracts"
 [metadata]
 description = "The Contracts pallet provides a framework for deploying and executing WebAssembly (Wasm) smart contracts on the Substrate blockchain, enabling features like contract creation, interaction, and storage management while supporting gas metering and runtime upgrades."
 short_description = "FRAME Contracts pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["SmartContracts"]
+category = "SmartContracts"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

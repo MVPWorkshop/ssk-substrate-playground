@@ -3,11 +3,11 @@ name = "Pallet Tx Pause"
 [metadata]
 description = """Allows dynamic, chain-state-based pausing and unpausing of specific extrinsics via call filters."""
 short_description = "FRAME Tx Pause pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Runtime"]
+category = "Runtime"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

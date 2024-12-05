@@ -3,11 +3,11 @@ name = "Pallet Asset Rate"
 [metadata]
 description = "The Asset Rate pallet facilitates the management of conversion rates between different types of assets within the Substrate ecosystem. It allows for the creation, updating, and removal of conversion rates, providing flexibility for economic models that require dynamic adjustment of asset values. This pallet is particularly useful in contexts like treasury, markets, or other modules that need precise tracking of asset valuations."
 short_description = "FRAME Asset Rate pallet"
-is_essential = false
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-categories = ["Assets"]
+category = "Assets"
+supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

@@ -95,7 +95,7 @@ pub enum SubstrateVersion {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display, Enum)]
-pub enum PalletCategories {
+pub enum PalletCategorie {
     Accounts,
     Assets,
     Consensus,
@@ -105,6 +105,34 @@ pub enum PalletCategories {
     SmartContracts,
     NFT,
     Other,
+}
+
+#[derive(
+    PartialEq,
+    Eq,
+    Debug,
+    Enum,
+    Clone,
+    Deserialize,
+    Serialize,
+    PartialOrd,
+    Ord,
+    EnumString,
+    Display,
+    Hash,
+)]
+
+pub enum TemplateType {
+    #[strum(serialize = "SoloChain")]
+    SoloChain,
+    #[strum(serialize = "SoloFrontierChain")]
+    SoloFrontierChain,
+    #[strum(serialize = "ParaChain")]
+    ParaChain,
+    #[strum(serialize = "Minimal")]
+    Minimal,
+    #[strum(serialize = "Frontier")]
+    Frontier,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Enum)]
@@ -121,9 +149,10 @@ pub struct PalletMetadata {
     pub compatibility: SubstrateVersion,
     pub license: Option<String>,
     pub authors: Vec<CommonAuthors>,
-    pub categories: Option<Vec<PalletCategories>>,
+    pub category: Option<PalletCategorie>,
     pub size: usize,
-    pub is_essential: bool,
+    pub is_essential: Option<Vec<TemplateType>>,
+    pub supported_template: Vec<TemplateType>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]

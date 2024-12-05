@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
 use crate::services::{
-    code_generator::{CodeGenerator, CodeGeneratorServiceError},
+    code_generator::{types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
     object_store::ObjectStoreService,
 };
+use handlers::get_pallet_options_handler::PalletOptionsRequest;
 use poem_openapi::{param::Path, payload::Json, OpenApi};
 use scc::HashMap as ConcurrentHashMap;
 use uuid::Uuid;
@@ -28,15 +29,6 @@ impl Api {
             code_generator_service,
         }
     }
-    #[oai(path = "/list-supported-pallets", method = "get")]
-    pub async fn list_supported_pallets(
-        &self,
-    ) -> handlers::list_supported_pallets_handler::ListSupportedPalletsResponse {
-        handlers::list_supported_pallets_handler::list_supported_pallets_handler(
-            self.code_generator_service.pallet_configs(),
-        )
-        .await
-    }
     #[oai(path = "/generate-project", method = "post")]
     pub async fn generate_a_project(
         &self,
@@ -53,22 +45,23 @@ impl Api {
     #[oai(path = "/get-templates/:template_type", method = "get")]
     pub async fn get_templates(
         &self,
-        template_type: Path<Option<handlers::get_templates_handler::TemplateType>>,
+        template_type: Path<TemplateType>,
     ) -> handlers::get_templates_handler::GetTemplatesResponse {
         handlers::get_templates_handler::get_templates_handler(
             self.code_generator_service.pallet_configs(),
             template_type,
+            self.code_generator_service.templates().clone(),
         )
         .await
     }
     #[oai(path = "/get-pallet-options", method = "post")]
     pub async fn get_pallet_options(
         &self,
-        pallets: Json<Vec<String>>,
+        request: Json<PalletOptionsRequest>,
     ) -> handlers::get_pallet_options_handler::GetPalletOptionsResponse {
         handlers::get_pallet_options_handler::get_pallet_options_handler(
             self.code_generator_service.pallet_configs(),
-            pallets,
+            request,
         )
         .await
     }
