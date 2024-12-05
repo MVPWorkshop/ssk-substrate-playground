@@ -8,13 +8,14 @@ use substrate_runtime_builder::{
                 GenerateProjectResponse, NewProject, ParameterConfiguration,
             },
             get_status_handler::{GetStatusResponse, Status},
-            list_supported_pallets_handler::ListSupportedPalletsResponse,
+            get_templates_handler::GetTemplatesResponse,
         },
         Api,
     },
     services::{
         archiver::async_zip::AsyncZipArchiverService,
-        code_generator::service::CodeGeneratorService, object_store::s3::S3ObjectStoreService,
+        code_generator::{service::CodeGeneratorService, types::TemplateType},
+        object_store::s3::S3ObjectStoreService,
     },
 };
 
@@ -41,13 +42,16 @@ async fn test_api() {
     let api = boot_api().await;
     assert!(api.is_ok());
     let api = api.unwrap();
-    let sp = api.list_supported_pallets().await;
-    let ListSupportedPalletsResponse::Ok(sp) = sp;
-    assert!(sp.len() > 0);
-    let request_sp =
-        sp.0.keys()
-            .map(|name| (name.clone(), None))
-            .collect::<HashMap<String, Option<HashMap<String, ParameterConfiguration>>>>();
+    let sp = api.get_templates(Path(TemplateType::SoloChain)).await;
+    let bt = match sp {
+        GetTemplatesResponse::Ok(Json(bt)) => bt,
+        GetTemplatesResponse::NotFound(_) => panic!("Templates not found"),
+    };
+    let request_sp = bt
+        .supported_pallets
+        .iter()
+        .map(|pallet| (pallet.name.clone(), None))
+        .collect::<HashMap<String, Option<HashMap<String, ParameterConfiguration>>>>();
     let req_body = "{\"name\": \"test_project\", \"template\": \"SoloChain\",\"pallets\": "
         .to_string()
         + &serde_json::to_string(&request_sp).unwrap()

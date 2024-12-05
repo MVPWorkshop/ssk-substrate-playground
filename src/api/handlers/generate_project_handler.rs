@@ -78,10 +78,8 @@ pub async fn generate_a_project_handler(
     // Append uuid to project name
     project_name = format!("{}_{}", project_name, Uuid::new_v4());
 
-    let template_type = project.template.clone();
-
     let archive = match code_generator_service
-        .generate_project_archive(&project.pallets, template_type)
+        .generate_project_archive(&project.pallets, &project.template)
         .await
     {
         Ok(archive) => archive,

@@ -29,15 +29,6 @@ impl Api {
             code_generator_service,
         }
     }
-    #[oai(path = "/list-supported-pallets", method = "get")]
-    pub async fn list_supported_pallets(
-        &self,
-    ) -> handlers::list_supported_pallets_handler::ListSupportedPalletsResponse {
-        handlers::list_supported_pallets_handler::list_supported_pallets_handler(
-            self.code_generator_service.pallet_configs(),
-        )
-        .await
-    }
     #[oai(path = "/generate-project", method = "post")]
     pub async fn generate_a_project(
         &self,
@@ -54,7 +45,7 @@ impl Api {
     #[oai(path = "/get-templates/:template_type", method = "get")]
     pub async fn get_templates(
         &self,
-        template_type: Path<Option<TemplateType>>,
+        template_type: Path<TemplateType>,
     ) -> handlers::get_templates_handler::GetTemplatesResponse {
         handlers::get_templates_handler::get_templates_handler(
             self.code_generator_service.pallet_configs(),

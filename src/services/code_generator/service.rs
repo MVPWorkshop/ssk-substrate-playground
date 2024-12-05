@@ -19,7 +19,6 @@ pub struct CodeGeneratorService<ZB: 'static> {
     config_directory: String,
     templates_directory: String,
     pallet_configs: HashMap<String, PalletConfig>,
-    // TODO: change this to Vec<TemplateType>
     templates: Vec<TemplateType>,
     archiver_service: Arc<dyn ArchiverService<ZippedBuffer = ZB>>,
 }
@@ -56,11 +55,20 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         }
 
         // Get the required pallets for the pallets in the list
-        let mut filtered: Vec<String> = self
+        let filtered: Vec<String> = self
             .pallet_configs
             .iter()
             // Get the pallets that are in the list of pallet names
-            .filter(|(name, _)| filter.contains(*name))
+            .filter(|(name, pallet)| {
+                filter.contains(name)
+                    || pallet
+                        .metadata
+                        .is_essential
+                        .as_ref()
+                        .map_or(false, |essential_templates| {
+                            essential_templates.contains(template_type)
+                        })
+            })
             // Get the required pallets for each pallet
             .flat_map(|(pallet_name, pallet)| {
                 let mut pallet_with_reqs = vec![pallet_name.clone()];
@@ -70,20 +78,6 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
                 pallet_with_reqs
             })
             .collect::<Vec<String>>();
-
-        let essential = self
-            .pallet_configs
-            .iter()
-            .filter(|(_, config)| {
-                if let Some(essential_templates) = &config.metadata.is_essential {
-                    essential_templates.contains(template_type)
-                } else {
-                    false
-                }
-            })
-            .map(|(pallet_name, _)| pallet_name.clone())
-            .collect::<Vec<_>>();
-        filtered.extend(essential);
 
         // create local coppy of the pallets
         Ok(self
@@ -97,7 +91,7 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         &self,
         zipper_buffer: ZB,
         pallet_configs: Vec<PalletConfig>,
-        template_type: TemplateType,
+        template_type: &TemplateType,
     ) -> Result<ZB>
     where
         ZB: 'static + Send,
@@ -170,10 +164,10 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
     async fn generate_project_archive(
         &self,
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
-        template_type: TemplateType,
+        template_type: &TemplateType,
     ) -> Result<Vec<u8>> {
-        let pallets = self.apply_configs(pallets, &template_type)?;
-        if !self.templates.contains(&template_type) {
+        let pallets = self.apply_configs(pallets, template_type)?;
+        if !self.templates.contains(template_type) {
             return Err(CodeGeneratorServiceError::InvalidTemplateType(format!(
                 "{:?}",
                 template_type
@@ -220,7 +214,7 @@ mod tests {
         assert!(cg.is_ok());
         let cg = cg.unwrap();
         let zipper_buffer = cg
-            .add_pallets_to_archive(zipper_buffer.unwrap(), pallets, TemplateType::SoloChain)
+            .add_pallets_to_archive(zipper_buffer.unwrap(), pallets, &TemplateType::SoloChain)
             .await;
         // save zipper_buffer to file test.zip in root directory
         let bytes = archiver.close_archive(zipper_buffer.unwrap()).await;

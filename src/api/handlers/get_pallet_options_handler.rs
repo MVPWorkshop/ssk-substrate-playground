@@ -55,7 +55,7 @@ pub async fn get_pallet_options_handler(
     pallet_configs: &HashMap<String, PalletConfig>,
     request: Json<PalletOptionsRequest>,
 ) -> GetPalletOptionsResponse {
-    let templatecheck = request.template.clone();
+    let templatecheck = &request.template;
     let pallets = &request.pallets;
     // Check if the pallets are supported
     for pallet_name in pallets.iter() {
@@ -77,9 +77,7 @@ pub async fn get_pallet_options_handler(
                     .is_essential
                     .as_ref()
                     .map_or(false, |essential_templates| {
-                        essential_templates
-                            .iter()
-                            .any(|template| *template == templatecheck)
+                        essential_templates.contains(templatecheck)
                     })
         })
         // Get the required pallets for each pallet

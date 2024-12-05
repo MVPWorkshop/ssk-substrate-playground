@@ -44,6 +44,6 @@ pub trait CodeGenerator: Send + Sync {
     async fn generate_project_archive(
         &self,
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
-        template_type: TemplateType,
+        template_type: &TemplateType,
     ) -> Result<Vec<u8>>;
 }
