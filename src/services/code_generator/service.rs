@@ -226,13 +226,11 @@ mod tests {
         dotenv::from_filename(".env.local").ok();
         let archiver = Arc::new(AsyncZipArchiverService);
         let cg = CodeGeneratorService::try_new(archiver.clone()).await;
-        assert!(cg.is_ok());
         let cg = cg.unwrap();
         let filtered = cg.filter_configs(
             vec!["Pallet Bounties".to_string()],
             &TemplateType::SoloChain,
         );
-        assert!(filtered.is_ok());
         let filtered = filtered.unwrap();
         assert_eq!(filtered.len(), 9);
     }

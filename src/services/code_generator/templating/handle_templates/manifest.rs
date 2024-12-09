@@ -27,7 +27,10 @@ pub fn generate_manifest_file_to_bytes(
     mainfest_file_path: &str,
     pallet_configs: &[PalletConfig],
 ) -> Result<Vec<u8>, TemplateRenderError> {
-    let manifest_configs: Vec<ManifestConfig> =
-        pallet_configs.iter().map(|pallet| pallet.into()).collect();
+    let manifest_configs: Vec<ManifestConfig> = pallet_configs
+        .iter()
+        .filter(|pallet| !pallet.metadata.is_instance.unwrap_or_default())
+        .map(|pallet| pallet.into())
+        .collect();
     render_handlebars_template_to_bytes(mainfest_file_path, &manifest_configs)
 }
