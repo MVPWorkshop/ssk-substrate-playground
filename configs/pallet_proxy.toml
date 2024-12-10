@@ -60,7 +60,7 @@ impl InstanceFilter<RuntimeCall> for ProxyType {
 }
 """
 additional_runtime_lib_code = [
-    "use codec::{Decode, Encode, MaxEncodedLen};",
+    "use codec::{MaxEncodedLen};",
     "use frame_support::traits::InstanceFilter;",
     "use sp_runtime::RuntimeDebug;",
 ]
