@@ -1,0 +1,15 @@
+[workspace.package]
+license = "MIT-0"
+authors = ["MVP Workshop <hello@mvpworkshop.co>"]
+homepage = ""
+repository = ""
+edition = "2021"
+
+[workspace]
+members = [
+    "node",
+    "pallets/template",
+    "runtime",
+]
+
+resolver = "2"
