@@ -76,9 +76,7 @@ pub async fn get_pallet_options_handler(
                     .metadata
                     .is_essential
                     .as_ref()
-                    .map_or(false, |essential_templates| {
-                        essential_templates.contains(templatecheck)
-                    })
+                    .is_some_and(|essential_templates| essential_templates.contains(templatecheck))
         })
         // Get the required pallets for each pallet
         .flat_map(|(pallet_name, pallet)| {

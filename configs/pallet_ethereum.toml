@@ -1,0 +1,61 @@
+name = "Pallet Ethereum"
+
+[metadata]
+description = """Pallet Ethereum is a Substrate module that emulates Ethereum’s block and transaction format, allowing a Frontier-based chain to handle Ethereum-compatible transactions. It ensures smooth interaction with Ethereum tools and clients, making the chain appear more like a standard Ethereum network."""
+short_description = "FRAME Broker pallet"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+is_essential = ["SoloFrontierChain"]
+category = "Other"
+supported_template=["SoloFrontierChain"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_runtime_lib_code = [
+]
+additional_pallet_impl_code = """
+parameter_types! {
+    pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
+}
+
+"""
+# pub const EthExtraDataLength: u32 = 30;
+[runtime.optional_parameter_types.EthExtraDataLength]
+name = "EthExtraDataLength"
+description = "EthExtraDataLength defines the maximum length of the extraData field in Ethereum-compatible block headers. It sets how many bytes of metadata or “vanity” data can be included within each block."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.EthExtraDataLength.expression]
+default_unit = ""
+default_multiiplier = 30
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+
+[runtime.construct_runtime]
+runtime = ["Ethereum", "pallet_ethereum::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+StateRoot = "pallet_ethereum::IntermediateStateRoot<Self>"
+PostLogContent = "PostBlockAndTxnHashes"
+ExtraDataLength = "EthExtraDataLength"
+
+[dependencies.pallet]
+package = "pallet-ethereum"
+alias = "pallet ethereum"
+default_features = false
+git_repo = "https://github.com/polkadot-evm/frontier"
+tag = "polkadot-v1.14.0"
+
+
+
+
+
+
+
+

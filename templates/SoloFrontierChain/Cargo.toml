@@ -150,10 +150,7 @@ fp-storage = { git = "https://github.com/polkadot-evm/frontier", branch = "stabl
 
 
 # Frontier FRAME
-pallet-base-fee = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 pallet-dynamic-fee = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
-pallet-ethereum = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
-pallet-evm = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 pallet-evm-chain-id = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 pallet-evm-precompile-modexp = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 pallet-evm-precompile-sha3fips = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
