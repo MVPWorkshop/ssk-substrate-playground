@@ -7,11 +7,15 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "NFT"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
-
-
 
 # pub const UniquesStringLimit: u32 = 256;
 [runtime.optional_parameter_types.UniquesStringLimit]
@@ -117,7 +121,6 @@ default_multiiplier = 1
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
-
 
 
 [runtime.construct_runtime]

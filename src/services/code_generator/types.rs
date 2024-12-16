@@ -95,7 +95,7 @@ pub enum SubstrateVersion {
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Eq, Display, Enum)]
-pub enum PalletCategorie {
+pub enum PalletCategory {
     Accounts,
     Assets,
     Consensus,
@@ -149,11 +149,12 @@ pub struct PalletMetadata {
     pub compatibility: SubstrateVersion,
     pub license: Option<String>,
     pub authors: Vec<CommonAuthors>,
-    pub category: Option<PalletCategorie>,
+    pub category: Option<PalletCategory>,
     pub size: usize,
     pub is_essential: Option<Vec<TemplateType>>,
     pub supported_template: Vec<TemplateType>,
     pub is_instance: Option<bool>,
+    pub use_cases: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
