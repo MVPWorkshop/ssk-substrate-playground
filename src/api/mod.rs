@@ -72,4 +72,15 @@ impl Api {
     ) -> handlers::get_status_handler::GetStatusResponse {
         handlers::get_status_handler::get_status_handler(self.task_handles.clone(), task_id).await
     }
+    #[oai(path = "/get-dependencies", method = "post")]
+    pub async fn get_dependencies(
+        &self,
+        request: Json<handlers::get_dependencies_handler::GetDependenciesRequest>,
+    ) -> handlers::get_dependencies_handler::GetDependenciesResponse {
+        handlers::get_dependencies_handler::get_dependencies_handler(
+            self.code_generator_service.pallet_configs(),
+            request,
+        )
+        .await
+    }
 }
