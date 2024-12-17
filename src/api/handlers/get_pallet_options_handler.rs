@@ -15,6 +15,8 @@ pub struct Parameter {
     pub possible_unit_names: Vec<String>,
     pub multiplier_configurable: bool,
     pub example: String,
+    pub default_unit: String,
+    pub default_multiplier: Option<i64>,
 }
 
 impl From<&ParameterType> for Parameter {
@@ -34,6 +36,8 @@ impl From<&ParameterType> for Parameter {
                 "pub{}{}: {} = {};",
                 pt.prefix, pt.name, pt.p_type, example_expression
             ),
+            default_multiplier: pt.expression.default_multiplier,
+            default_unit: pt.expression.default_unit.clone(),
         }
     }
 }
