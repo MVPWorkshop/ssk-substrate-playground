@@ -39,7 +39,7 @@ pub enum ParameterTypePrefix {
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq, Object)]
 pub struct ParameterTypeExpression {
     pub default_unit: String,
-    pub default_multiiplier: Option<i64>,
+    pub default_multiplier: Option<i64>,
     pub format: String,
     pub possible_units: Vec<String>,
     pub multiplier_configurable: bool,

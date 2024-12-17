@@ -30,7 +30,7 @@ prefix = "empty"
 p_type = "Weight"
 [runtime.optional_parameter_types.MaximumSchedulerWeight.expression]
 default_unit = ""
-default_multiiplier = 80
+default_multiplier = 80
 format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
 possible_units = []
 multiplier_configurable = true

@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "SmartContracts"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+	"SoloChain",
+	"ParaChain",
+	"Minimal",
+	"Frontier",
+	"SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -32,7 +38,7 @@ prefix = "const"
 p_type = "Perbill"
 [runtime.optional_parameter_types.CodeHashLockupDepositPercent.expression]
 default_unit = ""
-default_multiiplier = 20
+default_multiplier = 20
 format = "{}Perbill::from_percent({})"
 possible_units = []
 multiplier_configurable = true
@@ -45,7 +51,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxDelegateDependencies.expression]
 default_unit = ""
-default_multiiplier = 32
+default_multiplier = 32
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -58,7 +64,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxCodeLen.expression]
 default_unit = "1024"
-default_multiiplier = 128
+default_multiplier = 128
 format = "{}*{}"
 possible_units = ["1024"]
 multiplier_configurable = true
@@ -71,7 +77,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxStorageKeyLen.expression]
 default_unit = ""
-default_multiiplier = 128
+default_multiplier = 128
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -84,7 +90,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxDebugBufferLen.expression]
 default_unit = "1024 * 1024"
-default_multiiplier = 2
+default_multiplier = 2
 format = "{}*{}"
 possible_units = ["1024 * 1024"]
 multiplier_configurable = true
@@ -97,7 +103,7 @@ prefix = "const"
 p_type = "bool"
 [runtime.optional_parameter_types.UnsafeUnstableInterface.expression]
 default_unit = "true"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}"
 possible_units = ["true", "false"]
 multiplier_configurable = false

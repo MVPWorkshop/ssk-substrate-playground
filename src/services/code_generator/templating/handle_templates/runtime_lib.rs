@@ -98,7 +98,7 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 for (_, pt) in optional_parameter_types {
                     let m = match pt.expression.configured_multiplier {
                         Some(v) => v.to_string(),
-                        None => match pt.expression.default_multiiplier {
+                        None => match pt.expression.default_multiplier {
                             Some(v) => v.to_string(),
                             None => "".to_string(),
                         },

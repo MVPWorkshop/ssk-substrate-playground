@@ -25,7 +25,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.UniquesStringLimit.expression]
 default_unit = ""
-default_multiiplier = 256
+default_multiplier = 256
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -38,7 +38,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.UniquesDepositPerByte.expression]
 default_unit = ""
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -52,7 +52,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.UniquesCollectionDeposit.expression]
 default_unit = "1000"
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -65,7 +65,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.UniquesValueLimit.expression]
 default_unit = ""
-default_multiiplier = 256
+default_multiplier = 256
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -78,7 +78,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.UniquesAttributeDepositBase.expression]
 default_unit = "1000"
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -91,7 +91,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.UniquesItemDeposit.expression]
 default_unit = "1000"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -104,7 +104,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.UniquesKeyLimit.expression]
 default_unit = ""
-default_multiiplier = 64
+default_multiplier = 64
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -117,7 +117,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.UniquesMetadataDepositBase.expression]
 default_unit = "1000"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true

@@ -26,7 +26,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.TechnicalMaxMembers.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

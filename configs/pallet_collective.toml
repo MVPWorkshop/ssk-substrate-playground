@@ -26,7 +26,7 @@ prefix = "const"
 p_type = "BlockNumber"
 [runtime.optional_parameter_types.CouncilMotionDuration.expression]
 default_unit = "MINUTES"
-default_multiiplier = 3
+default_multiplier = 3
 format = "{} * {}"
 possible_units = ["MINUTES", "HOURS", "DAYS"]
 multiplier_configurable = true
@@ -39,7 +39,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.CouncilMaxProposals.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -52,7 +52,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.CouncilMaxMembers.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -65,7 +65,7 @@ prefix = "empty"
 p_type = "Weight"
 [runtime.optional_parameter_types.MaxCollectivesProposalWeight.expression]
 default_unit = ""
-default_multiiplier = 50
+default_multiplier = 50
 format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
 possible_units = []
 multiplier_configurable = true

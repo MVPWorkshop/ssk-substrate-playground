@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Runtime"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+	"SoloChain",
+	"ParaChain",
+	"Minimal",
+	"Frontier",
+	"SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -26,8 +32,8 @@ impl Contains<RuntimeCallNameOf<Runtime>> for TxPauseWhitelistedCalls {
 """
 
 additional_runtime_lib_code = [
-    "use pallet_tx_pause::RuntimeCallNameOf;",
-    "use frame_support::traits::Contains;",
+	"use pallet_tx_pause::RuntimeCallNameOf;",
+	"use frame_support::traits::Contains;",
 ]
 
 # pub const TxPauseMaxNameLen: u32 = 256;
@@ -38,7 +44,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.TxPauseMaxNameLen.expression]
 default_unit = ""
-default_multiiplier = 256
+default_multiplier = 256
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

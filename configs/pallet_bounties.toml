@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Governance"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -20,7 +26,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.BountyDepositBase.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -34,7 +40,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.BountyMaximumReasonLength.expression]
 default_unit = ""
-default_multiiplier = 16384
+default_multiplier = 16384
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -48,7 +54,7 @@ p_type = "Permill"
 
 [runtime.optional_parameter_types.CuratorDepositMultiplier.expression]
 default_unit = ""
-default_multiiplier = 50
+default_multiplier = 50
 format = "{}Permill::from_percent({})"
 possible_units = []
 multiplier_configurable = true
@@ -62,7 +68,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.BountyDepositPayoutDelay.expression]
 default_unit = "DAYS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -76,7 +82,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.BountyUpdatePeriod.expression]
 default_unit = "DAYS"
-default_multiiplier = 14
+default_multiplier = 14
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -90,9 +96,9 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.BountyValueMinimum.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 5
+default_multiplier = 5
 format = "{} * {}"
-possible_units = ["DOLLARS", "CENTS","MILLICENTS"]
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
 
 # ! CuratorDepositMin
@@ -104,7 +110,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.CuratorDepositMin.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -119,7 +125,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.CuratorDepositMax.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 100
+default_multiplier = 100
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -133,7 +139,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.BountyDataDepositPerByte.expression]
 default_unit = "CENTS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true

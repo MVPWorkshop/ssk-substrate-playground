@@ -32,7 +32,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.AssetDeposit.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 100
+default_multiplier = 100
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -45,7 +45,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.ApprovalDeposit.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -58,7 +58,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.StringLimit.expression]
 default_unit = ""
-default_multiiplier = 50
+default_multiplier = 50
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -71,7 +71,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.MetadataDepositBase.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 10
+default_multiplier = 10
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -84,7 +84,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.MetadataDepositPerByte.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -97,7 +97,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.RemoveItemsLimit.expression]
 default_unit = ""
-default_multiiplier = 1000
+default_multiplier = 1000
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -110,7 +110,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.AssetAccountDeposit.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true

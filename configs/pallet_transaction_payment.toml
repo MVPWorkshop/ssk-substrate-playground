@@ -43,7 +43,7 @@ p_type = "u8"
 
 [runtime.optional_parameter_types.FTPOperationalFeeMultiplier.expression]
 default_unit = ""
-default_multiiplier = 5
+default_multiplier = 5
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Runtime"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -27,7 +33,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.SocietyMaxLockDuration.expression]
 default_unit = "DAYS"
-default_multiiplier = 1080
+default_multiplier = 1080
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -41,7 +47,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.SocietyChallengePeriod.expression]
 default_unit = "DAYS"
-default_multiiplier = 7
+default_multiplier = 7
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -55,9 +61,9 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.SocietyPeriodSpend.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 500
+default_multiplier = 500
 format = "{} * {}"
-possible_units = ["DOLLARS", "CENTS","MILLICENTS"]
+possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
 
 # pub const SocietyClaimPeriod: BlockNumber = 80 * HOURS;
@@ -69,7 +75,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.SocietyClaimPeriod.expression]
 default_unit = "HOURS"
-default_multiiplier = 80
+default_multiplier = 80
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -83,7 +89,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.SocietyGraceStrikes.expression]
 default_unit = ""
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -97,7 +103,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.SocietyVotingPeriod.expression]
 default_unit = "HOURS"
-default_multiiplier = 80
+default_multiplier = 80
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -111,7 +117,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.SocietyMaxPayouts.expression]
 default_unit = ""
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -124,7 +130,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.SocietyMaxBids.expression]
 default_unit = ""
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
