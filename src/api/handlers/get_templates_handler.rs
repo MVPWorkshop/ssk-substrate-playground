@@ -50,7 +50,7 @@ pub async fn get_templates_handler(
             &query_template_type.0
         )));
     }
-    let blockcain_supported_pallets: Vec<Pallet> = pallet_configs
+    let blockchain_supported_pallets: Vec<Pallet> = pallet_configs
         .iter()
         .filter(|(_, pallet)| {
             pallet
@@ -90,12 +90,82 @@ pub async fn get_templates_handler(
         })
         .collect();
 
-    // Return JSON response
+    let gaming_name = "Gaming".to_string();
+    let gaming_desc = "Default pallets necessary for Gaming use case".to_string();
+    let gaming_pallets = get_use_case_pallets(
+        pallet_configs,
+        &query_template_type,
+        gaming_name,
+        gaming_desc,
+    );
+
+    let defi_name = "DeFi".to_string();
+    let defi_desc = "Default pallets necessary for DeFi use case".to_string();
+    let defi_pallets =
+        get_use_case_pallets(pallet_configs, &query_template_type, defi_name, defi_desc);
+
+    let nft_name = "NFT".to_string();
+    let nft_desc = "Default pallets necessary for NFT use case".to_string();
+    let nft_pallets =
+        get_use_case_pallets(pallet_configs, &query_template_type, nft_name, nft_desc);
+
+    let gov_name = "Governance".to_string();
+    let gov_desc = "Default pallets necessary for Governance use case".to_string();
+    let gov_pallets =
+        get_use_case_pallets(pallet_configs, &query_template_type, gov_name, gov_desc);
+
+    let supply_name = "SupplyChain".to_string();
+    let supply_desc = "Default pallets necessary for Supply Chain use case".to_string();
+    let supply_pallets = get_use_case_pallets(
+        pallet_configs,
+        &query_template_type,
+        supply_name,
+        supply_desc,
+    );
+
     GetTemplatesResponse::Ok(Json(BlockchainTemplate {
         template_type: query_template_type.0,
         essential_pallets: blockchain_essential_templates,
-        supported_pallets: blockcain_supported_pallets,
-        use_cases: vec![],
+        supported_pallets: blockchain_supported_pallets,
+        use_cases: vec![
+            gaming_pallets,
+            defi_pallets,
+            nft_pallets,
+            gov_pallets,
+            supply_pallets,
+        ],
         chain_type: vec![],
     }))
+}
+
+fn get_use_case_pallets(
+    pallet_configs: &HashMap<String, PalletConfig>,
+    query_template_type: &Path<TemplateType>,
+    name: String,
+    description: String,
+) -> UseCase {
+    let pallets: Vec<String> = pallet_configs
+        .iter()
+        .filter(|(_, pallet)| {
+            pallet
+                .metadata
+                .use_cases
+                .as_ref()
+                .map_or(false, |use_case| use_case.contains(&name))
+                || pallet
+                    .metadata
+                    .is_essential
+                    .as_ref()
+                    .map_or(false, |essential_templates| {
+                        essential_templates.contains(&query_template_type.0)
+                    })
+        })
+        .map(|(name, _)| name.to_string())
+        .collect();
+
+    UseCase {
+        name,
+        description,
+        pallets,
+    }
 }
