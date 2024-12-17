@@ -50,6 +50,9 @@ pallet-utility = { git = "https://github.com/paritytech/polkadot-sdk", default-f
 pallet-multisig = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, branch = "release-polkadot-v1.1.0" }
 pallet-preimage = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, branch = "release-polkadot-v1.1.0" }
 pallet-scheduler = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, branch = "release-polkadot-v1.1.0" }
+{{#each this}}
+{{this.name}} = { git = '{{this.git_path}}', branch = "stable2407", default-features = {{this.use_default}} }
+{{/each}}
 sp-api = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, branch = "release-polkadot-v1.1.0" }
 sp-block-builder = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, branch = "release-polkadot-v1.1.0" }
 sp-consensus-aura = { git = "https://github.com/paritytech/polkadot-sdk", default-features = false, branch = "release-polkadot-v1.1.0" }
@@ -147,6 +150,9 @@ std = [
 	"pallet-transaction-payment/std",
 	"pallet-utility/std",
 	"pallet-xcm/std",
+	{{#each this}}
+    "{{this.name}}/std",
+{{/each}}
 	"parachain-info/std",
 	"polkadot-parachain-primitives/std",
 	"polkadot-primitives/std",
