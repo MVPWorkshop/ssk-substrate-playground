@@ -9,9 +9,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "NFT"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+        "SoloChain",
+        "ParaChain",
+        "Minimal",
+        "Frontier",
+        "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
+use_cases = ["NFT"]
 
 [runtime]
 additional_pallet_impl_code = """
@@ -33,7 +40,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.ItemDepositNfts.expression]
 default_unit = "1000"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -46,7 +53,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxDeadlineDurationNfts.expression]
 default_unit = ""
-default_multiiplier = 1000
+default_multiplier = 1000
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -59,7 +66,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxAttributesPerCallNfts.expression]
 default_unit = ""
-default_multiiplier = 5
+default_multiplier = 5
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -72,7 +79,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.KeyLimitNfts.expression]
 default_unit = ""
-default_multiiplier = 64
+default_multiplier = 64
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -85,7 +92,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.StringLimitNfts.expression]
 default_unit = ""
-default_multiiplier = 256
+default_multiplier = 256
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -98,7 +105,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxTipsNfts.expression]
 default_unit = ""
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -111,7 +118,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.MetadataDepositBaseNfts.expression]
 default_unit = "1000"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -124,7 +131,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.ValueLimitNfts.expression]
 default_unit = ""
-default_multiiplier = 256
+default_multiplier = 256
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -137,7 +144,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.CollectionDepositNfts.expression]
 default_unit = "1000"
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -150,7 +157,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.DepositPerByteNfts.expression]
 default_unit = ""
-default_multiiplier = 10
+default_multiplier = 10
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -163,7 +170,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.AttributeDepositBaseNfts.expression]
 default_unit = "1000"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}*{}"
 possible_units = ["1000"]
 multiplier_configurable = true
@@ -176,7 +183,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.ApprovalsLimitNfts.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -189,7 +196,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.ItemAttributesApprovalsLimitNfts.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

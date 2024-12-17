@@ -6,8 +6,14 @@ short_description = "FRAME Recovery pallet"
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-category= "Accounts"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+category = "Accounts"
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -19,7 +25,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.ConfigDepositBase.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 5
+default_multiplier = 5
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -32,7 +38,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.FriendDepositFactor.expression]
 default_unit = "CENTS"
-default_multiiplier = 50
+default_multiplier = 50
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -45,7 +51,7 @@ prefix = "const"
 p_type = "u16"
 [runtime.optional_parameter_types.MaxFriends.expression]
 default_unit = ""
-default_multiiplier = 9
+default_multiplier = 9
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -58,7 +64,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.RecoveryDeposit.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 5
+default_multiplier = 5
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true

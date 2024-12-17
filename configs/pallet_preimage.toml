@@ -7,10 +7,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Governance"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+	"SoloChain",
+	"ParaChain",
+	"Minimal",
+	"Frontier",
+	"SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
-
+use_cases = ["Gaming", "SupplyChain"]
 
 [runtime]
 additional_pallet_impl_code = """
@@ -22,7 +28,10 @@ parameter_types! {
 	pub const PreimageHoldReason: RuntimeHoldReason = RuntimeHoldReason::Preimage(pallet_preimage::HoldReason::Preimage);
 }
 """
-additional_runtime_lib_code = ["use frame_support::traits::fungible::HoldConsideration;","use frame_support::traits::LinearStoragePrice;"]
+additional_runtime_lib_code = [
+	"use frame_support::traits::fungible::HoldConsideration;",
+	"use frame_support::traits::LinearStoragePrice;",
+]
 
 [runtime.construct_runtime]
 runtime = ["Preimage", "pallet_preimage::Pallet<Runtime>"]

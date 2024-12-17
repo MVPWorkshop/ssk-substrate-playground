@@ -6,10 +6,17 @@ short_description = "FRAME Scheduler pallet"
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-category= "Runtime"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+category = "Runtime"
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
+use_cases = ["Gaming", "SupplyChain", "Governance"]
 
 [runtime]
 additional_runtime_lib_code = ["use frame_support::traits::EqualPrivilegeOnly;"]
@@ -23,7 +30,7 @@ prefix = "empty"
 p_type = "Weight"
 [runtime.optional_parameter_types.MaximumSchedulerWeight.expression]
 default_unit = ""
-default_multiiplier = 80
+default_multiplier = 80
 format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
 possible_units = []
 multiplier_configurable = true

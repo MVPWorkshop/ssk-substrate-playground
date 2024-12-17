@@ -8,9 +8,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 5078
 updated = "1729175503"
+use_cases = ["Gaming", "SupplyChain"]
 
 [runtime.construct_runtime]
 runtime = ["Aura", "pallet_aura"]
@@ -24,7 +31,7 @@ prefix = "const"
 p_type = "bool"
 [runtime.optional_parameter_types.AllowMultipleBlocksPerSlot.expression]
 default_unit = "false"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}"
 possible_units = ["true", "false"]
 multiplier_configurable = false
@@ -37,7 +44,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxAuthoritiesAura.expression]
 default_unit = ""
-default_multiiplier = 32
+default_multiplier = 32
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

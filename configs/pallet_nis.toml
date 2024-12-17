@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Assets"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+	"SoloChain",
+	"ParaChain",
+	"Minimal",
+	"Frontier",
+	"SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -36,7 +42,7 @@ prefix = "const"
 p_type = "BlockNumber"
 [runtime.optional_parameter_types.NisBasePeriod.expression]
 default_unit = "DAYS"
-default_multiiplier = 30
+default_multiplier = 30
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -49,7 +55,7 @@ prefix = "const"
 p_type = "Balance"
 [runtime.optional_parameter_types.MinBid.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -62,7 +68,7 @@ prefix = "empty"
 p_type = "Perquintill"
 [runtime.optional_parameter_types.MinReceipt.expression]
 default_unit = ""
-default_multiiplier = 10_000_000
+default_multiplier = 10_000_000
 format = "{}Perquintill::from_rational(1u64, {}u64)"
 possible_units = []
 multiplier_configurable = true
@@ -75,7 +81,7 @@ prefix = "const"
 p_type = "BlockNumber"
 [runtime.optional_parameter_types.IntakePeriod.expression]
 default_unit = "MINUTES"
-default_multiiplier = 5
+default_multiplier = 5
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -88,7 +94,7 @@ prefix = "const"
 p_type = "Weight"
 [runtime.optional_parameter_types.MaxIntakeWeight.expression]
 default_unit = ""
-default_multiiplier = 10_000
+default_multiplier = 10_000
 format = "{}Weight::from_parts({}, u64::MAX)"
 possible_units = []
 multiplier_configurable = true
@@ -102,7 +108,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.QueueCount.expression]
 default_unit = ""
-default_multiiplier = 300
+default_multiplier = 300
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -115,7 +121,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxQueueLen.expression]
 default_unit = ""
-default_multiiplier = 1000
+default_multiplier = 1000
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -128,7 +134,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.FifoQueueLen.expression]
 default_unit = ""
-default_multiiplier = 250
+default_multiplier = 250
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

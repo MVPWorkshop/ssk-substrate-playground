@@ -38,7 +38,7 @@ pub async fn get_dependencies_handler(
         }
     }
     let essential = pallet_configs
-        .into_iter()
+        .iter()
         .filter_map(|(name, pallet)| match &pallet.metadata.is_essential {
             None => None,
             Some(templates) => {
@@ -53,13 +53,13 @@ pub async fn get_dependencies_handler(
     let filtered = match &request.pallets {
         None => pallet_configs,
         Some(pallets) => &pallet_configs
-            .into_iter()
+            .iter()
             .filter(|(name, _)| pallets.contains(name))
             .map(|(name, config)| (name.clone(), config.clone()))
             .collect(),
     };
     let response = filtered
-        .into_iter()
+        .iter()
         .map(|(name, config)| {
             let mut dependencies = essential.clone();
             dependencies.push(name.clone());

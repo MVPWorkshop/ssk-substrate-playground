@@ -11,9 +11,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 5078
 updated = "1729175503"
+use_cases = ["Gaming", "NFT", "DeFi", "SupplyChain"]
 
 [runtime.construct_runtime]
 runtime = ["Timestamp", "pallet_timestamp"]

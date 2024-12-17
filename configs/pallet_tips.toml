@@ -13,7 +13,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Assets"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -26,7 +32,7 @@ p_type = "u128"
 
 [runtime.optional_parameter_types.MaxTipAmount.expression]
 default_unit = "1_000_000_000"
-default_multiiplier = 5_000_000
+default_multiplier = 5_000_000
 format = "{} * {}"
 possible_units = ["1_000_000_000"]
 multiplier_configurable = true
@@ -39,7 +45,7 @@ p_type = "Percent"
 
 [runtime.optional_parameter_types.TipFindersFee.expression]
 default_unit = ""
-default_multiiplier = 20
+default_multiplier = 20
 format = "{}Percent::from_percent({})"
 possible_units = []
 multiplier_configurable = true
@@ -52,7 +58,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.TipReportDepositBase.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -65,7 +71,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.MaximumReasonLength.expression]
 default_unit = ""
-default_multiiplier = 300
+default_multiplier = 300
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -78,7 +84,7 @@ p_type = "BlockNumber"
 
 [runtime.optional_parameter_types.TipCountdown.expression]
 default_unit = "DAYS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = true
@@ -91,7 +97,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.TipDataDepositPerByte.expression]
 default_unit = "CENTS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["CENTS", "DOLLARS", "MILLICENTS"]
 multiplier_configurable = true

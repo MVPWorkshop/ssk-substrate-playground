@@ -10,9 +10,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Assets"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 5078
 updated = "1729175503"
+use_cases = ["Gaming", "NFT", "DeFi", "SupplyChain"]
 
 [runtime.construct_runtime]
 runtime = ["Balances", "pallet_balances"]
@@ -35,7 +42,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.MaxLocks.expression]
 default_unit = ""
-default_multiiplier = 50
+default_multiplier = 50
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
