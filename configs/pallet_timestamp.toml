@@ -20,7 +20,7 @@ supported_template = [
 ]
 size = 5078
 updated = "1729175503"
-use_cases = ["Gaming"]
+use_cases = ["Gaming", "NFT", "DeFi", "SupplyChain"]
 
 [runtime.construct_runtime]
 runtime = ["Timestamp", "pallet_timestamp"]

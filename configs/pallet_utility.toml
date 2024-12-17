@@ -21,7 +21,7 @@ supported_template = [
 ]
 size = 10500
 updated = "1729175503"
-use_cases = ["Gaming"]
+use_cases = ["Gaming", "DeFi", "SupplyChain"]
 
 [runtime.construct_runtime]
 runtime = ["Utility", "pallet_utility::Pallet<Runtime>"]

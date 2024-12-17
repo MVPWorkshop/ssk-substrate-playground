@@ -18,7 +18,7 @@ supported_template = [
 ]
 size = 10500
 updated = "1729175503"
-use_cases = ["Gaming"]
+use_cases = ["Gaming", "DeFi"]
 
 [runtime]
 additional_pallet_impl_code = '''

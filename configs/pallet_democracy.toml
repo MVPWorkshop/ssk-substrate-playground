@@ -16,7 +16,7 @@ supported_template = [
 ]
 size = 10500
 updated = "1729175503"
-use_cases = ["Gaming"]
+use_cases = ["Gaming", "DeFi", "Governance"]
 
 [runtime]
 additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]

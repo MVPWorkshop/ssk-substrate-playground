@@ -6,10 +6,17 @@ short_description = "FRAME Multisig pallet"
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-category= "Governance"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+category = "Governance"
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
+use_cases = ["DeFi", "SupplyChain"]
 
 [runtime.construct_runtime]
 runtime = ["Multisig", "pallet_multisig::Pallet<Runtime>"]
