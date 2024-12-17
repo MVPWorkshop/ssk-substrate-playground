@@ -101,7 +101,7 @@ pub async fn get_templates_handler(
                 .metadata
                 .is_essential
                 .as_ref()
-                .map_or(false, |essential_templates| {
+                .is_some_and(|essential_templates| {
                     essential_templates.contains(&query_template_type.0)
                 })
         })

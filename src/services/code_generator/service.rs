@@ -55,29 +55,25 @@ impl<ZB: 'static + Send> CodeGeneratorService<ZB> {
         }
 
         // Get the required pallets for the pallets in the list
-        let filtered: Vec<String> = self
-            .pallet_configs
-            .iter()
-            // Get the pallets that are in the list of pallet names
-            .filter(|(name, pallet)| {
-                filter.contains(name)
-                    || pallet
-                        .metadata
-                        .is_essential
-                        .as_ref()
-                        .map_or(false, |essential_templates| {
-                            essential_templates.contains(template_type)
-                        })
-            })
-            // Get the required pallets for each pallet
-            .flat_map(|(pallet_name, pallet)| {
-                let mut pallet_with_reqs = vec![pallet_name.clone()];
-                if let Some(required_pallets) = pallet.dependencies.required_pallets.clone() {
-                    pallet_with_reqs.extend(required_pallets);
-                }
-                pallet_with_reqs
-            })
-            .collect::<Vec<String>>();
+        let filtered: Vec<String> =
+            self.pallet_configs
+                .iter()
+                // Get the pallets that are in the list of pallet names
+                .filter(|(name, pallet)| {
+                    filter.contains(name)
+                        || pallet.metadata.is_essential.as_ref().is_some_and(
+                            |essential_templates| essential_templates.contains(template_type),
+                        )
+                })
+                // Get the required pallets for each pallet
+                .flat_map(|(pallet_name, pallet)| {
+                    let mut pallet_with_reqs = vec![pallet_name.clone()];
+                    if let Some(required_pallets) = pallet.dependencies.required_pallets.clone() {
+                        pallet_with_reqs.extend(required_pallets);
+                    }
+                    pallet_with_reqs
+                })
+                .collect::<Vec<String>>();
 
         // create local coppy of the pallets
         Ok(self
