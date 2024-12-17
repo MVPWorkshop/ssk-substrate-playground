@@ -20,6 +20,32 @@ pub struct UseCase {
     pallets: Vec<String>,
 }
 
+impl From<(&HashMap<String, PalletConfig>, String)> for UseCase {
+    fn from(value: (&HashMap<String, PalletConfig>, String)) -> Self {
+        let (pallet_configs, use_case) = value;
+
+        let use_cases = pallet_configs
+            .iter()
+            .filter_map(|(name, config)| match &config.metadata.use_cases {
+                None => None,
+                Some(config_use_cases) => {
+                    if config_use_cases.contains(&use_case) {
+                        Some(name.clone())
+                    } else {
+                        None
+                    }
+                }
+            })
+            .collect();
+
+        UseCase {
+            name: use_case.clone(),
+            description: format!("Default pallets for use case {}", use_case),
+            pallets: use_cases,
+        }
+    }
+}
+
 // Blockchain template structure.
 #[derive(PartialEq, Eq, Debug, Object)]
 pub struct BlockchainTemplate {
@@ -90,82 +116,19 @@ pub async fn get_templates_handler(
         })
         .collect();
 
-    let gaming_name = "Gaming".to_string();
-    let gaming_desc = "Default pallets necessary for Gaming use case".to_string();
-    let gaming_pallets = get_use_case_pallets(
-        pallet_configs,
-        &query_template_type,
-        gaming_name,
-        gaming_desc,
-    );
-
-    let defi_name = "DeFi".to_string();
-    let defi_desc = "Default pallets necessary for DeFi use case".to_string();
-    let defi_pallets =
-        get_use_case_pallets(pallet_configs, &query_template_type, defi_name, defi_desc);
-
-    let nft_name = "NFT".to_string();
-    let nft_desc = "Default pallets necessary for NFT use case".to_string();
-    let nft_pallets =
-        get_use_case_pallets(pallet_configs, &query_template_type, nft_name, nft_desc);
-
-    let gov_name = "Governance".to_string();
-    let gov_desc = "Default pallets necessary for Governance use case".to_string();
-    let gov_pallets =
-        get_use_case_pallets(pallet_configs, &query_template_type, gov_name, gov_desc);
-
-    let supply_name = "SupplyChain".to_string();
-    let supply_desc = "Default pallets necessary for Supply Chain use case".to_string();
-    let supply_pallets = get_use_case_pallets(
-        pallet_configs,
-        &query_template_type,
-        supply_name,
-        supply_desc,
-    );
+    let use_cases = vec![
+        (pallet_configs, "Gaming".to_string()).into(),
+        (pallet_configs, "NFT".to_string()).into(),
+        (pallet_configs, "Governance".to_string()).into(),
+        (pallet_configs, "DeFi".to_string()).into(),
+        (pallet_configs, "SupplyChain".to_string()).into(),
+    ];
 
     GetTemplatesResponse::Ok(Json(BlockchainTemplate {
         template_type: query_template_type.0,
         essential_pallets: blockchain_essential_templates,
         supported_pallets: blockchain_supported_pallets,
-        use_cases: vec![
-            gaming_pallets,
-            defi_pallets,
-            nft_pallets,
-            gov_pallets,
-            supply_pallets,
-        ],
+        use_cases,
         chain_type: vec![],
     }))
-}
-
-fn get_use_case_pallets(
-    pallet_configs: &HashMap<String, PalletConfig>,
-    query_template_type: &Path<TemplateType>,
-    name: String,
-    description: String,
-) -> UseCase {
-    let pallets: Vec<String> = pallet_configs
-        .iter()
-        .filter(|(_, pallet)| {
-            pallet
-                .metadata
-                .use_cases
-                .as_ref()
-                .map_or(false, |use_case| use_case.contains(&name))
-                || pallet
-                    .metadata
-                    .is_essential
-                    .as_ref()
-                    .map_or(false, |essential_templates| {
-                        essential_templates.contains(&query_template_type.0)
-                    })
-        })
-        .map(|(name, _)| name.to_string())
-        .collect();
-
-    UseCase {
-        name,
-        description,
-        pallets,
-    }
 }
