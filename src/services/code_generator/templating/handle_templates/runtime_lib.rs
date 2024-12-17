@@ -58,9 +58,7 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 instance_counter += 1;
                 construct_runtime.push(format!(
                     "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {}<Instance{}>;",
-
                     index + 55,
-
                     part1,
                     pallet_name,
                     instance_counter
@@ -68,9 +66,7 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
             } else {
                 construct_runtime.push(format!(
                     "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {};",
-
                     index + 55,
-
                     pallet.runtime.construct_runtime.runtime[0],
                     pallet.runtime.construct_runtime.runtime[1],
                 ));
