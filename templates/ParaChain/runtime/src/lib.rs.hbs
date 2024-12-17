@@ -9,7 +9,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub mod apis;
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarks;
-mod configs;
+pub mod configs;
 mod weights;
 
 use smallvec::smallvec;
@@ -31,6 +31,20 @@ use frame_system::EnsureSigned;
 use frame_support::parameter_types;
 use frame_support::traits::ConstU32;
 use frame_support::traits::ConstU128;
+use sp_runtime::traits::ConstU64;
+use frame_support::traits::VariantCountOf;
+use pallet_transaction_payment::Multiplier;
+use frame_support::weights::IdentityFee;
+use pallet_transaction_payment::ConstFeeMultiplier;
+use pallet_transaction_payment::FungibleAdapter;
+use sp_runtime::traits::One;
+
+use crate::configs::xcm_config::RelayLocation;
+use pallet_xcm::EnsureXcm;
+use pallet_xcm::IsVoiceOfBody;
+use xcm::latest::prelude::*;
+
+
 use frame_support::weights::{
     constants::WEIGHT_REF_TIME_PER_SECOND, Weight, WeightToFeeCoefficient, WeightToFeeCoefficients,
     WeightToFeePolynomial,
@@ -208,8 +222,7 @@ frame_system::limits::BlockWeights::with_sensible_defaults(
 	NORMAL_DISPATCH_RATIO,
 );}
 
-/// The existential deposit. Set to 1/10 of the Connected Relay Chain.
-pub const EXISTENTIAL_DEPOSIT: Balance = CENTS;
+
 
 /// We assume that ~5% of the block weight is consumed by `on_initialize` handlers. This is
 /// used to limit the maximal weight of a single extrinsic.
@@ -251,8 +264,6 @@ pub fn native_version() -> NativeVersion {
     }
 }
 
-use frame_support::traits::WithdrawReasons;
-use sp_runtime::traits::{ConvertInto};
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 #[frame_support::runtime]
@@ -275,30 +286,15 @@ mod runtime {
     pub type System = frame_system;
     #[runtime::pallet_index(1)]
     pub type ParachainSystem = cumulus_pallet_parachain_system;
-    #[runtime::pallet_index(2)]
-    pub type Timestamp = pallet_timestamp;
+   
     #[runtime::pallet_index(3)]
     pub type ParachainInfo = parachain_info;
 
-    // Monetary stuff.
-    #[runtime::pallet_index(10)]
-    pub type Balances = pallet_balances;
-    #[runtime::pallet_index(11)]
-    pub type TransactionPayment = pallet_transaction_payment;
 
-    // Governance
-    #[runtime::pallet_index(15)]
-    pub type Sudo = pallet_sudo;
 
-    // Collator support. The order of these 4 are important and shall not change.
-    #[runtime::pallet_index(20)]
-    pub type Authorship = pallet_authorship;
-    #[runtime::pallet_index(21)]
-    pub type CollatorSelection = pallet_collator_selection;
-    #[runtime::pallet_index(22)]
-    pub type Session = pallet_session;
-    #[runtime::pallet_index(23)]
-    pub type Aura = pallet_aura;
+
+   
+
     #[runtime::pallet_index(24)]
     pub type AuraExt = cumulus_pallet_aura_ext;
 

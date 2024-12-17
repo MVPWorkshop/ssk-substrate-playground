@@ -5,7 +5,7 @@ description = """
 The Balances pallet provides functionality for handling accounts and balances for a single token.
 It makes heavy use of concepts such as Holds and Freezes from the [`frame_support::traits::fungible`] traits, therefore you should read and understand those docs as a prerequisite to understanding this pallet."""
 short_description = "FRAME Balances pallet"
-is_essential = ["SoloChain"]
+is_essential = ["SoloChain","ParaChain"]
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
