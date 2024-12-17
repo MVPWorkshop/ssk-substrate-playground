@@ -58,7 +58,9 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 instance_counter += 1;
                 construct_runtime.push(format!(
                     "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {}<Instance{}>;",
+
                     index + 55,
+
                     part1,
                     pallet_name,
                     instance_counter
@@ -66,7 +68,9 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
             } else {
                 construct_runtime.push(format!(
                     "\n\t#[runtime::pallet_index({})]\n\tpub type {} = {};",
+
                     index + 55,
+
                     pallet.runtime.construct_runtime.runtime[0],
                     pallet.runtime.construct_runtime.runtime[1],
                 ));
@@ -98,7 +102,7 @@ impl From<Vec<PalletConfig>> for RuntimeLibAggregate {
                 for (_, pt) in optional_parameter_types {
                     let m = match pt.expression.configured_multiplier {
                         Some(v) => v.to_string(),
-                        None => match pt.expression.default_multiiplier {
+                        None => match pt.expression.default_multiplier {
                             Some(v) => v.to_string(),
                             None => "".to_string(),
                         },

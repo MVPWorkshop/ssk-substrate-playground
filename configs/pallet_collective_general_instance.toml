@@ -10,7 +10,13 @@ categories = ["Governance"]
 size = 10500
 updated = "1729175503"
 is_instance = true
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 
 # pub const GeneralCouncilMotionDuration: BlockNumber = 3 * MINUTES;
 [runtime.optional_parameter_types.GeneralCouncilMotionDuration]
@@ -20,7 +26,7 @@ prefix = "const"
 p_type = "BlockNumber"
 [runtime.optional_parameter_types.GeneralCouncilMotionDuration.expression]
 default_unit = "MINUTES"
-default_multiiplier = 3
+default_multiplier = 3
 format = "{} * {}"
 possible_units = ["MINUTES", "HOURS", "DAYS"]
 multiplier_configurable = true
@@ -33,7 +39,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.GeneralCouncilMaxProposals.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -46,7 +52,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.GeneralCouncilMaxMembers.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -59,7 +65,7 @@ prefix = "empty"
 p_type = "Weight"
 [runtime.optional_parameter_types.GeneralMaxCollectivesProposalWeight.expression]
 default_unit = ""
-default_multiiplier = 50
+default_multiplier = 50
 format = "{}Perbill::from_percent({}) * BlockWeights::get().max_block"
 possible_units = []
 multiplier_configurable = true

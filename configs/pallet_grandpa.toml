@@ -3,12 +3,18 @@ name = "Pallet Grandpa"
 [metadata]
 description = "This manages the GRANDPA authority set ready for the native code. These authorities are only for GRANDPA finality, not for consensus overall."
 short_description = "FRAME Grandpa consensus pallet"
-is_essential = ["SoloChain"]
+is_essential = ["SoloChain","SoloFrontierChain"]
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 5078
 updated = "1729175503"
 
@@ -23,7 +29,7 @@ prefix = "const"
 p_type = "u64"
 [runtime.optional_parameter_types.MaxSetIdSessionEntries.expression]
 default_unit = ""
-default_multiiplier = 0
+default_multiplier = 0
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -36,7 +42,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxAuthorities.expression]
 default_unit = ""
-default_multiiplier = 32
+default_multiplier = 32
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -49,7 +55,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxNominators.expression]
 default_unit = ""
-default_multiiplier = 0
+default_multiplier = 0
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

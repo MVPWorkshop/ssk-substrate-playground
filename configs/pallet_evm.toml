@@ -1,0 +1,84 @@
+name = "Pallet EVM"
+
+[metadata]
+description = """Pallet EVM is a Substrate module that integrates the Ethereum Virtual Machine (EVM) into a Substrate-based chain. It enables deploying and running Solidity smart contracts, providing a bridge between the Substrate framework and Ethereum-compatible functionality."""
+short_description = "FRAME evm"
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+is_essential = ["SoloFrontierChain"]
+category = "Other"
+supported_template=["SoloFrontierChain"]
+size = 10500
+updated = "1729175503"
+
+[runtime]
+additional_runtime_lib_code = [
+]
+additional_pallet_impl_code = """
+const BLOCK_GAS_LIMIT: u64 = 75_000_000;
+const MAX_POV_SIZE: u64 =5*1024*1024;
+ parameter_types! {
+     pub BlockGasLimit: U256 = U256::from(BLOCK_GAS_LIMIT);
+     pub const GasLimitPovSizeRatio: u64 = BLOCK_GAS_LIMIT.saturating_div(MAX_POV_SIZE);
+     pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
+     pub WeightPerGas: Weight = Weight::from_parts(weight_per_gas(BLOCK_GAS_LIMIT, NORMAL_DISPATCH_RATIO, WEIGHT_MILLISECS_PER_BLOCK), 0);
+    
+}
+
+"""
+
+# pub SuicideQuickClearLimit: u32 = 0;
+[runtime.optional_parameter_types.SuicideQuickClearLimit]
+name = "SuicideQuickClearLimit"
+description = "SuicideQuickClearLimit is a parameter that sets the maximum number of EVM accounts (contracts) that can be instantly cleared via selfdestruct in a single block. It helps control resource usage by limiting how many selfdestructed accounts are removed at once."
+prefix = "empty"
+p_type = "u32"
+[runtime.optional_parameter_types.SuicideQuickClearLimit.expression]
+default_unit = ""
+default_multiiplier =0
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+
+
+
+
+[runtime.construct_runtime]
+runtime = ["EVM", "pallet_evm::Pallet<Runtime>"]
+
+[runtime.pallet_traits]
+ FeeCalculator = "BaseFee"
+GasWeightMapping = "pallet_evm::FixedGasWeightMapping<Self>"
+WeightPerGas = "WeightPerGas"
+BlockHashMapping = "pallet_ethereum::EthereumBlockHashMapping<Self>"
+CallOrigin = "EnsureAccountId20"
+ WithdrawOrigin ="EnsureAccountId20"
+AddressMapping = "IdentityAddressMapping"
+Currency = "Balances"
+RuntimeEvent = "RuntimeEvent"
+PrecompilesType = "FrontierPrecompiles<Self>"
+PrecompilesValue = "PrecompilesValue"
+ChainId ="EVMChainId"
+BlockGasLimit = "BlockGasLimit"
+Runner = "pallet_evm::runner::stack::Runner<Self>"
+OnChargeTransaction = "()"
+OnCreate = "()"
+ FindAuthor = "FindAuthorTruncated<Aura>"
+ GasLimitPovSizeRatio = "GasLimitPovSizeRatio"
+SuicideQuickClearLimit = "SuicideQuickClearLimit"
+Timestamp = "Timestamp"
+ WeightInfo = "pallet_evm::weights::SubstrateWeight<Self>"
+
+[dependencies.pallet]
+package = "pallet-evm"
+alias = "pallet evm"
+default_features = false
+git_repo = "https://github.com/polkadot-evm/frontier"
+tag = "polkadot-v1.14.0"
+
+
+
+

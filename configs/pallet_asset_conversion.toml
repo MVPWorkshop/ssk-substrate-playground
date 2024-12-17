@@ -18,7 +18,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Assets"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+	"SoloChain",
+	"ParaChain",
+	"Minimal",
+	"Frontier",
+	"SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -56,7 +62,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.PoolSetupFee.expression]
 default_unit = "DOLLARS"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{} * {}"
 possible_units = ["DOLLARS", "CENTS", "MILLICENTS"]
 multiplier_configurable = true
@@ -70,7 +76,7 @@ p_type = "Balance"
 
 [runtime.optional_parameter_types.MintMinLiquidity.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = false
@@ -84,7 +90,7 @@ p_type = "Permill"
 
 [runtime.optional_parameter_types.LiquidityWithdrawalFee.expression]
 default_unit = ""
-default_multiiplier = 0
+default_multiplier = 0
 format = "{}Permill::from_percent({})"
 possible_units = []
 multiplier_configurable = true
@@ -98,7 +104,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.LPFee.expression]
 default_unit = ""
-default_multiiplier = 3
+default_multiplier = 3
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -112,7 +118,7 @@ p_type = "u32"
 
 [runtime.optional_parameter_types.MaxSwapPathLength.expression]
 default_unit = ""
-default_multiiplier = 4
+default_multiplier = 4
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

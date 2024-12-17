@@ -7,9 +7,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Runtime"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
+use_cases = ["Gaming", "SupplyChain"]
 
 [runtime]
 additional_pallet_impl_code = """
@@ -60,7 +67,7 @@ impl InstanceFilter<RuntimeCall> for ProxyType {
 }
 """
 additional_runtime_lib_code = [
-    "use codec::{Decode, Encode, MaxEncodedLen};",
+    "use codec::{MaxEncodedLen};",
     "use frame_support::traits::InstanceFilter;",
     "use sp_runtime::RuntimeDebug;",
 ]
@@ -76,7 +83,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxPending.expression]
 default_unit = ""
-default_multiiplier = 32
+default_multiplier = 32
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -89,7 +96,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxProxies.expression]
 default_unit = ""
-default_multiiplier = 32
+default_multiplier = 32
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

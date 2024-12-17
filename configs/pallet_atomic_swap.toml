@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Assets"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -19,7 +25,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.ProofLimit.expression]
 default_unit = ""
-default_multiiplier = 1024
+default_multiplier = 1024
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

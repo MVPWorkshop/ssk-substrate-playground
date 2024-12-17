@@ -7,7 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Other"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
 
@@ -20,7 +26,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.PTSMaxBlockTransactions.expression]
 default_unit = ""
-default_multiiplier = 1000
+default_multiplier = 1000
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -33,7 +39,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.PTSMaxTransactionSize.expression]
 default_unit = ""
-default_multiiplier = 1000
+default_multiplier = 1000
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -50,8 +56,6 @@ FeeDestination = "()"
 RuntimeHoldReason = "RuntimeHoldReason"
 MaxBlockTransactions = "PTSMaxBlockTransactions"
 MaxTransactionSize = "PTSMaxTransactionSize"
-
-
 
 
 [dependencies.pallet]

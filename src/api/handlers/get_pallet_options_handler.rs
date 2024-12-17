@@ -15,6 +15,8 @@ pub struct Parameter {
     pub possible_unit_names: Vec<String>,
     pub multiplier_configurable: bool,
     pub example: String,
+    pub default_unit: String,
+    pub default_multiplier: Option<i64>,
 }
 
 impl From<&ParameterType> for Parameter {
@@ -34,6 +36,8 @@ impl From<&ParameterType> for Parameter {
                 "pub{}{}: {} = {};",
                 pt.prefix, pt.name, pt.p_type, example_expression
             ),
+            default_multiplier: pt.expression.default_multiplier,
+            default_unit: pt.expression.default_unit.clone(),
         }
     }
 }
@@ -76,9 +80,7 @@ pub async fn get_pallet_options_handler(
                     .metadata
                     .is_essential
                     .as_ref()
-                    .map_or(false, |essential_templates| {
-                        essential_templates.contains(templatecheck)
-                    })
+                    .is_some_and(|essential_templates| essential_templates.contains(templatecheck))
         })
         // Get the required pallets for each pallet
         .flat_map(|(pallet_name, pallet)| {

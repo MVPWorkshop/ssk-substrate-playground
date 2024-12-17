@@ -7,10 +7,13 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
+
 is_essential = ["ParaChain"]
 supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+
 size = 10500
 updated = "1729175503"
+use_cases = ["SupplyChain"]
 
 [runtime]
 additional_pallet_impl_code = """

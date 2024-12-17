@@ -20,6 +20,32 @@ pub struct UseCase {
     pallets: Vec<String>,
 }
 
+impl From<(&HashMap<String, PalletConfig>, String)> for UseCase {
+    fn from(value: (&HashMap<String, PalletConfig>, String)) -> Self {
+        let (pallet_configs, use_case) = value;
+
+        let use_cases = pallet_configs
+            .iter()
+            .filter_map(|(name, config)| match &config.metadata.use_cases {
+                None => None,
+                Some(config_use_cases) => {
+                    if config_use_cases.contains(&use_case) {
+                        Some(name.clone())
+                    } else {
+                        None
+                    }
+                }
+            })
+            .collect();
+
+        UseCase {
+            name: use_case.clone(),
+            description: format!("Default pallets for use case {}", use_case),
+            pallets: use_cases,
+        }
+    }
+}
+
 // Blockchain template structure.
 #[derive(PartialEq, Eq, Debug, Object)]
 pub struct BlockchainTemplate {
@@ -50,7 +76,7 @@ pub async fn get_templates_handler(
             &query_template_type.0
         )));
     }
-    let blockcain_supported_pallets: Vec<Pallet> = pallet_configs
+    let blockchain_supported_pallets: Vec<Pallet> = pallet_configs
         .iter()
         .filter(|(_, pallet)| {
             pallet
@@ -75,7 +101,7 @@ pub async fn get_templates_handler(
                 .metadata
                 .is_essential
                 .as_ref()
-                .map_or(false, |essential_templates| {
+                .is_some_and(|essential_templates| {
                     essential_templates.contains(&query_template_type.0)
                 })
         })
@@ -90,12 +116,19 @@ pub async fn get_templates_handler(
         })
         .collect();
 
-    // Return JSON response
+    let use_cases = vec![
+        (pallet_configs, "Gaming".to_string()).into(),
+        (pallet_configs, "NFT".to_string()).into(),
+        (pallet_configs, "Governance".to_string()).into(),
+        (pallet_configs, "DeFi".to_string()).into(),
+        (pallet_configs, "SupplyChain".to_string()).into(),
+    ];
+
     GetTemplatesResponse::Ok(Json(BlockchainTemplate {
         template_type: query_template_type.0,
         essential_pallets: blockchain_essential_templates,
-        supported_pallets: blockcain_supported_pallets,
-        use_cases: vec![],
+        supported_pallets: blockchain_supported_pallets,
+        use_cases,
         chain_type: vec![],
     }))
 }

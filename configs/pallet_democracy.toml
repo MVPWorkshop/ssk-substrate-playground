@@ -7,9 +7,16 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Governance"
-supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
+supported_template = [
+    "SoloChain",
+    "ParaChain",
+    "Minimal",
+    "Frontier",
+    "SoloFrontierChain",
+]
 size = 10500
 updated = "1729175503"
+use_cases = ["Gaming", "DeFi", "Governance"]
 
 [runtime]
 additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
@@ -22,7 +29,7 @@ prefix = "const"
 p_type = "u128"
 [runtime.optional_parameter_types.MinimumDeposit.expression]
 default_unit = "1_000_000_000_000"
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}*{}"
 possible_units = ["1_000_000_000_000"]
 multiplier_configurable = true
@@ -35,7 +42,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.Period.expression]
 default_unit = "MINUTES"
-default_multiiplier = 5
+default_multiplier = 5
 format = "{} * {}"
 possible_units = ["MINUTES", "HOURS", "DAYS"]
 multiplier_configurable = true
@@ -48,7 +55,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.FastTrackVotingPeriod.expression]
 default_unit = "MINUTES"
-default_multiiplier = 2
+default_multiplier = 2
 format = "{} / {}"
 possible_units = ["MINUTES", "HOURS", "DAYS"]
 multiplier_configurable = true
@@ -61,7 +68,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.CooloffPeriod.expression]
 default_unit = "MINUTES"
-default_multiiplier = 2
+default_multiplier = 2
 format = "{} * {}"
 possible_units = ["MINUTES", "HOURS", "DAYS"]
 multiplier_configurable = true
@@ -74,7 +81,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxAll.expression]
 default_unit = ""
-default_multiiplier = 128
+default_multiplier = 128
 format = "{}{}"
 possible_units = []
 multiplier_configurable = false
@@ -87,7 +94,7 @@ prefix = "const"
 p_type = "bool"
 [runtime.optional_parameter_types.InstantAllowed.expression]
 default_unit = "true"
-default_multiiplier = 1
+default_multiplier = 1
 format = "{}"
 possible_units = ["true", "false"]
 multiplier_configurable = false
@@ -100,7 +107,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.VoteLockingPeriod.expression]
 default_unit = "MINUTES"
-default_multiiplier = 2
+default_multiplier = 2
 format = "{} * {}"
 possible_units = ["MINUTES", "HOURS", "DAYS"]
 multiplier_configurable = true
