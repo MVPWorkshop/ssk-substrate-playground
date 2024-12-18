@@ -1,0 +1,45 @@
+[relaychain]
+default_command = "./bin/polkadot"
+default_args = [ "-lparachain=debug", "-lxcm=trace" ]
+chain = "rococo-local"
+
+[[relaychain.nodes]]
+name = "alice"
+ws_port = 9900
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
+
+[[relaychain.nodes]]
+name = "bob"
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
+
+[[relaychain.nodes]]
+name = "charlie"
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
+
+[[relaychain.nodes]]
+name = "dave"
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
+
+[[parachains]]
+id = 2000
+chain = "local"
+cumulus_based = true
+# comment this if you need a simple spawn
+# add_to_genesis = false
+# register_para = false
+# onboard_as_parachain = false
+
+[[parachains.collators]]
+name = "parachain-collator01"
+ws_port = 9920
+command = "./target/release/parachain-template-node"
+args = [ "-lxcm=trace", "--state-cache-size=0"]
+
+[[parachains.collators]]
+name = "parachain-collator02"
+command = "./target/release/parachain-template-node"
+args = ["-lxcm=trace", "--state-cache-size=0"]

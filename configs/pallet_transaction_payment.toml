@@ -9,7 +9,8 @@ This pallet provides the basic logic needed to pay the absolute minimum amount n
 - _tip_: An optional tip. Tip increases the priority of the transaction, giving it a higher chance to be included by the transaction queue.
 The base fee and adjusted weight and length fees constitute the _inclusion fee_, which is the minimum fee for a transaction to be included in a block."""
 short_description = "FRAME Transaction Payment pallet"
-is_essential = ["SoloChain","SoloFrontierChain"]
+is_essential = ["SoloChain","SoloFrontierChain","ParaChain"]
+
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]

@@ -1,0 +1,111 @@
+name = "Pallet Collator Selection"
+
+[metadata]
+description = "The pallet_collator_selection manages the selection of collators in parachain networks, ensuring an active and valid set of collators is maintained for block production"
+short_description = "FRAME Collator Selection"
+is_essential = ["ParaChain"]
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+category = "Consensus"
+supported_template = ["ParaChain"]
+size = 5078
+updated = "1729175503"
+
+[runtime]
+additional_pallet_impl_code = """
+parameter_types! {
+    pub const PotId: PalletId = PalletId(*b"PotStake");
+  
+    // StakingAdmin pluralistic body.
+    pub const StakingAdminBodyId: BodyId = BodyId::Defense;
+}
+
+/// We allow root and the StakingAdmin to execute privileged collator selection operations.
+pub type CollatorSelectionUpdateOrigin = EitherOfDiverse<
+    EnsureRoot<AccountId>,
+    EnsureXcm<IsVoiceOfBody<RelayLocation, StakingAdminBodyId>>,
+>;
+
+"""
+
+
+[runtime.construct_runtime]
+runtime = ["CollatorSelection", "pallet_collator_selection"]
+
+#   pub const SessionLength: BlockNumber = 6 * HOURS;
+[runtime.optional_parameter_types.SessionLength]
+name = "SessionLength"
+description = "SessionLength defines the duration of a session, typically measured in blocks, after which validator or collator rotations and other session-related updates occur."
+prefix = "const"
+p_type = "BlockNumber"
+[runtime.optional_parameter_types.SessionLength.expression]
+default_unit = "HOURS"
+default_multiiplier = 6
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = false
+
+
+#pub const PCSMaxCandidates: u32 = 100;
+[runtime.optional_parameter_types.PCSMaxCandidates]
+name = "PCSMaxCandidates"
+description = "MaxCandidates: Specifies the maximum number of collator candidates that can register to be considered for selection in the active set."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.PCSMaxCandidates.expression]
+default_unit = ""
+default_multiiplier = 100
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+#pub const MinEligibleCollators: u32 = 4;
+[runtime.optional_parameter_types.MinEligibleCollators]
+name = "MinEligibleCollators"
+description = "MinEligibleCollators: Defines the minimum number of collators required to ensure the network can function properly and maintain block production."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MinEligibleCollators.expression]
+default_unit = ""
+default_multiiplier = 4
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+#pub const MaxInvulnerables: u32 = 20;
+[runtime.optional_parameter_types.MaxInvulnerables]
+name = "MaxInvulnerables"
+description = "MaxInvulnerables: Sets the maximum number of collators that are deemed invulnerable and are always included in the active collator set."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxInvulnerables.expression]
+default_unit = ""
+default_multiiplier = 20
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+Currency = "Balances"
+UpdateOrigin = "CollatorSelectionUpdateOrigin"
+PotId = "PotId"
+MaxCandidates = "PCSMaxCandidates"
+MinEligibleCollators = "MinEligibleCollators"
+MaxInvulnerables = "MaxInvulnerables"
+KickThreshold = "SessionPeriod"
+ValidatorId = "<Self as frame_system::Config>::AccountId"
+ValidatorIdOf = "pallet_collator_selection::IdentityCollator"
+ValidatorRegistration = "Session"
+WeightInfo = "()"
+
+[dependencies.pallet]
+package = "pallet-collator-selection"
+alias = "pallet collator selection"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"

@@ -1,0 +1,102 @@
+[package]
+name = "parachain-template-node"
+description = "A parachain node template built with Substrate and Cumulus, part of Polkadot Sdk."
+version = "0.0.0"
+license = "Unlicense"
+authors.workspace = true
+homepage.workspace = true
+repository.workspace = true
+edition.workspace = true
+publish = false
+build = "build.rs"
+
+# [[bin]]
+# name = "parachain-template-node"
+
+[dependencies]
+clap = { features = ["derive"], version = "4.5.3" }
+serde = { features = ["derive"], version = "1.0.197", default-features = true }
+jsonrpsee = { features = ["server"], version = "0.23.2" }
+futures = { version = "0.3.30" }
+serde_json = { version = "1.0.114", default-features = true }
+
+codec = { version = "3.6.12", default-features = true, package = "parity-scale-codec" }
+hex-literal = { version = "0.4.1", default-features = false }
+log = { version = "0.4.21", default-features = true }
+scale-info = { version = "2.11.1", default-features = false }
+smallvec = { version = "1.11.0", default-features = false }
+docify = { version = "0.2.8" }
+
+# Local
+pallet-parachain-template = { path = "../pallets/template", default-features = false }
+parachain-template-runtime = { path = "../runtime" }
+
+# Substrate
+frame-benchmarking = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+frame-benchmarking-cli = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+pallet-transaction-payment-rpc = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-basic-authorship = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-chain-spec = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-cli = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-client-api = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-offchain = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-consensus = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-executor = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-network = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-network-sync = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-rpc = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-service = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-sysinfo = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-telemetry = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-tracing = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-transaction-pool = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sc-transaction-pool-api = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-api = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-block-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-blockchain = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-consensus-aura = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-core = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-keystore = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-io = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-runtime = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+sp-timestamp = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+substrate-frame-rpc-system = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+prometheus-endpoint = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false, package = "substrate-prometheus-endpoint" }
+
+# Polkadot
+polkadot-cli = { features = ["rococo-native"], git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+polkadot-primitives = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+xcm = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0", default-features = false, package = "staging-xcm" }
+
+# Cumulus
+cumulus-client-cli = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-client-collator = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-client-consensus-aura = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-client-consensus-common = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-client-consensus-proposer = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-client-service = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-primitives-core = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-primitives-parachain-inherent = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+cumulus-relay-chain-interface = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+color-print = { version = "0.3.4" }
+
+[build-dependencies]
+substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk.git", tag = "polkadot-v1.14.0" }
+
+[features]
+default = []
+runtime-benchmarks = [
+	"cumulus-primitives-core/runtime-benchmarks",
+	"frame-benchmarking-cli/runtime-benchmarks",
+	"frame-benchmarking/runtime-benchmarks",
+	"parachain-template-runtime/runtime-benchmarks",
+	"polkadot-cli/runtime-benchmarks",
+	"polkadot-primitives/runtime-benchmarks",
+	"sc-service/runtime-benchmarks",
+	"sp-runtime/runtime-benchmarks",
+]
+try-runtime = [
+	"parachain-template-runtime/try-runtime",
+	"polkadot-cli/try-runtime",
+	"sp-runtime/try-runtime",
+]

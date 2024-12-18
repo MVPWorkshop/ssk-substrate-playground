@@ -1,0 +1,63 @@
+name = "Pallet Session"
+
+[metadata]
+description = "pallet_session manages validator rotation and key management in predefined intervals, ensuring seamless session transitions in Substrate-based networks."
+short_description = "FRAME session"
+is_essential = ["ParaChain"]
+compatibility = "Two"
+license = "Apache-2.0"
+authors = ["ParityTechnologies"]
+category = "Consensus"
+supported_template = ["ParaChain"]
+size = 5078
+updated = "1729175503"
+
+[runtime.construct_runtime]
+runtime = ["Session", "pallet_session"]
+
+[runtime]
+#pub const SessionPeriod: u32 = 6 * HOURS;
+[runtime.optional_parameter_types.SessionPeriod]
+name = "SessionPeriod"
+description = "The period parameter in pallet_session defines the duration (number of blocks) for a single session before validator rotation occurs."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.SessionPeriod.expression]
+default_unit = "HOURS"
+default_multiiplier = 6
+format = "{} * {}"
+possible_units = ["DAYS", "HOURS", "MINUTES"]
+multiplier_configurable = false
+
+
+#pub const Offset: u32 = 0;
+[runtime.optional_parameter_types.Offset]
+name = "Offset"
+description = "The offset parameter in pallet_session specifies the starting block number from which the session rotation schedule begins."
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.Offset.expression]
+default_unit = ""
+default_multiiplier = 0
+format = "{}{}"
+possible_units = []
+multiplier_configurable = true
+
+
+[runtime.pallet_traits]
+RuntimeEvent = "RuntimeEvent"
+ValidatorId = "<Self as frame_system::Config>::AccountId"
+ValidatorIdOf = "pallet_collator_selection::IdentityCollator"
+ShouldEndSession = "pallet_session::PeriodicSessions<SessionPeriod, Offset>"
+NextSessionRotation = "pallet_session::PeriodicSessions<SessionPeriod, Offset>"
+SessionManager = "CollatorSelection"
+SessionHandler = "<SessionKeys as sp_runtime::traits::OpaqueKeys>::KeyTypeIdProviders"
+Keys = "SessionKeys"
+WeightInfo = "()"
+
+[dependencies.pallet]
+package = "pallet-session"
+alias = "pallet session"
+default_features = false
+git_repo = "https://github.com/paritytech/polkadot-sdk.git"
+tag = "polkadot-v1.14.0"
