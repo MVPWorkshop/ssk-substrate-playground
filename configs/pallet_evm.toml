@@ -8,13 +8,11 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 is_essential = ["SoloFrontierChain"]
 category = "Other"
-supported_template=["SoloFrontierChain"]
+supported_template = ["SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 
 [runtime]
-additional_runtime_lib_code = [
-]
 additional_pallet_impl_code = """
 const BLOCK_GAS_LIMIT: u64 = 75_000_000;
 const MAX_POV_SIZE: u64 =5*1024*1024;
@@ -36,41 +34,36 @@ prefix = "empty"
 p_type = "u32"
 [runtime.optional_parameter_types.SuicideQuickClearLimit.expression]
 default_unit = ""
-default_multiiplier =0
+default_multiplier = 0
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
-
-
-
-
-
 
 [runtime.construct_runtime]
 runtime = ["EVM", "pallet_evm::Pallet<Runtime>"]
 
 [runtime.pallet_traits]
- FeeCalculator = "BaseFee"
+FeeCalculator = "BaseFee"
 GasWeightMapping = "pallet_evm::FixedGasWeightMapping<Self>"
 WeightPerGas = "WeightPerGas"
 BlockHashMapping = "pallet_ethereum::EthereumBlockHashMapping<Self>"
 CallOrigin = "EnsureAccountId20"
- WithdrawOrigin ="EnsureAccountId20"
+WithdrawOrigin = "EnsureAccountId20"
 AddressMapping = "IdentityAddressMapping"
 Currency = "Balances"
 RuntimeEvent = "RuntimeEvent"
 PrecompilesType = "FrontierPrecompiles<Self>"
 PrecompilesValue = "PrecompilesValue"
-ChainId ="EVMChainId"
+ChainId = "EVMChainId"
 BlockGasLimit = "BlockGasLimit"
 Runner = "pallet_evm::runner::stack::Runner<Self>"
 OnChargeTransaction = "()"
 OnCreate = "()"
- FindAuthor = "FindAuthorTruncated<Aura>"
- GasLimitPovSizeRatio = "GasLimitPovSizeRatio"
+FindAuthor = "FindAuthorTruncated<Aura>"
+GasLimitPovSizeRatio = "GasLimitPovSizeRatio"
 SuicideQuickClearLimit = "SuicideQuickClearLimit"
 Timestamp = "Timestamp"
- WeightInfo = "pallet_evm::weights::SubstrateWeight<Self>"
+WeightInfo = "pallet_evm::weights::SubstrateWeight<Self>"
 
 [dependencies.pallet]
 package = "pallet-evm"
@@ -78,7 +71,3 @@ alias = "pallet evm"
 default_features = false
 git_repo = "https://github.com/polkadot-evm/frontier"
 tag = "polkadot-v1.14.0"
-
-
-
-

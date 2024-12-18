@@ -13,6 +13,8 @@ size = 5078
 updated = "1729175503"
 
 [runtime]
+additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
+
 additional_pallet_impl_code = """
 parameter_types! {
     pub const PotId: PalletId = PalletId(*b"PotStake");
@@ -41,7 +43,7 @@ prefix = "const"
 p_type = "BlockNumber"
 [runtime.optional_parameter_types.SessionLength.expression]
 default_unit = "HOURS"
-default_multiiplier = 6
+default_multiplier = 6
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
 multiplier_configurable = false
@@ -55,7 +57,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.PCSMaxCandidates.expression]
 default_unit = ""
-default_multiiplier = 100
+default_multiplier = 100
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -69,7 +71,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MinEligibleCollators.expression]
 default_unit = ""
-default_multiiplier = 4
+default_multiplier = 4
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true
@@ -83,7 +85,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.MaxInvulnerables.expression]
 default_unit = ""
-default_multiiplier = 20
+default_multiplier = 20
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

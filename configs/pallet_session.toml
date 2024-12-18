@@ -24,10 +24,10 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.SessionPeriod.expression]
 default_unit = "HOURS"
-default_multiiplier = 6
+default_multiplier = 6
 format = "{} * {}"
 possible_units = ["DAYS", "HOURS", "MINUTES"]
-multiplier_configurable = false
+multiplier_configurable = true
 
 
 #pub const Offset: u32 = 0;
@@ -38,7 +38,7 @@ prefix = "const"
 p_type = "u32"
 [runtime.optional_parameter_types.Offset.expression]
 default_unit = ""
-default_multiiplier = 0
+default_multiplier = 0
 format = "{}{}"
 possible_units = []
 multiplier_configurable = true

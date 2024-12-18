@@ -8,13 +8,11 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 is_essential = ["SoloFrontierChain"]
 category = "Other"
-supported_template=["SoloFrontierChain"]
+supported_template = ["SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 
 [runtime]
-additional_runtime_lib_code = [
-]
 additional_pallet_impl_code = """
 
 pub struct BaseFeeThreshold;
@@ -39,7 +37,7 @@ prefix = "empty"
 p_type = "U256"
 [runtime.optional_parameter_types.DefaultBaseFeePerGas.expression]
 default_unit = ""
-default_multiiplier = 1_000_000_000
+default_multiplier = 1_000_000_000
 format = "U256::from({}{})"
 possible_units = []
 multiplier_configurable = true
@@ -52,7 +50,7 @@ prefix = "empty"
 p_type = "Permill"
 [runtime.optional_parameter_types.DefaultElasticity.expression]
 default_unit = ""
-default_multiiplier = 125_000
+default_multiplier = 125_000
 format = "Permill::from_parts({}{})"
 possible_units = []
 multiplier_configurable = true
@@ -74,5 +72,3 @@ alias = "pallet base fee"
 default_features = false
 git_repo = "https://github.com/polkadot-evm/frontier"
 tag = "polkadot-v1.14.0"
-
-
