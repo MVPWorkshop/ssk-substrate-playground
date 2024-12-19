@@ -22,13 +22,17 @@ pub struct UseCase {
 }
 
 impl UseCase {
-    pub fn new(pallet_configs: &HashMap<String, PalletConfig>, name: String, icon: String) -> Self {
+    pub fn new(
+        pallet_configs: &HashMap<String, PalletConfig>,
+        use_case: String,
+        icon: String,
+    ) -> Self {
         let use_cases = pallet_configs
             .iter()
             .filter_map(|(name, config)| match &config.metadata.use_cases {
                 None => None,
                 Some(config_use_cases) => {
-                    if config_use_cases.contains(name) {
+                    if config_use_cases.contains(&use_case) {
                         Some(name.clone())
                     } else {
                         None
@@ -38,8 +42,8 @@ impl UseCase {
             .collect();
 
         UseCase {
-            description: format!("Default pallets for use case {}", &name),
-            name,
+            description: format!("Default pallets for use case {}", &use_case),
+            name: use_case,
             pallets: use_cases,
             icon,
         }
