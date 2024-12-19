@@ -17,19 +17,18 @@ pub struct Pallet {
 pub struct UseCase {
     name: String,
     description: String,
+    icon: String,
     pallets: Vec<String>,
 }
 
-impl From<(&HashMap<String, PalletConfig>, String)> for UseCase {
-    fn from(value: (&HashMap<String, PalletConfig>, String)) -> Self {
-        let (pallet_configs, use_case) = value;
-
+impl UseCase {
+    pub fn new(pallet_configs: &HashMap<String, PalletConfig>, name: String, icon: String) -> Self {
         let use_cases = pallet_configs
             .iter()
             .filter_map(|(name, config)| match &config.metadata.use_cases {
                 None => None,
                 Some(config_use_cases) => {
-                    if config_use_cases.contains(&use_case) {
+                    if config_use_cases.contains(name) {
                         Some(name.clone())
                     } else {
                         None
@@ -39,9 +38,10 @@ impl From<(&HashMap<String, PalletConfig>, String)> for UseCase {
             .collect();
 
         UseCase {
-            name: use_case.clone(),
-            description: format!("Default pallets for use case {}", use_case),
+            description: format!("Default pallets for use case {}", &name),
+            name,
             pallets: use_cases,
+            icon,
         }
     }
 }
@@ -117,11 +117,23 @@ pub async fn get_templates_handler(
         .collect();
 
     let use_cases = vec![
-        (pallet_configs, "Gaming".to_string()).into(),
-        (pallet_configs, "NFT".to_string()).into(),
-        (pallet_configs, "Governance".to_string()).into(),
-        (pallet_configs, "DeFi".to_string()).into(),
-        (pallet_configs, "SupplyChain".to_string()).into(),
+        UseCase::new(
+            pallet_configs,
+            "Gaming".to_string(),
+            "game-controller".to_string(),
+        ),
+        UseCase::new(pallet_configs, "NFT".to_string(), "certificate".to_string()),
+        UseCase::new(
+            pallet_configs,
+            "Governance".to_string(),
+            "gavel".to_string(),
+        ),
+        UseCase::new(pallet_configs, "DeFi".to_string(), "swap".to_string()),
+        UseCase::new(
+            pallet_configs,
+            "SupplyChain".to_string(),
+            "warehouse".to_string(),
+        ),
     ];
 
     GetTemplatesResponse::Ok(Json(BlockchainTemplate {
