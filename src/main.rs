@@ -5,9 +5,8 @@ use poem::{listener::TcpListener, Route, Server};
 use poem_openapi::OpenApiService;
 
 use substrate_runtime_builder::{
-    api::Api, services::archiver::async_zip::AsyncZipArchiverService,
-    services::code_generator::service::CodeGeneratorService,
-    services::object_store::s3::S3ObjectStoreService,
+    api::Api, services::async_zip::AsyncZipArchiverService,
+    services::code_generator::service::CodeGeneratorService, services::s3::S3ObjectStoreService,
 };
 
 const PORT: &str = "3000";
