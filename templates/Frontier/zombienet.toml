@@ -1,34 +1,45 @@
-[settings]
-timeout = 1000
-
 [relaychain]
+default_command = "./bin/polkadot"
+default_args = [ "-lparachain=debug", "-lxcm=trace" ]
 chain = "rococo-local"
-default_command = "/Users/todortodorovic/.cargo/bin/polkadot"
 
 [[relaychain.nodes]]
 name = "alice"
-validator = true
 ws_port = 9900
-extra_args = ["-lparachain=debug"]
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
 
 [[relaychain.nodes]]
 name = "bob"
 validator = true
-extra_args = ["-lparachain=debug"]
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
+
+[[relaychain.nodes]]
+name = "charlie"
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
+
+[[relaychain.nodes]]
+name = "dave"
+validator = true
+args = ["--state-cache-size=0", "--disable-worker-version-check"]
 
 [[parachains]]
-id = 1000
-add_to_genesis = true
-cumulus_based = true
+id = 2000
 chain = "local"
+cumulus_based = true
+# comment this if you need a simple spawn
+# add_to_genesis = false
+# register_para = false
+# onboard_as_parachain = false
 
 [[parachains.collators]]
-name = "frontier-parachain-collator01"
-command = "target/release/frontier-parachain-node"
-ws_port = 9910
-args = [""]
+name = "parachain-collator01"
+ws_port = 9920
+command = "./target/release/frontier-parachain-node"
+args = [ "-lxcm=trace", "--state-cache-size=0"]
 
-[types.Header]
-number = "u64"
-parent_hash = "Hash"
-post_state = "Hash"
+[[parachains.collators]]
+name = "parachain-collator02"
+command = "./target/release/frontier-parachain-node"
+args = ["-lxcm=trace", "--state-cache-size=0"]

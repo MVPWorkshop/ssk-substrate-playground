@@ -1,327 +1,177 @@
-use cumulus_primitives_core::ParaId;
-use frontier_parachain_runtime::{AccountId, AuraId, Signature, EXISTENTIAL_DEPOSIT};
-use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
-use sc_service::ChainType;
-use serde::{Deserialize, Serialize};
-use sp_core::{sr25519, Pair, Public, H160, U256};
+use std::{collections::BTreeMap, str::FromStr};
+
+use hex_literal::hex;
+// Substrate
+use sc_chain_spec::{ChainType, Properties};
+use sp_consensus_aura::sr25519::AuthorityId as AuraId;
+use sp_consensus_grandpa::AuthorityId as GrandpaId;
+#[allow(unused_imports)]
+use sp_core::ecdsa;
+use sp_core::{Pair, Public, H160, U256};
 use sp_runtime::traits::{IdentifyAccount, Verify};
-use std::{collections::BTreeMap, marker::PhantomData, str::FromStr};
+// Frontier
+use frontier_template_runtime::{AccountId, Balance, SS58Prefix, Signature, WASM_BINARY};
 
-/// Specialized `ChainSpec` for the normal parachain runtime.
-pub type ChainSpec =
-	sc_service::GenericChainSpec<frontier_parachain_runtime::RuntimeGenesisConfig, Extensions>;
+// The URL for the telemetry server.
+// const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
 
-/// The default XCM version to set in genesis config.
-const SAFE_XCM_VERSION: u32 = xcm::prelude::XCM_VERSION;
+/// Specialized `ChainSpec`. This is a specialization of the general Substrate ChainSpec type.
+pub type ChainSpec = sc_service::GenericChainSpec;
 
-/// Helper function to generate a crypto pair from seed
+/// Generate a crypto pair from seed.
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
-	TPublic::Pair::from_string(&format!("//{}", seed), None)
-		.expect("static values are valid; qed")
-		.public()
+    TPublic::Pair::from_string(&format!("//{}", seed), None)
+        .expect("static values are valid; qed")
+        .public()
 }
 
-/// The extensions for the [`ChainSpec`].
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ChainSpecGroup, ChainSpecExtension)]
-#[serde(deny_unknown_fields)]
-pub struct Extensions {
-	/// The relay chain of the Parachain.
-	pub relay_chain: String,
-	/// The id of the Parachain.
-	pub para_id: u32,
-}
-
-impl Extensions {
-	/// Try to get the extension from the given `ChainSpec`.
-	pub fn try_get(chain_spec: &dyn sc_service::ChainSpec) -> Option<&Self> {
-		sc_chain_spec::get_extension(chain_spec.extensions())
-	}
-}
-
+#[allow(dead_code)]
 type AccountPublic = <Signature as Verify>::Signer;
 
-/// Generate collator keys from seed.
-///
-/// This function's return type must always match the session keys of the chain in tuple format.
-pub fn get_collator_keys_from_seed(seed: &str) -> AuraId {
-	get_from_seed::<AuraId>(seed)
-}
-
-/// Helper function to generate an account ID from seed
+/// Generate an account ID from seed.
+/// For use with `AccountId32`, `dead_code` if `AccountId20`.
+#[allow(dead_code)]
 pub fn get_account_id_from_seed<TPublic: Public>(seed: &str) -> AccountId
 where
-	AccountPublic: From<<TPublic::Pair as Pair>::Public>,
+    AccountPublic: From<<TPublic::Pair as Pair>::Public>,
 {
-	AccountPublic::from(get_from_seed::<TPublic>(seed)).into_account()
+    AccountPublic::from(get_from_seed::<TPublic>(seed)).into_account()
 }
 
-/// Generate the session keys from individual elements.
-///
-/// The input must be a tuple of individual keys (a single arg for now since we have just one key).
-pub fn template_session_keys(keys: AuraId) -> frontier_parachain_runtime::SessionKeys {
-	frontier_parachain_runtime::SessionKeys { aura: keys }
+/// Generate an Aura authority key.
+pub fn authority_keys_from_seed(s: &str) -> (AuraId, GrandpaId) {
+    (get_from_seed::<AuraId>(s), get_from_seed::<GrandpaId>(s))
 }
 
-pub fn development_config() -> ChainSpec {
-	// Give your base currency a unit name and decimal places
-	let mut properties = sc_chain_spec::Properties::new();
-	properties.insert("tokenSymbol".into(), "UNIT".into());
-	properties.insert("tokenDecimals".into(), 12.into());
-	properties.insert("ss58Format".into(), 42.into());
+fn properties() -> Properties {
+    let mut properties = Properties::new();
+    properties.insert("tokenDecimals".into(), 18.into());
+    properties.insert("ss58Format".into(), SS58Prefix::get().into());
+    properties
+}
 
-	ChainSpec::from_genesis(
-		// Name
-		"Development",
-		// ID
-		"dev",
-		ChainType::Development,
-		move || {
-			testnet_genesis(
-				// initial collators.
-				vec![
-					(
-						get_account_id_from_seed::<sr25519::Public>("Alice"),
-						get_collator_keys_from_seed("Alice"),
-					),
-					(
-						get_account_id_from_seed::<sr25519::Public>("Bob"),
-						get_collator_keys_from_seed("Bob"),
-					),
-				],
-				vec![
-					get_account_id_from_seed::<sr25519::Public>("Alice"),
-					get_account_id_from_seed::<sr25519::Public>("Bob"),
-					get_account_id_from_seed::<sr25519::Public>("Charlie"),
-					get_account_id_from_seed::<sr25519::Public>("Dave"),
-					get_account_id_from_seed::<sr25519::Public>("Eve"),
-					get_account_id_from_seed::<sr25519::Public>("Ferdie"),
-					get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
-				],
-				// Give Alice root privileges
-				Some(get_account_id_from_seed::<sr25519::Public>("Alice")),
-				1000.into(),
-			)
-		},
-		Vec::new(),
-		None,
-		None,
-		None,
-		None,
-		Extensions {
-			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
-			para_id: 1000,
-		},
-	)
+const UNITS: Balance = 1_000_000_000_000_000_000;
+
+pub fn development_config(enable_manual_seal: bool) -> ChainSpec {
+    ChainSpec::builder(WASM_BINARY.expect("WASM not available"), Default::default())
+        .with_name("Development")
+        .with_id("dev")
+        .with_chain_type(ChainType::Development)
+        .with_properties(properties())
+        .with_genesis_config_patch(testnet_genesis(
+            // Sudo account (Alith)
+            AccountId::from(hex!("f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")),
+            // Pre-funded accounts
+            vec![
+                AccountId::from(hex!("f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")), // Alith
+                AccountId::from(hex!("3Cd0A705a2DC65e5b1E1205896BaA2be8A07c6e0")), // Baltathar
+                AccountId::from(hex!("798d4Ba9baf0064Ec19eB4F0a1a45785ae9D6DFc")), // Charleth
+                AccountId::from(hex!("773539d4Ac0e786233D90A233654ccEE26a613D9")), // Dorothy
+                AccountId::from(hex!("Ff64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB")), // Ethan
+                AccountId::from(hex!("C0F0f4ab324C46e55D02D0033343B4Be8A55532d")), // Faith
+            ],
+            // Initial PoA authorities
+            vec![authority_keys_from_seed("Alice")],
+            // Ethereum chain ID
+            SS58Prefix::get() as u64,
+            enable_manual_seal,
+        ))
+        .build()
 }
 
 pub fn local_testnet_config() -> ChainSpec {
-	// Give your base currency a unit name and decimal places
-	let mut properties = sc_chain_spec::Properties::new();
-	properties.insert("tokenSymbol".into(), "UNIT".into());
-	properties.insert("tokenDecimals".into(), 12.into());
-	properties.insert("ss58Format".into(), 42.into());
-
-	ChainSpec::from_genesis(
-		// Name
-		"Local Testnet",
-		// ID
-		"local_testnet",
-		ChainType::Local,
-		move || {
-			testnet_genesis(
-				// initial collators.
-				vec![
-					(
-						get_account_id_from_seed::<sr25519::Public>("Alice"),
-						get_collator_keys_from_seed("Alice"),
-					),
-					(
-						get_account_id_from_seed::<sr25519::Public>("Bob"),
-						get_collator_keys_from_seed("Bob"),
-					),
-				],
-				vec![
-					get_account_id_from_seed::<sr25519::Public>("Alice"),
-					get_account_id_from_seed::<sr25519::Public>("Bob"),
-					get_account_id_from_seed::<sr25519::Public>("Charlie"),
-					get_account_id_from_seed::<sr25519::Public>("Dave"),
-					get_account_id_from_seed::<sr25519::Public>("Eve"),
-					get_account_id_from_seed::<sr25519::Public>("Ferdie"),
-					get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
-					get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
-				],
-				// Give Alice root privileges
-				Some(get_account_id_from_seed::<sr25519::Public>("Alice")),
-				1000.into(),
-			)
-		},
-		// Bootnodes
-		Vec::new(),
-		// Telemetry
-		None,
-		// Protocol ID
-		Some("template-local"),
-		// Fork ID
-		None,
-		// Properties
-		Some(properties),
-		// Extensions
-		Extensions {
-			relay_chain: "rococo-local".into(), // You MUST set this to the correct network!
-			para_id: 1000,
-		},
-	)
+    ChainSpec::builder(WASM_BINARY.expect("WASM not available"), Default::default())
+        .with_name("Local Testnet")
+        .with_id("local_testnet")
+        .with_chain_type(ChainType::Local)
+        .with_properties(properties())
+        .with_genesis_config_patch(testnet_genesis(
+            // Sudo account (Alith)
+            AccountId::from(hex!("f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")),
+            // Pre-funded accounts
+            vec![
+                AccountId::from(hex!("f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")), // Alith
+                AccountId::from(hex!("3Cd0A705a2DC65e5b1E1205896BaA2be8A07c6e0")), // Baltathar
+                AccountId::from(hex!("798d4Ba9baf0064Ec19eB4F0a1a45785ae9D6DFc")), // Charleth
+                AccountId::from(hex!("773539d4Ac0e786233D90A233654ccEE26a613D9")), // Dorothy
+                AccountId::from(hex!("Ff64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB")), // Ethan
+                AccountId::from(hex!("C0F0f4ab324C46e55D02D0033343B4Be8A55532d")), // Faith
+            ],
+            vec![
+                authority_keys_from_seed("Alice"),
+                authority_keys_from_seed("Bob"),
+            ],
+            42,
+            false,
+        ))
+        .build()
 }
 
+/// Configure initial storage state for FRAME modules.
 fn testnet_genesis(
-	invulnerables: Vec<(AccountId, AuraId)>,
-	endowed_accounts: Vec<AccountId>,
-	root_key: Option<AccountId>,
-	id: ParaId,
-) -> frontier_parachain_runtime::RuntimeGenesisConfig {
-	let alice = get_from_seed::<sr25519::Public>("Alice");
-	let bob = get_from_seed::<sr25519::Public>("Bob");
+    sudo_key: AccountId,
+    endowed_accounts: Vec<AccountId>,
+    initial_authorities: Vec<(AuraId, GrandpaId)>,
+    chain_id: u64,
+    enable_manual_seal: bool,
+) -> serde_json::Value {
+    let evm_accounts = {
+        let mut map = BTreeMap::new();
+        map.insert(
+            // H160 address of Alice dev account
+            // Derived from SS58 (42 prefix) address
+            // SS58: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
+            // hex: 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
+            // Using the full hex key, truncating to the first 20 bytes (the first 40 hex chars)
+            H160::from_str("d43593c715fdd31c61141abd04a99fd6822c8558")
+                .expect("internal H160 is valid; qed"),
+            fp_evm::GenesisAccount {
+                balance: U256::from_str("0xffffffffffffffffffffffffffffffff")
+                    .expect("internal U256 is valid; qed"),
+                code: Default::default(),
+                nonce: Default::default(),
+                storage: Default::default(),
+            },
+        );
+        map.insert(
+            // H160 address of CI test runner account
+            H160::from_str("05E053aB0f66422d243C1F14Da2091CD56F51F73")
+                .expect("internal H160 is valid; qed"),
+            fp_evm::GenesisAccount {
+                balance: U256::from_str("0xffffffffffffffffffffffffffffffff")
+                    .expect("internal U256 is valid; qed"),
+                code: Default::default(),
+                nonce: Default::default(),
+                storage: Default::default(),
+            },
+        );
+        map.insert(
+            // H160 address for benchmark usage
+            H160::from_str("1000000000000000000000000000000000000001")
+                .expect("internal H160 is valid; qed"),
+            fp_evm::GenesisAccount {
+                nonce: U256::from(1),
+                balance: U256::from(1_000_000_000_000_000_000_000_000u128),
+                storage: Default::default(),
+                code: vec![0x00],
+            },
+        );
+        map
+    };
 
-	frontier_parachain_runtime::RuntimeGenesisConfig {
-		system: frontier_parachain_runtime::SystemConfig {
-			code: frontier_parachain_runtime::WASM_BINARY
-				.expect("WASM binary was not build, please build it!")
-				.to_vec(),
-			..Default::default()
-		},
-		// Configure additional assets here
-		// For example, this configures asset "ALT1" & "ALT2" with owners, alice and bob, respectively
-		assets: frontier_parachain_runtime::AssetsConfig {
-			assets: vec![
-				(1, alice.into(), true, 10_000_000_0000),
-				(2, bob.into(), true, 10_000_000_0000),
-			],
-			// Genesis metadata: Vec<(id, name, symbol, decimals)>
-			metadata: vec![
-				(1, "asset-1".into(), "ALT1".into(), 10),
-				(2, "asset-2".into(), "ALT2".into(), 10),
-			],
-			// Genesis accounts: Vec<(id, account_id, balance)>
-			accounts: vec![(1, alice.into(), 50_000_000_0000), (2, bob.into(), 50_000_000_0000)],
-		},
-		balances: frontier_parachain_runtime::BalancesConfig {
-			balances: endowed_accounts.iter().cloned().map(|k| (k, 1 << 60)).collect(),
-		},
-		council: frontier_parachain_runtime::CouncilConfig {
-			phantom: PhantomData,
-			members: endowed_accounts
-				.iter()
-				.enumerate()
-				.filter_map(|(idx, acc)| if idx % 2 == 0 { Some(acc.clone()) } else { None })
-				.collect::<Vec<_>>(),
-		},
-		parachain_info: frontier_parachain_runtime::ParachainInfoConfig {
-			parachain_id: id,
-			..Default::default()
-		},
-		collator_selection: frontier_parachain_runtime::CollatorSelectionConfig {
-			invulnerables: invulnerables.iter().cloned().map(|(acc, _)| acc).collect(),
-			candidacy_bond: EXISTENTIAL_DEPOSIT * 16,
-			..Default::default()
-		},
-		session: frontier_parachain_runtime::SessionConfig {
-			keys: invulnerables
-				.into_iter()
-				.map(|(acc, aura)| {
-					(
-						acc.clone(),                 // account id
-						acc,                         // validator id
-						template_session_keys(aura), // session keys
-					)
-				})
-				.collect(),
-		},
-		// no need to pass anything to aura, in fact it will panic if we do. Session will take care
-		// of this.
-		aura: Default::default(),
-		aura_ext: Default::default(),
-		parachain_system: Default::default(),
-		polkadot_xcm: frontier_parachain_runtime::PolkadotXcmConfig {
-			safe_xcm_version: Some(SAFE_XCM_VERSION),
-			..Default::default()
-		},
-		sudo: frontier_parachain_runtime::SudoConfig { key: root_key },
-		transaction_payment: Default::default(),
-		// EVM compatibility
-		evm_chain_id: frontier_parachain_runtime::EVMChainIdConfig {
-			chain_id: 1000,
-			..Default::default()
-		},
-		evm: frontier_parachain_runtime::EVMConfig {
-			accounts: {
-				let mut map = BTreeMap::new();
-				map.insert(
-					// H160 address of Alice dev account
-					// Derived from SS58 (42 prefix) address
-					// SS58: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
-					// hex: 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
-					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex chars)
-					H160::from_str("d43593c715fdd31c61141abd04a99fd6822c8558")
-						.expect("internal H160 is valid; qed"),
-					fp_evm::GenesisAccount {
-						balance: U256::from_str("0xffffffffffffffffffffffffffffffff")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map.insert(
-					// H160 address of CI test runner account
-					H160::from_str("6be02d1d3665660d22ff9624b7be0551ee1ac91b")
-						.expect("internal H160 is valid; qed"),
-					fp_evm::GenesisAccount {
-						balance: U256::from_str("0xffffffffffffffffffffffffffffffff")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map.insert(
-					// H160 address for benchmark usage
-					H160::from_str("1000000000000000000000000000000000000001")
-						.expect("internal H160 is valid; qed"),
-					fp_evm::GenesisAccount {
-						nonce: U256::from(1),
-						balance: U256::from(1_000_000_000_000_000_000_000_000u128),
-						storage: Default::default(),
-						code: vec![0x00],
-					},
-				);
-				map.insert(
-					// H160 address of dev account
-					// Private key : 0xb9d2ea9a615f3165812e8d44de0d24da9bbd164b65c4f0573e1ce2c8dbd9c8df
-					H160::from_str("C0F0f4ab324C46e55D02D0033343B4Be8A55532d")
-						.expect("internal H160 is valid; qed"),
-					fp_evm::GenesisAccount {
-						balance: U256::from_str("0xef000000000000000000000000000")
-							.expect("internal U256 is valid; qed"),
-						code: Default::default(),
-						nonce: Default::default(),
-						storage: Default::default(),
-					},
-				);
-				map
-			},
-			..Default::default()
-		},
-		ethereum: Default::default(),
-		dynamic_fee: Default::default(),
-		base_fee: Default::default(),
-	}
+    serde_json::json!({
+        "sudo": { "key": Some(sudo_key) },
+        "balances": {
+            "balances": endowed_accounts
+                .iter()
+                .cloned()
+                .map(|k| (k, 1_000_000 * UNITS))
+                .collect::<Vec<_>>()
+        },
+        "aura": { "authorities": initial_authorities.iter().map(|x| (x.0.clone())).collect::<Vec<_>>() },
+        "grandpa": { "authorities": initial_authorities.iter().map(|x| (x.1.clone(), 1)).collect::<Vec<_>>() },
+        "evmChainId": { "chainId": chain_id },
+        "evm": { "accounts": evm_accounts },
+        "manualSeal": { "enable": enable_manual_seal }
+    })
 }
