@@ -46,7 +46,7 @@ pub struct NewProject {
     /// pallet name and the value is a optional map of configuration parameters
     pallets: HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
     /// The template type for the project
-    template: TemplateType,
+    pub template: TemplateType,
     github: Option<GitHubCredentials>,
 }
 
@@ -85,9 +85,7 @@ pub async fn generate_a_project_handler(
     version_control_service: Arc<dyn VersionControlService>,
     project: Json<NewProject>,
 ) -> GenerateProjectResponse {
-    let mut project_name = project.name.clone();
-    // Append uuid to project name
-    project_name = format!("{}_{}", project_name, Uuid::new_v4());
+    let project_name = project.name.clone();
 
     let archive = match code_generator_service
         .generate_project_archive(&project.pallets, &project.template)
