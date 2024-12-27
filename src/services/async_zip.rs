@@ -7,7 +7,7 @@ use std::{io::Cursor, path::Path};
 use tokio::fs::File;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
-use super::archiver::{ArchiverError, ArchiverService};
+use crate::services::traits::archiver::{ArchiverError, ArchiverService};
 
 pub struct AsyncZipArchiverService;
 

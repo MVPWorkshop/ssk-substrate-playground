@@ -11,7 +11,7 @@ use uuid::Uuid;
 
 use crate::services::{
     code_generator::{types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
-    object_store::ObjectStoreService,
+    traits::object_store::ObjectStoreService,
 };
 
 #[derive(Object, Clone, Serialize, Deserialize)]

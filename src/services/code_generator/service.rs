@@ -9,7 +9,7 @@ use super::templating::handle_templates::HBS_SUFFIX;
 use super::types::TemplateType;
 use super::{CodeGeneratorServiceError, Result};
 use crate::api::handlers::generate_project_handler::ParameterConfiguration;
-use crate::services::archiver::ArchiverService;
+use crate::services::traits::archiver::ArchiverService;
 use async_trait::async_trait;
 
 use super::{types::PalletConfig, CodeGenerator};

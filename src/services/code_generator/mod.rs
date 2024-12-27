@@ -13,9 +13,10 @@ use types::{PalletConfig, TemplateType};
 use load_configs::LoadConfigsError;
 use load_templates::LoadTemplatesError;
 
-use crate::api::handlers::generate_project_handler::ParameterConfiguration;
-
-use super::archiver::ArchiverError;
+use crate::{
+    api::handlers::generate_project_handler::ParameterConfiguration,
+    services::traits::archiver::ArchiverError,
+};
 
 pub type Result<T> = std::result::Result<T, CodeGeneratorServiceError>;
 // Define the CodeGeneratorServiceError

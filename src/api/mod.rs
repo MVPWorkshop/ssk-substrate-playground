@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::services::{
     code_generator::{types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
-    object_store::ObjectStoreService,
+    traits::object_store::ObjectStoreService,
 };
 use handlers::get_pallet_options_handler::PalletOptionsRequest;
 use poem_openapi::{param::Path, payload::Json, OpenApi};

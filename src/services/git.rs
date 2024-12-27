@@ -6,7 +6,7 @@ use reqwest::Client;
 use serde_json::json;
 use tokio::process::Command;
 
-use super::version_control::{VersionControlError, VersionControlService};
+use crate::services::traits::version_control::{VersionControlError, VersionControlService};
 
 pub struct GitService;
 
