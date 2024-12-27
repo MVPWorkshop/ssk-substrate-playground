@@ -44,7 +44,7 @@ pub struct NewProject {
     name: String,
     /// The list of pallets to include in the project, where the key is the
     /// pallet name and the value is a optional map of configuration parameters
-    pallets: HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
+    pub pallets: HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
     /// The template type for the project
     pub template: TemplateType,
     github: Option<GitHubCredentials>,
