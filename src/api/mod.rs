@@ -20,6 +20,7 @@ pub struct Api {
     pub version_control_service: Arc<dyn VersionControlService>,
     pub get_template_counter: Arc<IntCounterVec>,
     pub generate_project_counter: Arc<IntCounterVec>,
+    pub pallet_counter: Arc<IntCounterVec>,
 }
 #[OpenApi]
 impl Api {
@@ -43,7 +44,16 @@ impl Api {
                 "generate_project_called",
                 "Number of times generate_project endpoint was called with chain_type."
             ),
-            &["chain_type"],
+            &["pallet"],
+            prometheus_registry
+        )
+        .unwrap();
+        let pallet_counter = register_int_counter_vec_with_registry!(
+            opts!(
+                "pallet_counter",
+                "Number of times a pallet was added to a generate_project"
+            ),
+            &["pallet"],
             prometheus_registry
         )
         .unwrap();
@@ -54,6 +64,7 @@ impl Api {
             version_control_service,
             get_template_counter: Arc::new(get_template_counter),
             generate_project_counter: Arc::new(generate_project_counter),
+            pallet_counter: Arc::new(pallet_counter),
         }
     }
     #[oai(path = "/generate-project", method = "post")]
@@ -61,6 +72,11 @@ impl Api {
         &self,
         project: Json<handlers::generate_project_handler::NewProject>,
     ) -> handlers::generate_project_handler::GenerateProjectResponse {
+        for pallet in project.0.pallets.keys() {
+            self.pallet_counter
+                .with_label_values(&[pallet.as_str()])
+                .inc();
+        }
         self.generate_project_counter
             .with_label_values(&[&project.0.template.to_string()])
             .inc();
