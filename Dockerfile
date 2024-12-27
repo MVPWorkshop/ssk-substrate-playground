@@ -23,6 +23,7 @@ COPY --from=builder /app/configs /app/configs
 
 # Expose the necessary ports
 EXPOSE 3000
+EXPOSE 9090
 
 # Run the binary
 CMD ["substrate-runtime-builder"]

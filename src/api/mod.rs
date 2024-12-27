@@ -73,7 +73,9 @@ impl Api {
         project: Json<handlers::generate_project_handler::NewProject>,
     ) -> handlers::generate_project_handler::GenerateProjectResponse {
         for pallet in project.0.pallets.keys() {
-            self.pallet_counter.with_label_values(&[pallet.as_str()]).inc();
+            self.pallet_counter
+                .with_label_values(&[pallet.as_str()])
+                .inc();
         }
         self.generate_project_counter
             .with_label_values(&[&project.0.template.to_string()])

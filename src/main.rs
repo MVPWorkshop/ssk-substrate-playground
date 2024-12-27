@@ -15,6 +15,7 @@ use substrate_runtime_builder::{
 };
 
 const PORT: &str = "3000";
+const METRICS_PORT: &str = "9090";
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
@@ -56,13 +57,12 @@ async fn main() -> Result<(), std::io::Error> {
     .server(hosted_url);
     let ui = api_service.swagger_ui();
 
-    Server::new(TcpListener::bind(format!("0.0.0.0:{PORT}")))
-        .run(
-            Route::new()
-                .nest("/", api_service)
-                .nest("/docs", ui)
-                // Add an endpoint to serve the Prometheus metrics on /metrics
-                .nest("/metrics", PrometheusExporter::new(prometheus_registry)),
-        )
+    tokio::spawn(async move {
+        Server::new(TcpListener::bind(format!("0.0.0.0:{PORT}")))
+            .run(Route::new().nest("/", api_service).nest("/docs", ui))
+            .await
+    });
+    Server::new(TcpListener::bind(format!("0.0.0.0:{METRICS_PORT}")))
+        .run(Route::new().nest("/metrics", PrometheusExporter::new(prometheus_registry)))
         .await
 }

@@ -8,6 +8,7 @@ services:
     image: ghcr.io/mvpworkshop/ssk-substrate-playground:latest
     ports:
       - "3000:3000"
+      - "9090:9090"
     volumes:
       - ./generated_code:/app/generated_code
     restart: unless-stopped
