@@ -183,6 +183,12 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
         let zipped_data = self.archiver_service.close_archive(zipped_buffer).await?;
         Ok(zipped_data)
     }
+    async fn unpack_archive_to_folder(&self, buffer: Vec<u8>, output: &Path) -> Result<()> {
+        self.archiver_service
+            .unpack_archive_to_folder(buffer, output)
+            .await
+            .map_err(CodeGeneratorServiceError::ArchiveError)
+    }
 }
 
 #[cfg(test)]

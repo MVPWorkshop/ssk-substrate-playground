@@ -4,7 +4,7 @@ pub mod service;
 pub mod templating;
 pub mod types;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, path::Path};
 
 use async_trait::async_trait;
 use thiserror::Error;
@@ -47,4 +47,5 @@ pub trait CodeGenerator: Send + Sync {
         pallets: &HashMap<String, Option<HashMap<String, ParameterConfiguration>>>,
         template_type: &TemplateType,
     ) -> Result<Vec<u8>>;
+    async fn unpack_archive_to_folder(&self, buffer: Vec<u8>, output: &Path) -> Result<()>;
 }

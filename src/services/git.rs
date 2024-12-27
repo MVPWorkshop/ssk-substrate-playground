@@ -14,8 +14,8 @@ pub struct GitService;
 impl VersionControlService for GitService {
     async fn create_remote_repo(
         &self,
-        github_username: &str,
-        github_token: &str,
+        username: &str,
+        token: &str,
         repo_name: &str,
     ) -> Result<(), VersionControlError> {
         let client = Client::new();
@@ -29,8 +29,8 @@ impl VersionControlService for GitService {
         // Send the POST request to the GitHub API to create the repository
         let response = client
             .post(&url)
-            .basic_auth(github_username, Some(github_token))
-            .header("User-Agent", github_username)
+            .basic_auth(username, Some(token))
+            .header("User-Agent", username)
             .json(&body)
             .send()
             .await

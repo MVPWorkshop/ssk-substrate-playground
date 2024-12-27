@@ -14,11 +14,11 @@ pub enum VersionControlError {
 }
 
 #[async_trait]
-pub trait VersionControlService {
+pub trait VersionControlService: Send + Sync {
     async fn create_remote_repo(
         &self,
-        github_username: &str,
-        github_token: &str,
+        username: &str,
+        token: &str,
         repo_name: &str,
     ) -> Result<(), VersionControlError>;
     async fn push_folder_to_repo(

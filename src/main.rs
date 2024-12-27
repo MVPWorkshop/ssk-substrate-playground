@@ -5,8 +5,11 @@ use poem::{listener::TcpListener, Route, Server};
 use poem_openapi::OpenApiService;
 
 use substrate_runtime_builder::{
-    api::Api, services::async_zip::AsyncZipArchiverService,
-    services::code_generator::service::CodeGeneratorService, services::s3::S3ObjectStoreService,
+    api::Api,
+    services::{
+        async_zip::AsyncZipArchiverService, code_generator::service::CodeGeneratorService,
+        git::GitService, s3::S3ObjectStoreService,
+    },
 };
 
 const PORT: &str = "3000";
@@ -41,6 +44,7 @@ async fn main() -> Result<(), std::io::Error> {
         Api::new(
             Arc::new(object_store_service),
             Arc::new(code_generator_service),
+            Arc::new(GitService),
         ),
         "Substrate Runtime Builder",
         "1.0",
