@@ -13,9 +13,10 @@ use substrate_runtime_builder::{
         Api,
     },
     services::{
-        archiver::async_zip::AsyncZipArchiverService,
+        async_zip::AsyncZipArchiverService,
         code_generator::{service::CodeGeneratorService, types::TemplateType},
-        object_store::s3::S3ObjectStoreService,
+        git::GitService,
+        s3::S3ObjectStoreService,
     },
 };
 
@@ -33,6 +34,7 @@ async fn boot_api() -> Result<Api, String> {
     Ok(Api::new(
         Arc::new(object_store_service),
         Arc::new(code_generator_service),
+        Arc::new(GitService),
     ))
 }
 

@@ -1,10 +1,13 @@
 use async_trait::async_trait;
-use async_zip::{tokio::write::ZipFileWriter, ZipEntryBuilder};
+use async_zip::{
+    tokio::{read::seek::ZipFileReader, write::ZipFileWriter},
+    ZipEntryBuilder,
+};
 use std::{io::Cursor, path::Path};
 use tokio::fs::File;
-use tokio::io::AsyncReadExt;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
-use super::{ArchiverError, ArchiverService};
+use crate::services::traits::archiver::{ArchiverError, ArchiverService};
 
 pub struct AsyncZipArchiverService;
 
@@ -52,9 +55,9 @@ pub fn archive_dir_recursive<'a>(
 impl ArchiverService for AsyncZipArchiverService {
     type ZippedBuffer = ZipFileWriter<Cursor<Vec<u8>>>;
 
-    async fn archive_folder<'a>(
+    async fn archive_folder(
         &self,
-        template_path: &'a Path,
+        template_path: &Path,
         template_extension: &str,
     ) -> Result<Self::ZippedBuffer, ArchiverError> {
         let mut zip_writter = ZipFileWriter::with_tokio(Cursor::new(Vec::new()));
@@ -97,13 +100,56 @@ impl ArchiverService for AsyncZipArchiverService {
             .map_err(|_| ArchiverError::ArchiveError("Failed to write entry".into()))?;
         Ok(zipper_buffer)
     }
+    async fn unpack_archive_to_folder(
+        &self,
+        buffer: Vec<u8>,
+        output: &Path,
+    ) -> Result<(), ArchiverError> {
+        let mut archive = ZipFileReader::with_tokio(Cursor::new(buffer))
+            .await
+            .unwrap();
+
+        // Iterate over all entries by enumerating them so we have both index and entry
+        for i in 0..archive.file().entries().len() {
+            let entry = &archive.file().entries()[i];
+            let filename = entry.filename();
+            let output_path = output.join(filename.as_str().unwrap());
+
+            if entry.dir().unwrap() {
+                // Create the directory
+                tokio::fs::create_dir_all(&output_path).await.unwrap();
+            } else {
+                // Ensure the parent directory exists before creating the file
+                if let Some(parent) = output_path.parent() {
+                    tokio::fs::create_dir_all(parent).await.unwrap();
+                }
+
+                // Create the file
+                let mut file = tokio::fs::File::create(&output_path).await.unwrap();
+
+                // Get a reader for this entry's data
+                let mut reader = archive.reader_with_entry(i).await.unwrap();
+
+                // create buffer
+                let mut file_buffer = Vec::new();
+
+                // copy contents into buffer
+                reader.read_to_end_checked(&mut file_buffer).await.unwrap();
+
+                // write buffer into file
+                file.write_all(&file_buffer).await.unwrap();
+            }
+        }
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::services::code_generator::templating::handle_templates::HBS_SUFFIX;
-
     use super::*;
+    use crate::services::code_generator::templating::handle_templates::HBS_SUFFIX;
+    use tmpdir::TmpDir;
     #[tokio::test]
     async fn test_archive_and_close_archive() {
         let archiver = AsyncZipArchiverService;
@@ -113,5 +159,22 @@ mod tests {
         let zipper_buffer = result.unwrap();
         let zipped_data = archiver.close_archive(zipper_buffer).await;
         assert!(zipped_data.is_ok());
+    }
+    #[ignore]
+    #[tokio::test]
+    async fn test_archive_and_unpack() {
+        let archiver = AsyncZipArchiverService;
+        let template_path = Path::new("templates/SoloChain");
+        let zipper_buffer = archiver
+            .archive_folder(template_path, HBS_SUFFIX)
+            .await
+            .unwrap();
+        let zipped_data = archiver.close_archive(zipper_buffer).await.unwrap();
+        let tmp = TmpDir::new("output").await.unwrap();
+        let x = archiver
+            .unpack_archive_to_folder(zipped_data, tmp.as_ref())
+            .await;
+        println!("{}", tmp.as_ref().file_name().unwrap().to_str().unwrap());
+        println!("{}", x.is_ok());
     }
 }

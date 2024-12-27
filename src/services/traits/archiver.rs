@@ -1,5 +1,3 @@
-pub mod async_zip;
-
 use std::path::Path;
 
 use async_trait::async_trait;
@@ -16,9 +14,9 @@ pub enum ArchiverError {
 #[async_trait]
 pub trait ArchiverService: Send + Sync {
     type ZippedBuffer;
-    async fn archive_folder<'a>(
+    async fn archive_folder(
         &self,
-        template_path: &'a Path,
+        template_path: &Path,
         template_extension: &str,
     ) -> Result<Self::ZippedBuffer, ArchiverError>;
     async fn close_archive(
@@ -31,4 +29,9 @@ pub trait ArchiverService: Send + Sync {
         content: &[u8],
         dest_path: &Path,
     ) -> Result<Self::ZippedBuffer, ArchiverError>;
+    async fn unpack_archive_to_folder(
+        &self,
+        buffer: Vec<u8>,
+        output: &Path,
+    ) -> Result<(), ArchiverError>;
 }

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::services::{
     code_generator::{types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
-    object_store::ObjectStoreService,
+    traits::{object_store::ObjectStoreService, version_control::VersionControlService},
 };
 use handlers::get_pallet_options_handler::PalletOptionsRequest;
 use poem_openapi::{param::Path, payload::Json, OpenApi};
@@ -16,17 +16,20 @@ pub struct Api {
         Arc<ConcurrentHashMap<Uuid, Option<Result<String, CodeGeneratorServiceError>>>>,
     pub object_store_service: Arc<dyn ObjectStoreService>,
     pub code_generator_service: Arc<dyn CodeGenerator>,
+    pub version_control_service: Arc<dyn VersionControlService>,
 }
 #[OpenApi]
 impl Api {
     pub fn new(
         object_store_service: Arc<dyn ObjectStoreService>,
         code_generator_service: Arc<dyn CodeGenerator>,
+        version_control_service: Arc<dyn VersionControlService>,
     ) -> Self {
         Self {
             task_handles: Arc::new(ConcurrentHashMap::new()),
             object_store_service,
             code_generator_service,
+            version_control_service,
         }
     }
     #[oai(path = "/generate-project", method = "post")]
@@ -38,6 +41,7 @@ impl Api {
             self.task_handles.clone(),
             self.object_store_service.clone(),
             self.code_generator_service.clone(),
+            self.version_control_service.clone(),
             project,
         )
         .await

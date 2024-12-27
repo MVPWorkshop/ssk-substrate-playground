@@ -9,7 +9,7 @@ use aws_sdk_s3::{
 };
 use log::info;
 
-use super::ObjectStoreService;
+use crate::services::traits::object_store::ObjectStoreService;
 
 pub struct S3ObjectStoreService {
     config: S3Config,
