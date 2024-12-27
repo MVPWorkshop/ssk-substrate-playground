@@ -13,9 +13,9 @@ use substrate_runtime_builder::{
         Api,
     },
     services::{
-        archiver::async_zip::AsyncZipArchiverService,
+        async_zip::AsyncZipArchiverService,
         code_generator::{service::CodeGeneratorService, types::TemplateType},
-        object_store::s3::S3ObjectStoreService,
+        s3::S3ObjectStoreService,
     },
 };
 

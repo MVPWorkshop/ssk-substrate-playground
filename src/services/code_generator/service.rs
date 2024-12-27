@@ -189,7 +189,7 @@ impl<ZB: 'static + Send> CodeGenerator for CodeGeneratorService<ZB> {
 mod tests {
     use super::*;
     use crate::services::{
-        archiver::async_zip::AsyncZipArchiverService,
+        async_zip::AsyncZipArchiverService,
         code_generator::{
             service::CodeGeneratorService, templating::handle_templates::HBS_SUFFIX, CodeGenerator,
         },
