@@ -1,8 +1,10 @@
 use std::io::ErrorKind;
 use std::sync::Arc;
 
+use poem::endpoint::PrometheusExporter;
 use poem::{listener::TcpListener, Route, Server};
 use poem_openapi::OpenApiService;
+use prometheus::Registry;
 
 use substrate_runtime_builder::{
     api::Api,
@@ -39,12 +41,14 @@ async fn main() -> Result<(), std::io::Error> {
                 format!("Error creating object store: {:?}", err),
             )
         })?;
+    let prometheus_registry = Registry::new();
 
     let api_service = OpenApiService::new(
         Api::new(
             Arc::new(object_store_service),
             Arc::new(code_generator_service),
             Arc::new(GitService),
+            &prometheus_registry,
         ),
         "Substrate Runtime Builder",
         "1.0",
@@ -53,6 +57,12 @@ async fn main() -> Result<(), std::io::Error> {
     let ui = api_service.swagger_ui();
 
     Server::new(TcpListener::bind(format!("0.0.0.0:{PORT}")))
-        .run(Route::new().nest("/", api_service).nest("/docs", ui))
+        .run(
+            Route::new()
+                .nest("/", api_service)
+                .nest("/docs", ui)
+                // Add an endpoint to serve the Prometheus metrics on /metrics
+                .nest("/metrics", PrometheusExporter::new(prometheus_registry)),
+        )
         .await
 }
