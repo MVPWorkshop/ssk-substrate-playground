@@ -44,7 +44,7 @@ impl Api {
                 "generate_project_called",
                 "Number of times generate_project endpoint was called with chain_type."
             ),
-            &["pallet"],
+            &["chain_type"],
             prometheus_registry
         )
         .unwrap();
