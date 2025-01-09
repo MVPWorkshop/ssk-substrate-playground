@@ -70,6 +70,7 @@ additional_runtime_lib_code = [
     "use codec::{MaxEncodedLen};",
     "use frame_support::traits::InstanceFilter;",
     "use sp_runtime::RuntimeDebug;",
+    "use sp_core::Decode;",
 ]
 
 [runtime.construct_runtime]

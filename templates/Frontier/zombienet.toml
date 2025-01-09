@@ -1,6 +1,6 @@
 [relaychain]
-default_command = "./bin/polkadot"
-default_args = [ "-lparachain=debug", "-lxcm=trace" ]
+default_command = "/Users/todortodorovic/.cargo/bin/polkadot"
+default_args = ["-lparachain=debug", "-lxcm=trace"]
 chain = "rococo-local"
 
 [[relaychain.nodes]]
@@ -36,10 +36,10 @@ cumulus_based = true
 [[parachains.collators]]
 name = "parachain-collator01"
 ws_port = 9920
-command = "./target/release/frontier-parachain-node"
-args = [ "-lxcm=trace", "--state-cache-size=0"]
+command = "./target/release/parachain-template-node"
+args = ["-lxcm=trace", "--state-cache-size=0"]
 
 [[parachains.collators]]
 name = "parachain-collator02"
-command = "./target/release/frontier-parachain-node"
+command = "./target/release/parachain-template-node"
 args = ["-lxcm=trace", "--state-cache-size=0"]
