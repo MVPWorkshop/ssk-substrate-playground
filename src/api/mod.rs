@@ -4,7 +4,9 @@ use crate::services::{
     code_generator::{types::TemplateType, CodeGenerator, CodeGeneratorServiceError},
     traits::{object_store::ObjectStoreService, version_control::VersionControlService},
 };
-use handlers::get_pallet_options_handler::PalletOptionsRequest;
+use handlers::{
+    get_pallet_options_handler::PalletOptionsRequest, get_status_handler::GetStatusResponse,
+};
 use poem_openapi::{param::Path, payload::Json, OpenApi};
 use prometheus::{opts, register_int_counter_vec_with_registry, IntCounterVec, Registry};
 use scc::HashMap as ConcurrentHashMap;
@@ -21,6 +23,7 @@ pub struct Api {
     pub get_template_counter: Arc<IntCounterVec>,
     pub generate_project_counter: Arc<IntCounterVec>,
     pub pallet_counter: Arc<IntCounterVec>,
+    pub status_counter: Arc<IntCounterVec>,
 }
 #[OpenApi]
 impl Api {
@@ -57,6 +60,12 @@ impl Api {
             prometheus_registry
         )
         .unwrap();
+        let status_counter = register_int_counter_vec_with_registry!(
+            opts!("status_counter", "Project generation status",),
+            &["status"],
+            prometheus_registry,
+        )
+        .unwrap();
         Self {
             task_handles: Arc::new(ConcurrentHashMap::new()),
             object_store_service,
@@ -65,6 +74,7 @@ impl Api {
             get_template_counter: Arc::new(get_template_counter),
             generate_project_counter: Arc::new(generate_project_counter),
             pallet_counter: Arc::new(pallet_counter),
+            status_counter: Arc::new(status_counter),
         }
     }
     #[oai(path = "/generate-project", method = "post")]
@@ -120,7 +130,23 @@ impl Api {
         &self,
         task_id: Path<Uuid>,
     ) -> handlers::get_status_handler::GetStatusResponse {
-        handlers::get_status_handler::get_status_handler(self.task_handles.clone(), task_id).await
+        match handlers::get_status_handler::get_status_handler(self.task_handles.clone(), task_id)
+            .await
+        {
+            GetStatusResponse::Ok(x) => {
+                self.status_counter
+                    .with_label_values(&[&"success".to_string()])
+                    .inc();
+                GetStatusResponse::Ok(x)
+            }
+            GetStatusResponse::TaskNotFound(x) => GetStatusResponse::TaskNotFound(x),
+            GetStatusResponse::InternalServerError(e) => {
+                self.status_counter
+                    .with_label_values(&[&"fail".to_string()])
+                    .inc();
+                GetStatusResponse::InternalServerError(e)
+            }
+        }
     }
     #[oai(path = "/get-dependencies", method = "post")]
     pub async fn get_dependencies(
