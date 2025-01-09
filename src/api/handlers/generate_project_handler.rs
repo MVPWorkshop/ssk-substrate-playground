@@ -1,5 +1,6 @@
 use std::{collections::HashMap, sync::Arc};
 
+use log::error;
 use poem_openapi::{
     payload::{Json, PlainText},
     types::Example,
@@ -117,6 +118,7 @@ pub async fn generate_a_project_handler(
                     .await
                     .map_err(CodeGeneratorServiceError::OtherError)
                 {
+                    error!("Error Uploading to ObjectStore e: {e}");
                     let _ = task_status_map
                         .update_async(&status_id, |_, v| {
                             *v = Some(Err(e));
@@ -129,6 +131,9 @@ pub async fn generate_a_project_handler(
                     .get_presigned_url(object_name.as_str(), 3600)
                     .await
                     .map_err(CodeGeneratorServiceError::OtherError);
+                if let Err(e) = &result {
+                    error!("Error getting presigned url to ObjectStore e: {e}");
+                }
                 let _ = task_status_map
                     .update_async(&status_id, |_, v| {
                         *v = Some(result);
