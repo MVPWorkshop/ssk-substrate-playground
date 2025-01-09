@@ -1,4 +1,4 @@
-use substrate_runtime_builder::services::object_store::{s3::*, ObjectStoreService};
+use substrate_runtime_builder::services::{s3::*, traits::object_store::ObjectStoreService};
 
 fn env_setup() {
     dotenv::from_filename(".env.local").ok();

@@ -1,6 +1,7 @@
 use std::{collections::HashMap, sync::Arc, time::Duration};
 
 use poem_openapi::{param::Path, payload::Json};
+use prometheus::Registry;
 use substrate_runtime_builder::{
     api::{
         handlers::{
@@ -13,9 +14,10 @@ use substrate_runtime_builder::{
         Api,
     },
     services::{
-        archiver::async_zip::AsyncZipArchiverService,
+        async_zip::AsyncZipArchiverService,
         code_generator::{service::CodeGeneratorService, types::TemplateType},
-        object_store::s3::S3ObjectStoreService,
+        git::GitService,
+        s3::S3ObjectStoreService,
     },
 };
 
@@ -30,9 +32,12 @@ async fn boot_api() -> Result<Api, String> {
     let code_generator_service = CodeGeneratorService::try_new(Arc::new(AsyncZipArchiverService))
         .await
         .map_err(|err| format!("Error creating code generator service: {:?}", err))?;
+    let registry = Registry::new();
     Ok(Api::new(
         Arc::new(object_store_service),
         Arc::new(code_generator_service),
+        Arc::new(GitService),
+        &registry,
     ))
 }
 

@@ -7,7 +7,7 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "SmartContracts"
-supported_template = ["SoloChain", "Minimal", "Frontier", "SoloFrontierChain"]
+supported_template = ["ParaChain"]
 size = 10500
 updated = "1729175503"
 
@@ -103,6 +103,20 @@ possible_units = ["true", "false"]
 multiplier_configurable = false
 
 
+# ! pub const MaxTransientStorage: u32 = 1 * 1024 * 1024;
+[runtime.optional_parameter_types.MaxTransientStorage]
+name = "MaxTransientStorage"
+description = "Maximum Transient Storage"
+prefix = "const"
+p_type = "u32"
+[runtime.optional_parameter_types.MaxTransientStorage.expression]
+default_unit = "1024 * 1024"
+default_multiplier = 1
+format = "{} * {}"
+possible_units = ["1024 * 1024"]
+multiplier_configurable = true
+
+
 [runtime.construct_runtime]
 runtime = ["Contracts", "pallet_contracts::Pallet<Runtime>"]
 
@@ -136,6 +150,7 @@ Migrations = "()"
 Xcm = "()"
 UploadOrigin = "EnsureSigned<Self::AccountId>"
 InstantiateOrigin = "EnsureSigned<Self::AccountId>"
+MaxTransientStorage = "MaxTransientStorage"
 
 
 [dependencies]
