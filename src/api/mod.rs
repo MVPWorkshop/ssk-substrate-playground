@@ -134,16 +134,12 @@ impl Api {
             .await
         {
             GetStatusResponse::Ok(x) => {
-                self.status_counter
-                    .with_label_values(&[&"success".to_string()])
-                    .inc();
+                self.status_counter.with_label_values(&["success"]).inc();
                 GetStatusResponse::Ok(x)
             }
             GetStatusResponse::TaskNotFound(x) => GetStatusResponse::TaskNotFound(x),
             GetStatusResponse::InternalServerError(e) => {
-                self.status_counter
-                    .with_label_values(&[&"fail".to_string()])
-                    .inc();
+                self.status_counter.with_label_values(&["fail"]).inc();
                 GetStatusResponse::InternalServerError(e)
             }
         }
