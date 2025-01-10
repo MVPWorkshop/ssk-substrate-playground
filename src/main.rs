@@ -1,13 +1,14 @@
 use std::io::ErrorKind;
 use std::sync::Arc;
 
-use poem::endpoint::PrometheusExporter;
+use poem::endpoint::{EndpointExt, PrometheusExporter};
 use poem::{listener::TcpListener, Route, Server};
 use poem_openapi::OpenApiService;
 use prometheus::Registry;
 
 use substrate_runtime_builder::{
     api::Api,
+    middleware::metrics::MetricsMiddleware,
     services::{
         async_zip::AsyncZipArchiverService, code_generator::service::CodeGeneratorService,
         git::GitService, s3::S3ObjectStoreService,
@@ -56,10 +57,15 @@ async fn main() -> Result<(), std::io::Error> {
     )
     .server(hosted_url);
     let ui = api_service.swagger_ui();
-
+    let metrics_middleware = MetricsMiddleware::new(&prometheus_registry);
     tokio::spawn(async move {
         Server::new(TcpListener::bind(format!("0.0.0.0:{PORT}")))
-            .run(Route::new().nest("/", api_service).nest("/docs", ui))
+            .run(
+                Route::new()
+                    .nest("/", api_service)
+                    .nest("/docs", ui)
+                    .with(metrics_middleware),
+            )
             .await
     });
     Server::new(TcpListener::bind(format!("0.0.0.0:{METRICS_PORT}")))
