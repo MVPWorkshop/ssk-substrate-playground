@@ -77,14 +77,6 @@ parachains-common = { git = "https://github.com/paritytech/polkadot-sdk.git", br
 parachain-info = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407", default-features = false, package = "staging-parachain-info" }
 pallet-insecure-randomness-collective-flip = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "stable2407", default-features = false }
 
-pallet-aura = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-collator-selection = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-sudo = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-transaction-payment = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-authorship = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-timestamp = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-session = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
-pallet-balances = { git = 'https://github.com/paritytech/polkadot-sdk.git', branch = "stable2407", default-features = false }
 
 {{#each this}}
 {{this.name}} = { git = '{{this.git_path}}', branch = "stable2407", default-features = {{this.use_default}} }
@@ -92,12 +84,10 @@ pallet-balances = { git = 'https://github.com/paritytech/polkadot-sdk.git', bran
 
 
 # Frontier
-pallet-base-fee = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
-pallet-evm = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
+pallet-evm = { git = 'https://github.com/polkadot-evm/frontier', branch = "stable2407", default-features = false }
 pallet-evm-precompile-simple = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 pallet-evm-precompile-modexp = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 pallet-evm-precompile-sha3fips = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
-pallet-ethereum = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 fp-rpc = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 fp-self-contained = { git = "https://github.com/polkadot-evm/frontier", branch = "stable2407", default-features = false }
 
@@ -127,26 +117,16 @@ std = [
 	"fp-self-contained/std",
 	"pallet-message-queue/std",
 	"pallet-parachain-template/std",
-	"pallet-base-fee/std",
 
-	"pallet-evm/std",
 	"pallet-evm-precompile-modexp/std",
 	"pallet-evm-precompile-simple/std",
 	"pallet-evm-precompile-sha3fips/std",
-	"pallet-ethereum/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-xcm/std",
 	"parachain-info/std",
 	"pallet-insecure-randomness-collective-flip/std",
+    "pallet-evm/std",
 
-	"pallet-aura/std",
-	"pallet-collator-selection/std",
-	"pallet-sudo/std",
-	"pallet-transaction-payment/std",
-	"pallet-authorship/std",
-	"pallet-timestamp/std",
-	"pallet-session/std",
-	"pallet-balances/std",
 	{{#each this}}
     "{{this.name}}/std",
 	{{/each}}

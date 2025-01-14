@@ -6,7 +6,7 @@ The Timestamp pallet is designed to create a consensus-based time source. This h
 It defines an _acceptable range_ using a configurable constant to specify how much time must pass before setting the new timestamp. Validator nodes in the network must verify that the timestamp falls within this acceptable range and reject blocks that do not.
 NOTE: The timestamp set by this pallet is the recommended way to query the onchain time instead of using block numbers alone. Measuring time with block numbers can cause cumulative calculation errors if depended upon in time critical operations and hence should generally be avoided."""
 short_description = "FRAME Timestamp consensus pallet"
-is_essential = ["SoloChain","SoloFrontierChain","ParaChain"]
+is_essential = ["SoloChain","SoloFrontierChain","ParaChain","Frontier"]
 
 compatibility = "Two"
 license = "Apache-2.0"

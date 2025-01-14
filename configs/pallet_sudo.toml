@@ -3,7 +3,7 @@ name = "Pallet Sudo" #"pallet_sudo"
 [metadata]
 description = "A pallet to provide a way to execute privileged runtime calls using a specified sudo (“superuser do”) account."
 short_description = "FRAME Sudo consensus pallet"
-is_essential = ["SoloChain","SoloFrontierChain","ParaChain"]
+is_essential = ["SoloChain", "SoloFrontierChain", "ParaChain", "Frontier"]
 
 compatibility = "Two"
 license = "Apache-2.0"

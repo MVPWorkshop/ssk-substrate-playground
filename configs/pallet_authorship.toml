@@ -8,7 +8,7 @@ license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
 
-is_essential = ["ParaChain"]
+is_essential = ["ParaChain","Frontier"]
 supported_template=["SoloChain","ParaChain","Minimal","Frontier","SoloFrontierChain"]
 
 size = 10500

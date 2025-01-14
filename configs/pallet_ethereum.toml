@@ -6,9 +6,9 @@ short_description = "FRAME Broker pallet"
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
-is_essential = ["SoloFrontierChain"]
+is_essential = ["SoloFrontierChain","Frontier"]
 category = "Other"
-supported_template = ["SoloFrontierChain"]
+supported_template = ["SoloFrontierChain","Frontier"]
 size = 10500
 updated = "1729175503"
 

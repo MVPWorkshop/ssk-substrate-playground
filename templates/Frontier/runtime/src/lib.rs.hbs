@@ -16,12 +16,10 @@ mod weights;
 {{#each additional_runtime_lib_code}}
 {{this}}
 {{/each}}
- use sp_core::Decode;
 use frame_system::EnsureSigned;
 use frame_support::parameter_types;
 use frame_support::traits::ConstU128;
 use frame_support::traits::ConstU32;
-use frame_support::traits::EitherOfDiverse;
 use frame_support::traits::FindAuthor;
 use frame_support::traits::VariantCountOf;
 use frame_support::weights::IdentityFee;
@@ -51,7 +49,6 @@ use crate::configs::xcm_config::RelayLocation;
 use pallet_xcm::EnsureXcm;
 use pallet_xcm::IsVoiceOfBody;
 use xcm::latest::prelude::*;
-
 use codec::Encode;
 use frame_support::weights::{
     constants::WEIGHT_REF_TIME_PER_SECOND, Weight, WeightToFeeCoefficient, WeightToFeeCoefficients,
@@ -65,7 +62,7 @@ pub use sp_runtime::{
 };
 
 // Frontier
-use pallet_ethereum::{EthereumBlockHashMapping, PostLogContent};
+use pallet_ethereum::PostLogContent;
 
 pub mod precompiles;
 pub use precompiles::FrontierPrecompiles;
@@ -375,45 +372,19 @@ mod runtime {
     pub type CumulusXcm = cumulus_pallet_xcm;
     #[runtime::pallet_index(33)]
     pub type MessageQueue = pallet_message_queue;
-
+#[runtime::pallet_index(34)]
+	pub type EVM = pallet_evm::Pallet<Runtime>;    
     // Template
     #[runtime::pallet_index(40)]
     pub type TemplatePallet = pallet_parachain_template;
     #[runtime::pallet_index(41)]
     pub type RandomnessCollectiveFlip = pallet_insecure_randomness_collective_flip::Pallet<Runtime>;
 
-    #[runtime::pallet_index(42)]
-    pub type Aura = pallet_aura;
 
-    #[runtime::pallet_index(43)]
-    pub type CollatorSelection = pallet_collator_selection;
 
-    #[runtime::pallet_index(44)]
-    pub type Sudo = pallet_sudo;
 
-    #[runtime::pallet_index(45)]
-    pub type TransactionPayment = pallet_transaction_payment;
 
-    #[runtime::pallet_index(46)]
-    pub type Authorship = pallet_authorship::Pallet<Runtime>;
 
-    #[runtime::pallet_index(47)]
-    pub type Timestamp = pallet_timestamp;
-
-    #[runtime::pallet_index(48)]
-    pub type Session = pallet_session;
-
-    #[runtime::pallet_index(49)]
-    pub type Balances = pallet_balances;
-
-    #[runtime::pallet_index(34)]
-    pub type Ethereum = pallet_ethereum;
-
-    #[runtime::pallet_index(35)]
-    pub type EVM = pallet_evm;
-
-    #[runtime::pallet_index(36)]
-    pub type BaseFee = pallet_base_fee;
 
     {{#each construct_runtime}}
     
@@ -444,169 +415,18 @@ type {{this.alias_name}} = {{this.pallet_name}}::Instance{{this.instance_counter
 {{/if}}
 {{/if}}
 {{/each}}
-parameter_types! {
-    pub const AllowMultipleBlocksPerSlot: bool = false;
-    pub const MaxAuthoritiesAura: u32 = 32;
-}
 
-impl pallet_aura::Config for Runtime {
-    type SlotDuration = pallet_aura::MinimumPeriodTimesTwo<Runtime>;
-    type DisabledValidators = ();
-    type AllowMultipleBlocksPerSlot = AllowMultipleBlocksPerSlot;
-    type AuthorityId = AuraId;
-    type MaxAuthorities = MaxAuthoritiesAura;
-}
-parameter_types! {
-    pub const PotId: PalletId = PalletId(*b"PotStake");
 
-    // StakingAdmin pluralistic body.
-    pub const StakingAdminBodyId: BodyId = BodyId::Defense;
-}
 
-/// We allow root and the StakingAdmin to execute privileged collator selection operations.
-pub type CollatorSelectionUpdateOrigin = EitherOfDiverse<
-    EnsureRoot<AccountId>,
-    EnsureXcm<IsVoiceOfBody<RelayLocation, StakingAdminBodyId>>,
->;
 
-parameter_types! {
-    pub const MaxInvulnerables: u32 = 20;
-    pub const SessionLength: BlockNumber = HOURS * 6;
-    pub const MinEligibleCollators: u32 = 4;
-    pub const PCSMaxCandidates: u32 = 100;
-}
 
-impl pallet_collator_selection::Config for Runtime {
-    type KickThreshold = SessionPeriod;
-    type MinEligibleCollators = MinEligibleCollators;
-    type ValidatorId = <Self as frame_system::Config>::AccountId;
-    type WeightInfo = ();
-    type RuntimeEvent = RuntimeEvent;
-    type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
-    type MaxInvulnerables = MaxInvulnerables;
-    type ValidatorRegistration = Session;
-    type Currency = Balances;
-    type PotId = PotId;
-    type MaxCandidates = PCSMaxCandidates;
-    type UpdateOrigin = CollatorSelectionUpdateOrigin;
-}
 
-impl pallet_sudo::Config for Runtime {
-    type RuntimeCall = RuntimeCall;
-    type WeightInfo = pallet_sudo::weights::SubstrateWeight<Runtime>;
-    type RuntimeEvent = RuntimeEvent;
-}
 
-parameter_types! {
-    pub FeeMultiplier: Multiplier = Multiplier::one();
-}
-
-parameter_types! {
-    pub const FTPOperationalFeeMultiplier: u8 = 5;
-}
-
-impl pallet_transaction_payment::Config for Runtime {
-    type WeightToFee = IdentityFee<Balance>;
-    type OperationalFeeMultiplier = FTPOperationalFeeMultiplier;
-    type FeeMultiplierUpdate = ConstFeeMultiplier<FeeMultiplier>;
-    type LengthToFee = IdentityFee<Balance>;
-    type RuntimeEvent = RuntimeEvent;
-    type OnChargeTransaction = FungibleAdapter<Balances, ()>;
-}
-
-pub struct AuraAccountAdapter;
-impl frame_support::traits::FindAuthor<AccountId> for AuraAccountAdapter {
-    fn find_author<'a, I>(digests: I) -> Option<AccountId>
-    where
-        I: 'a + IntoIterator<Item = (frame_support::ConsensusEngineId, &'a [u8])>,
-    {
-        pallet_aura::AuraAuthorId::<Runtime>::find_author(digests)
-            .and_then(|k| AccountId::try_from(k.as_ref()).ok())
-    }
-}
-
-impl pallet_authorship::Config for Runtime {
-    type EventHandler = ();
-    type FindAuthor = AuraAccountAdapter;
-}
-
-impl pallet_timestamp::Config for Runtime {
-    type Moment = u64;
-    type OnTimestampSet = Aura;
-    type MinimumPeriod = ConstU64<{ SLOT_DURATION / 2 }>;
-    type WeightInfo = ();
-}
-
-parameter_types! {
-    pub const SessionPeriod: u32 = HOURS * 6;
-    pub const Offset: u32 = 0;
-}
-
-impl pallet_session::Config for Runtime {
-    type NextSessionRotation = pallet_session::PeriodicSessions<SessionPeriod, Offset>;
-    type ShouldEndSession = pallet_session::PeriodicSessions<SessionPeriod, Offset>;
-    type WeightInfo = ();
-    type Keys = SessionKeys;
-    type SessionHandler = <SessionKeys as sp_runtime::traits::OpaqueKeys>::KeyTypeIdProviders;
-    type SessionManager = CollatorSelection;
-    type ValidatorId = <Self as frame_system::Config>::AccountId;
-    type RuntimeEvent = RuntimeEvent;
-    type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
-}
-
-/// Existential deposit.
-pub const EXISTENTIAL_DEPOSIT: u128 = 500;
-
-parameter_types! {
-    pub const MaxLocks: u32 = 50;
-}
-
-impl pallet_balances::Config for Runtime {
-    type ExistentialDeposit = ConstU128<500>;
-    type MaxLocks = MaxLocks;
-    type MaxFreezes = VariantCountOf<RuntimeFreezeReason>;
-    type RuntimeHoldReason = RuntimeHoldReason;
-    type Balance = Balance;
-    type DustRemoval = ();
-    type RuntimeFreezeReason = RuntimeHoldReason;
-    type AccountStore = System;
-    type FreezeIdentifier = RuntimeFreezeReason;
-    type WeightInfo = pallet_balances::weights::SubstrateWeight<Runtime>;
-    type ReserveIdentifier = [u8; 8];
-    type MaxReserves = ();
-    type RuntimeEvent = RuntimeEvent;
-}
 cumulus_pallet_parachain_system::register_validate_block! {
     Runtime = Runtime,
     BlockExecutor = cumulus_pallet_aura_ext::BlockExecutor::<Runtime, Executive>,
 }
-
-parameter_types! {
-    pub DefaultBaseFeePerGas: U256 = U256::from(1_000_000_000);
-    pub DefaultElasticity: Permill = Permill::from_parts(125_000);
-}
-
-pub struct BaseFeeThreshold;
-impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
-    fn lower() -> Permill {
-        Permill::zero()
-    }
-    fn ideal() -> Permill {
-        Permill::from_parts(500_000)
-    }
-    fn upper() -> Permill {
-        Permill::from_parts(1_000_000)
-    }
-}
-
-impl pallet_base_fee::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type Threshold = BaseFeeThreshold;
-    type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
-    type DefaultElasticity = DefaultElasticity;
-}
-
-/// Current approximation of the gas/s consumption considering
+// Current approximation of the gas/s consumption considering
 /// EVM execution over compiled WASM (on 4.4Ghz CPU).
 /// Given the 500ms Weight, from which 75% only are used for transactions,
 /// the total EVM execution gas limit is: GAS_PER_SECOND * 0.500 * 0.75 ~= 15_000_000.
@@ -633,7 +453,7 @@ impl<F: FindAuthor<u32>> FindAuthor<H160> for FindAuthorTruncated<F> {
 }
 
 parameter_types! {
-    pub const ChainId: u64 = 1337;
+    pub const EVMChainId: u64 = 1337;
     pub BlockGasLimit: U256 = U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT.ref_time() / WEIGHT_PER_GAS);
     pub PrecompilesValue: FrontierPrecompiles<Runtime> = FrontierPrecompiles::<_>::new();
     pub WeightPerGas: Weight = Weight::from_parts(WEIGHT_PER_GAS, 0);
@@ -644,41 +464,36 @@ parameter_types! {
     /// )
     pub const GasLimitPovSizeRatio: u64 = 4;
 }
+parameter_types! {
+    pub SuicideQuickClearLimit: u32 = 0;
+}
+
 
 impl pallet_evm::Config for Runtime {
-    type Currency = Balances;
-    type RuntimeEvent = RuntimeEvent;
+	type PrecompilesType = FrontierPrecompiles<Self>;
+	type WeightPerGas = WeightPerGas;
+	type Currency = Balances;
+	type OnCreate = ();
+	type SuicideQuickClearLimit = SuicideQuickClearLimit;
+	type Timestamp = Timestamp;
+	type OnChargeTransaction = ();
+    //ovo
+	type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
+    //ovo
+	type AddressMapping = pallet_evm::HashedAddressMapping<BlakeTwo256>;
+	type FindAuthor = FindAuthorTruncated<Aura>;
+    //ovo
+	type WithdrawOrigin =pallet_evm::EnsureAddressTruncated;
+	type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
+	type ChainId = EVMChainId;
+	type BlockGasLimit = BlockGasLimit;
+	type WeightInfo = pallet_evm::weights::SubstrateWeight<Self>;
+	type PrecompilesValue = PrecompilesValue;
+	type FeeCalculator = BaseFee;
+    //ovo
+	type CallOrigin = pallet_evm::EnsureAddressRoot<AccountId>;
+	type RuntimeEvent = RuntimeEvent;
+	type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
+	type Runner = pallet_evm::runner::stack::Runner<Self>;
 
-    type BlockGasLimit = BlockGasLimit;
-    type ChainId = ChainId;
-    type BlockHashMapping = EthereumBlockHashMapping<Self>;
-    type Runner = pallet_evm::runner::stack::Runner<Self>;
-
-    type CallOrigin = pallet_evm::EnsureAddressRoot<AccountId>;
-    type WithdrawOrigin = pallet_evm::EnsureAddressTruncated;
-    type AddressMapping = pallet_evm::HashedAddressMapping<BlakeTwo256>;
-
-    type FeeCalculator = BaseFee;
-    type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
-    type WeightPerGas = WeightPerGas;
-    type OnChargeTransaction = ();
-    type OnCreate = ();
-    type FindAuthor = FindAuthorTruncated<Aura>;
-    type PrecompilesType = FrontierPrecompiles<Self>;
-    type PrecompilesValue = PrecompilesValue;
-    type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
-    type SuicideQuickClearLimit = ConstU32<0>;
-    type Timestamp = Timestamp;
-    type WeightInfo = pallet_evm::weights::SubstrateWeight<Runtime>;
-}
-
-parameter_types! {
-    pub const PostBlockAndTxnHashes: PostLogContent = PostLogContent::BlockAndTxnHashes;
-}
-
-impl pallet_ethereum::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type StateRoot = pallet_ethereum::IntermediateStateRoot<Self>;
-    type PostLogContent = PostBlockAndTxnHashes;
-    type ExtraDataLength = ConstU32<30>;
 }
