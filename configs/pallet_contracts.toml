@@ -7,7 +7,7 @@ compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "SmartContracts"
-supported_template = ["SoloChain", "Minimal", "Frontier", "SoloFrontierChain"]
+supported_template = ["SoloChain", "Minimal", "SoloFrontierChain"]
 size = 10500
 updated = "1729175503"
 

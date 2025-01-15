@@ -3,17 +3,17 @@ name = "Pallet Collator Selection"
 [metadata]
 description = "The pallet_collator_selection manages the selection of collators in parachain networks, ensuring an active and valid set of collators is maintained for block production"
 short_description = "FRAME Collator Selection"
-is_essential = ["ParaChain"]
+is_essential = ["ParaChain","Frontier"]
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
-supported_template = ["ParaChain"]
+supported_template = ["ParaChain","Frontier"]
 size = 5078
 updated = "1729175503"
 
 [runtime]
-additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;"]
+additional_runtime_lib_code = ["use frame_support::traits::EitherOfDiverse;", "use sp_core::Decode;"]
 
 additional_pallet_impl_code = """
 parameter_types! {

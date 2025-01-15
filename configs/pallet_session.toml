@@ -3,12 +3,12 @@ name = "Pallet Session"
 [metadata]
 description = "pallet_session manages validator rotation and key management in predefined intervals, ensuring seamless session transitions in Substrate-based networks."
 short_description = "FRAME session"
-is_essential = ["ParaChain"]
+is_essential = ["ParaChain","Frontier"]
 compatibility = "Two"
 license = "Apache-2.0"
 authors = ["ParityTechnologies"]
 category = "Consensus"
-supported_template = ["ParaChain"]
+supported_template = ["ParaChain","Frontier"]
 size = 5078
 updated = "1729175503"
 
