@@ -1,12 +1,6 @@
 # Substrate Runtime Builder
 
-This project is a web-based application built using Rust and Actix Web. It allows users to generate Substrate projects with selected pallets and download them as zip files. The project uses the `substrate-runtime-builder` crate to dynamically generate Substrate-based blockchain projects.
-
-## Features
-
-- Create a new Substrate project with selected pallets.
-- Download the generated project as a zip file.
-- Handle multiple requests concurrently using async execution with Actix Web.
+This project allows users to generate Substrate projects with selected pallets and download them as zip files or publish them to your github. The project uses the `substrate-runtime-builder` crate to dynamically generate Substrate-based blockchain projects.
 
 ## Prerequisites
 
@@ -48,125 +42,15 @@ cargo dotenv -e .env.local run
 docker-compose up -d
 ```
 
-The server will start at http://127.0.0.1:8080. You should see the following message in the console:
+The server will start at `http://127.0.0.1:3000`. You should see the following message in the console:
 
 ```bash 
-Starting server at http://127.0.0.1:8080
+Starting server at http://127.0.0.1:3000
 ```
 
 The server is now running, and you can make API requests to generate and download Substrate projects.
 
+### 6. Swagger
+You can access the swagger openapi UI at [local](http://127.0.0.1:3000/docs), or [latest_release](https://dev-ssk.mvpw.io/api/docs)
 
-## API Endpoints
-
-### 1. Generate a New Substrate Project
-Endpoint: /generate-project
-
-Method: POST
-
-Request Body (JSON):
-
-``` json
-{
-    "name": "your_project_name",
-    "pallets": [
-         "Assets",
-        "Bounties",
-        "Treasury",
-        "Vesting",
-        "Society",
-        "Utility",
-        "Identity",
-        "Multisig",
-        "Proxy",
-        "Nfts",
-        "Uniques",
-        "Membership",
-        "ChildBounties"
-    ]
-}
-```
-
-The name field specifies the name of the project, and the pallets field is an array of pallet names you want to include in the project.
-
-### Example Request:
-
-bash
-```
-curl -X POST http://127.0.0.1:8080/generate-project \
--H "Content-Type: application/json" \
--d '{"name": "my_project5", 
-"pallets": [
-            "Utility", 
-            "Identity", 
-            "Multisig", 
-            "Proxy", 
-            "Assets", 
-            "Treasury", 
-            "Vesting", 
-            "Membership", 
-            "Society"
-            ], 
-"push_to_git": false, 
-"github_username": "username", 
-"github_token": "Github_token", 
-"github_email": "email"
-}'
-```
-
-#### Response:
-
-If the project is successfully created, you will receive the following message:
-
-```
-'my_project' project generated successfully.
-```
-
-### 2. Download the Generated Project
-Endpoint: /download-project/{name}
-
-Method: GET
-
-After generating the project, you can download it as a zip file using this endpoint. Replace {name} with the name of the project you generated.
-
-#### Example Request:
-
-```bash
-curl -o my_project.zip http://127.0.0.1:8080/download-project/my_project
-```
-
-This will download my_project.zip to your current directory.
-
-#### Response:
-
-If the project is found, you will receive the zip file for the project. If the project does not exist, you'll get a 404 Not Found response.
-
-
-### 3. Fetch the template data including all the pallet information.
-Endpoint: /templates
-
-Method: GET
-
-Fetch the all template data.
-
-#### Example Request:
-
-```bash
-curl -X GET "http://127.0.0.1:8080/templates"
-```
-
-Fetch the solochain template data.
-
-#### Example Request:
-
-```bash
-curl -X GET "http://127.0.0.1:8080/templates?template_type=solochain"
-```
-
-Fetch the solochain template data.
-
-#### Example Request:
-
-```bash
-curl -X GET "http://127.0.0.1:8080/templates?template_type=parachain"
-```
+## [API Reference](https://github.com/MVPWorkshop/ssk-substrate-playground/wiki/API-Reference)
