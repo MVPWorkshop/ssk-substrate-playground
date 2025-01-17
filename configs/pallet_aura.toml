@@ -23,6 +23,11 @@ use_cases = ["Gaming", "SupplyChain"]
 [runtime.construct_runtime]
 runtime = ["Aura", "pallet_aura"]
 
+additional_runtime_lib_code = [
+	"use sp_core::Decode;"
+]
+
+
 [runtime]
 # pub const AllowMultipleBlocksPerSlot: bool = false;
 [runtime.optional_parameter_types.AllowMultipleBlocksPerSlot]
